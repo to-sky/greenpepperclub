@@ -5,7 +5,7 @@
  * Description: Simple and responsive widget for WordPress to display your Instagram feed
  * Author: WPZOOM
  * Author URI: https://www.wpzoom.com/
- * Version: 1.7.2
+ * Version: 1.7.3
  * License: GPLv2 or later
  */
 
@@ -62,7 +62,10 @@ function wpzoom_instagram_get_default_settings() {
 		'transient-lifetime-value' => 1,
 		'transient-lifetime-type'  => 'days',
 		'is-forced-timeout'        => '',
-		'request-timeout-value'    => 15
+		'request-timeout-value'    => 15,
+		'user-info-avatar'=> '',
+		'user-info-fullname'=> '',
+		'user-info-biography'=> '',
 	];
 }
 

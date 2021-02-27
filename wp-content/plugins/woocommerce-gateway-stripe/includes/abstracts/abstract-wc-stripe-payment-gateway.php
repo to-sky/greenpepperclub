@@ -242,7 +242,7 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 	 */
 	public function validate_minimum_order_amount( $order ) {
 		if ( $order->get_total() * 100 < WC_Stripe_Helper::get_minimum_amount() ) {
-			/* translators: 1) dollar amount */
+			/* translators: 1) amount (including currency symbol) */
 			throw new WC_Stripe_Exception( 'Did not meet minimum amount', sprintf( __( 'Sorry, the minimum allowed order total is %1$s to use this payment method.', 'woocommerce-gateway-stripe' ), wc_price( WC_Stripe_Helper::get_minimum_amount() / 100 ) ) );
 		}
 	}
@@ -322,7 +322,7 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 	 * Generate the request for the payment.
 	 *
 	 * @since 3.1.0
-	 * @version 4.0.0
+	 * @version 4.5.4
 	 * @param  WC_Order $order
 	 * @param  object $prepared_source
 	 * @return array()
@@ -359,18 +359,32 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 				break;
 		}
 
+		if ( method_exists( $order, 'get_shipping_postcode' ) && ! empty( $order->get_shipping_postcode() ) ) {
+			$post_data['shipping'] = array(
+				'name'    => trim( $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name() ),
+				'address' => array(
+					'line1'       => $order->get_shipping_address_1(),
+					'line2'       => $order->get_shipping_address_2(),
+					'city'        => $order->get_shipping_city(),
+					'country'     => $order->get_shipping_country(),
+					'postal_code' => $order->get_shipping_postcode(),
+					'state'       => $order->get_shipping_state(),
+				)
+			);
+		}
+
 		$post_data['expand[]'] = 'balance_transaction';
 
 		$metadata = array(
 			__( 'customer_name', 'woocommerce-gateway-stripe' ) => sanitize_text_field( $billing_first_name ) . ' ' . sanitize_text_field( $billing_last_name ),
 			__( 'customer_email', 'woocommerce-gateway-stripe' ) => sanitize_email( $billing_email ),
 			'order_id' => $order->get_order_number(),
+			'site_url' => esc_url( get_site_url() ),
 		);
 
 		if ( $this->has_subscription( $order->get_id() ) ) {
 			$metadata += array(
 				'payment_type' => 'recurring',
-				'site_url'     => esc_url( get_site_url() ),
 			);
 		}
 
@@ -450,7 +464,7 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 			}
 
 			/* translators: transaction id */
-			$order->update_status( 'on-hold', sprintf( __( 'Stripe charge authorized (Charge ID: %s). Process order to take payment, or cancel to remove the pre-authorization.', 'woocommerce-gateway-stripe' ), $response->id ) );
+			$order->update_status( 'on-hold', sprintf( __( 'Stripe charge authorized (Charge ID: %s). Process order to take payment, or cancel to remove the pre-authorization. Attempting to refund the order in part or in full will release the authorization and cancel the payment.', 'woocommerce-gateway-stripe' ), $response->id ) );
 		}
 
 		if ( is_callable( array( $order, 'save' ) ) ) {
@@ -805,10 +819,12 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 	 * Refund a charge.
 	 *
 	 * @since 3.1.0
-	 * @version 4.0.0
+	 * @version 4.9.0
 	 * @param  int $order_id
 	 * @param  float $amount
+	 *
 	 * @return bool
+	 * @throws Exception Throws exception when charge wasn't captured.
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 		$order = wc_get_order( $order_id );
@@ -837,6 +853,13 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 		}
 
 		if ( $reason ) {
+			// Trim the refund reason to a max of 500 characters due to Stripe limits: https://stripe.com/docs/api/metadata.
+			if ( strlen( $reason ) > 500 ) {
+				$reason = function_exists( 'mb_substr' ) ? mb_substr( $reason, 0, 450 ) : substr( $reason, 0, 450 );
+				// Add some explainer text indicating where to find the full refund reason.
+				$reason = $reason . '... [See WooCommerce order page for full text.]';
+			}
+
 			$request['metadata'] = array(
 				'reason' => $reason,
 			);
@@ -850,7 +873,7 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 		$intent = $this->get_intent_from_order( $order );
 		$intent_cancelled = false;
 		if ( $intent ) {
-			// If the order has a Payment Intent pending capture, then the Intent itself must be refunded (cancelled), not the Charge
+			// If the order has a Payment Intent pending capture, then the Intent itself must be refunded (cancelled), not the Charge.
 			if ( ! empty( $intent->error ) ) {
 				$response = $intent;
 				$intent_cancelled = true;
@@ -870,7 +893,7 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 			}
 		}
 
-		if ( ! $intent_cancelled ) {
+		if ( ! $intent_cancelled && 'yes' === $captured ) {
 			$response = WC_Stripe_API::request( $request, 'refunds' );
 		}
 
@@ -880,20 +903,34 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 			return $response;
 
 		} elseif ( ! empty( $response->id ) ) {
-			$order->update_meta_data( '_stripe_refund_id', $response->id );
-
-			$amount = wc_price( $response->amount / 100 );
-
+			$formatted_amount = wc_price( $response->amount / 100 );
 			if ( in_array( strtolower( $order->get_currency() ), WC_Stripe_Helper::no_decimal_currencies() ) ) {
-				$amount = wc_price( $response->amount );
+				$formatted_amount = wc_price( $response->amount );
 			}
+
+			// If charge wasn't captured, skip creating a refund and cancel order.
+			if ( 'yes' !== $captured ) {
+				/* translators: amount (including currency symbol) */
+				$order->add_order_note( sprintf( __( 'Pre-Authorization for %s voided.', 'woocommerce-gateway-stripe' ), $formatted_amount ) );
+				$order->update_status( 'cancelled' );
+				// If amount is set, that means this function was called from the manual refund form.
+				if ( ! is_null( $amount ) ) {
+					// Throw an exception to provide a custom message on why the refund failed.
+					throw new Exception( __( 'The authorization was voided and the order cancelled. Click okay to continue, then refresh the page.', 'woocommerce-gateway-stripe' ) );
+				} else {
+					// If refund was initiaded by changing order status, prevent refund without errors.
+					return false;
+				}
+			}
+
+			$order->update_meta_data( '_stripe_refund_id', $response->id );
 
 			if ( isset( $response->balance_transaction ) ) {
 				$this->update_fees( $order, $response->balance_transaction );
 			}
 
-			/* translators: 1) dollar amount 2) transaction id 3) refund message */
-			$refund_message = ( isset( $captured ) && 'yes' === $captured ) ? sprintf( __( 'Refunded %1$s - Refund ID: %2$s - Reason: %3$s', 'woocommerce-gateway-stripe' ), $amount, $response->id, $reason ) : __( 'Pre-Authorization Released', 'woocommerce-gateway-stripe' );
+			/* translators: 1) amount (including currency symbol) 2) transaction id 3) refund message */
+			$refund_message = sprintf( __( 'Refunded %1$s - Refund ID: %2$s - Reason: %3$s', 'woocommerce-gateway-stripe' ), $formatted_amount, $response->id, $reason );
 
 			$order->add_order_note( $refund_message );
 			WC_Stripe_Logger::log( 'Success: ' . html_entity_decode( wp_strip_all_tags( $refund_message ) ) );
@@ -1039,6 +1076,10 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 			$request['statement_descriptor'] = $full_request['statement_descriptor'];
 		}
 
+		if ( isset( $full_request['shipping'] ) ) {
+			$request['shipping'] = $full_request['shipping'];
+		}
+
 		/**
 		 * Filter the return value of the WC_Payment_Gateway_CC::generate_create_intent_request.
 		 *
@@ -1059,18 +1100,24 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 	public function get_level3_data_from_order( $order ) {
 		// Get the order items. Don't need their keys, only their values.
 		// Order item IDs are used as keys in the original order items array.
-		$order_items = array_values( $order->get_items() );
+		$order_items = array_values( $order->get_items( [ 'line_item', 'fee' ] ) );
 		$currency    = $order->get_currency();
 
-		$stripe_line_items = array_map(function( $item ) use ( $currency ) {
-			$product_id          = $item->get_variation_id()
-				? $item->get_variation_id()
-				: $item->get_product_id();
+		$stripe_line_items = array_map( function( $item ) use ( $currency ) {
+			if ( is_a( $item, 'WC_Order_Item_Product' ) ) {
+				$product_id = $item->get_variation_id()
+					? $item->get_variation_id()
+					: $item->get_product_id();
+				$subtotal   = $item->get_subtotal();
+			} else {
+				$product_id = substr( sanitize_title( $item->get_name() ), 0, 12 );
+				$subtotal   = $item->get_total();
+			}
 			$product_description = substr( $item->get_name(), 0, 26 );
 			$quantity            = $item->get_quantity();
-			$unit_cost           = WC_Stripe_Helper::get_stripe_amount( ( $item->get_subtotal() / $quantity ), $currency );
+			$unit_cost           = WC_Stripe_Helper::get_stripe_amount( ( $subtotal / $quantity ), $currency );
 			$tax_amount          = WC_Stripe_Helper::get_stripe_amount( $item->get_total_tax(), $currency );
-			$discount_amount     = WC_Stripe_Helper::get_stripe_amount( $item->get_subtotal() - $item->get_total(), $currency );
+			$discount_amount     = WC_Stripe_Helper::get_stripe_amount( $subtotal - $item->get_total(), $currency );
 
 			return (object) array(
 				'product_code'        => (string) $product_id, // Up to 12 characters that uniquely identify the product.
@@ -1150,6 +1197,12 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 
 		if ( $prepared_source->customer && $intent->customer !== $prepared_source->customer ) {
 			$request['customer'] = $prepared_source->customer;
+		}
+
+		if ( $this->has_subscription( $order ) ) {
+			// If this is a failed subscription order payment, the intent should be
+			// prepared for future usage.
+			$request['setup_future_usage'] = 'off_session';
 		}
 
 		if ( empty( $request ) ) {
@@ -1377,9 +1430,10 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 		}
 
 		if ( isset( $full_request['source'] ) ) {
-			$request['source'] = $full_request['source'];
+			$is_source = 'src_' === substr( $full_request['source'], 0, 4 );
+			$request[ $is_source ? 'source' : 'payment_method' ] = $full_request['source'];
 		}
-	
+
 		/**
 		 * Filter the value of the request.
 		 *
@@ -1389,6 +1443,10 @@ abstract class WC_Stripe_Payment_Gateway extends WC_Payment_Gateway_CC {
 		 * @param object $source
 		 */
 		$request = apply_filters('wc_stripe_generate_create_intent_request', $request, $order, $prepared_source );
+
+		if ( isset( $full_request['shipping'] ) ) {
+			$request['shipping'] = $full_request['shipping'];
+		}
 
 		$level3_data = $this->get_level3_data_from_order( $order );
 		$intent = WC_Stripe_API::request_with_level3_data(

@@ -112,4 +112,18 @@ jQuery(function ($) {
     requestTick();
 
     $('.zoom-instagram-widget__items').zoomLoadAsyncImages();
+
+
+    var siteOriginInit = function () {
+        var $widgets = $('.zoom-instagram-widget__items');
+        if ($widgets.length) {
+            $('.zoom-instagram-widget__items').zoomInstagramWidget();
+            $('.zoom-instagram-widget__items').zoomLoadAsyncImages();
+        }
+
+    };
+
+    var debounceInit = _.debounce(siteOriginInit, 1500);
+    $(document).on('panels_setup_preview', debounceInit);
+
 });

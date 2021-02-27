@@ -47,19 +47,56 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 
 		$this->api = Wpzoom_Instagram_Widget_API::getInstance();
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'scripts' ) );
+		add_action( 'wp_enqueue_scripts', [ $this, 'styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
+
+		/**
+		 * Enqueue styles and scripts for SiteOrigin Page Builder.
+		 */
+		add_action('siteorigin_panel_enqueue_admin_scripts', [ $this, 'styles' ]);
+		add_action('siteorigin_panel_enqueue_admin_scripts', [ $this, 'register_scripts' ]);
+		add_action('siteorigin_panel_enqueue_admin_scripts', [ $this, 'enqueue_scripts' ]);
+
 	}
 
 	/**
-	 * Widget specific scripts & styles
+	 * Load widget specific styles.
 	 */
-	public function scripts() {
-		wp_enqueue_style( 'zoom-instagram-widget', plugin_dir_url( dirname( __FILE__ ) . '/instagram-widget-by-wpzoom.php' ) . 'css/instagram-widget.css', array( 'dashicons' ), '1.7.0' );
-		wp_enqueue_script( 'zoom-instagram-widget-lazy-load', plugin_dir_url( dirname( __FILE__ ) . '/instagram-widget-by-wpzoom.php' ) . 'js/jquery.lazy.min.js', array( 'jquery' ), '1.4.2' );
-		wp_enqueue_script( 'zoom-instagram-widget', plugin_dir_url( dirname( __FILE__ ) . '/instagram-widget-by-wpzoom.php' ) . 'js/instagram-widget.js', array(
-			'jquery',
-			'wp-util'
-		), '1.7.1' );
+	public function styles() {
+		wp_enqueue_style(
+			'zoom-instagram-widget',
+			plugin_dir_url( __FILE__ ) . 'css/instagram-widget.css',
+			[ 'dashicons' ],
+			filemtime( plugin_dir_path( __FILE__ ) . 'css/instagram-widget.css' )
+		);
+	}
+
+	/**
+	 * Register widget specific scripts.
+	 */
+	public function register_scripts() {
+		wp_register_script(
+			'zoom-instagram-widget-lazy-load',
+			plugin_dir_url( __FILE__ ) . 'js/jquery.lazy.min.js',
+			array( 'jquery' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'js/jquery.lazy.min.js' ),
+			true
+		);
+		wp_register_script(
+			'zoom-instagram-widget',
+			plugin_dir_url( __FILE__ ) . 'js/instagram-widget.js',
+			[ 'jquery', 'underscore', 'wp-util' ],
+			filemtime( plugin_dir_path( __FILE__ ) . 'js/instagram-widget.js' ),
+			true
+		);
+	}
+
+	/**
+	 * Load widget specific scripts.
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_script( 'zoom-instagram-widget-lazy-load' );
+		wp_enqueue_script( 'zoom-instagram-widget' );
 	}
 
 	/**
@@ -71,6 +108,9 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
+
+		$this->enqueue_scripts();
+
 		$instance = wp_parse_args( (array) $instance, $this->defaults );
 
 		echo $args['before_widget'];
@@ -116,7 +156,9 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 		if ( current_user_can( 'edit_theme_options' ) ) {
 			?>
             <p>
-				<?php _e( 'Instagram Widget misconfigured, check plugin &amp; widget settings.', 'wpzoom-instagram-widget' ); ?>
+				<?php _e( 'Instagram Widget misconfigured or your Access Token <strong>expired</strong>. Please check', 'wpzoom-instagram-widget' ); ?>
+                  <strong><a href="<?php echo admin_url( 'options-general.php?page=wpzoom-instagram-widget' ); ?>" target="_blank"><?php _e( 'Instagram Settings Page', 'wpzoom-instagram-widget' ); ?></a></strong> <?php _e( 'and make sure the plugin is properly configured', 'wpzoom-instagram-widget' ); ?>
+
             </p>
 
 			<?php if ( ! empty( $errors ) ): ?>
@@ -262,7 +304,7 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 					$inline_attrs = 'data-media-id="' . esc_attr( $media_id ) . '"';
 					$inline_attrs .= 'data-nonce="' . wp_create_nonce( WPZOOM_Instagram_Image_Uploader::get_nonce_action( $media_id ) ) . '"';
 
-					$src = plugin_dir_url( __FILE__ ) . 'images/loading-spinner-transparent.svg';
+					$src = $item['original-image-url'];
 				}
 				?>
 
@@ -435,6 +477,26 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
         </p>
 
         <p>
+            <label for="<?php echo $this->get_field_id( 'image-resolution' ); ?>"><?php esc_html_e( 'Force image resolution:', 'wpzoom-instagram-widget' ); ?></label>
+            <select class="widefat" id="<?php echo $this->get_field_id( 'image-resolution' ); ?>"
+                    name="<?php echo $this->get_field_name( 'image-resolution' ); ?>">
+                <option value="default_algorithm" <?php selected( $instance['image-resolution'], "default_algorithm" ); ?>>
+                    <?php _e( 'By Default Algorithm', 'wpzoom-instagram-widget' ); ?>
+                </option>
+                <option value="thumbnail" <?php selected( $instance['image-resolution'], "thumbnail" ); ?>>
+                    <?php _e( 'Thumbnail ( 150x150px )', 'wpzoom-instagram-widget' ); ?>
+                </option>
+                <option value="low_resolution" <?php selected( $instance['image-resolution'], "low_resolution" ); ?>>
+                    <?php _e( 'Low Resolution ( 320x320px )', 'wpzoom-instagram-widget' ); ?>
+
+                </option>
+                <option value="standard_resolution" <?php selected( $instance['image-resolution'], "standard_resolution" ); ?>>
+                    <?php _e( 'Standard Resolution ( 640x640px )', 'wpzoom-instagram-widget' ); ?>
+                </option>
+            </select>
+        </p>
+
+        <p>
             <label for="<?php echo $this->get_field_id( 'image-spacing' ); ?>"><?php esc_html_e( 'Image spacing in pixels:', 'wpzoom-instagram-widget' ); ?>
                 <small>(Just integer)</small>
             </label>
@@ -467,25 +529,6 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 
         </p>
 
-        <p>
-            <label for="<?php echo $this->get_field_id( 'image-resolution' ); ?>"><?php esc_html_e( 'Set forced image resolution:', 'wpzoom-instagram-widget' ); ?></label>
-            <select class="widefat" id="<?php echo $this->get_field_id( 'image-resolution' ); ?>"
-                    name="<?php echo $this->get_field_name( 'image-resolution' ); ?>">
-                <option value="default_algorithm" <?php selected( $instance['image-resolution'], "default_algorithm" ); ?>>
-					<?php _e( 'By Default Algorithm', 'wpzoom-instagram-widget' ); ?>
-                </option>
-                <option value="thumbnail" <?php selected( $instance['image-resolution'], "thumbnail" ); ?>>
-					<?php _e( 'Thumbnail ( 150x150px )', 'wpzoom-instagram-widget' ); ?>
-                </option>
-                <option value="low_resolution" <?php selected( $instance['image-resolution'], "low_resolution" ); ?>>
-					<?php _e( 'Low Resolution ( 320x320px )', 'wpzoom-instagram-widget' ); ?>
-
-                </option>
-                <option value="standard_resolution" <?php selected( $instance['image-resolution'], "standard_resolution" ); ?>>
-					<?php _e( 'Standard Resolution ( 640x640px )', 'wpzoom-instagram-widget' ); ?>
-                </option>
-            </select>
-        </p>
         <p>
             <input class="checkbox" type="checkbox" <?php checked( $instance['show-user-info'] ); ?>
                    id="<?php echo $this->get_field_id( 'show-user-info' ); ?>"

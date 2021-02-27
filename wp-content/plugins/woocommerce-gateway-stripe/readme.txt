@@ -2,9 +2,9 @@
 Contributors: woocommerce, automattic, royho, akeda, mattyza, bor0, woothemes
 Tags: credit card, stripe, apple pay, payment request, google pay, sepa, sofort, bancontact, alipay, giropay, ideal, p24, woocommerce, automattic
 Requires at least: 4.4
-Tested up to: 5.5
+Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 4.5.3
+Stable tag: 4.9.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Attributions: thorsten-stripe
@@ -70,7 +70,7 @@ Stripe also supports the [WooCommerce Subscriptions extension](https://woocommer
 
 = Apple Pay Support =
 
-WooCommerce Stripe includes [Apple Pay](https://stripe.com/apple-pay) support, which means customers can pay using payment details associated with their Apple ID. Checkout is now just an authorization (Touch ID or Face ID) away on both mobile and desktop. Only supports simple, variable, and Subscription products for now. More support to come.
+WooCommerce Stripe includes [Apple Pay](https://woocommerce.com/apple-pay) support, which means customers can pay using payment details associated with their Apple ID. Checkout is now just an authorization (Touch ID or Face ID) away on both mobile and desktop. Only supports simple, variable, and Subscription products for now. More support to come.
 
 = Web Payments API Support =
 
@@ -126,14 +126,14 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 4.5.4 - 2020-10-06 =
-* Fix   - Apple Pay now requires a buyer's phone number only if it's required in Appearance > Customize > WooCommerce > Checkout.
-* Add   - Allow toggling secrets temporarily to visible in settings.
-* Fix   - Properly display field required error when SEPA method is used.
-* Tweak - Update payment request button description to include link to Stripe dashboard Apple Pay settings.
-* Add   - Add off session payment intent filter, props rfair404.
-* Tweak - Update contributors list.
-* Add   - Link from Payment Request button setting to Apple Pay settings in Stripe dashboard.
+= 4.9.0 - 2021-02-24 =
 
-[See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce-gateway-stripe/master/changelog.txt).
+* Fix    - Add fees as line items sent to Stripe to prevent Level 3 errors.
+* Fix    - Adding a SEPA payment method doesn't work.
+* Fix    - Apple Pay domain verification with live secret key.
+* Fix    - Display the correct accepted card branding depending on store currency and location.
+* Fix    - Remove duplicate Apple Pay domain registration Inbox notes.
+* Add    - Copy Apple Pay domain registration file and trigger domain registration on domain name change.
+* Update - Notes and status when refunding order with charge authorization.
 
+[See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce-gateway-stripe/trunk/changelog.txt).

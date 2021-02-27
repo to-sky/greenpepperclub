@@ -1,4 +1,4 @@
-# Copyright (C) 2020 user-menus
+# Copyright (C) 2021 user-menus
 # This file is distributed under the same license as the user-menus package.
 msgid ""
 msgstr ""
