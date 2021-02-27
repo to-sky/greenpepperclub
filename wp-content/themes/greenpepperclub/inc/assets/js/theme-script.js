@@ -75,4 +75,29 @@ jQuery( function ( $ ) {
         }, 1000, 'swing');
     });
 
+    // Testimonials slider
+    $('#gpTestimonialsSlider').slick({
+        infinite: true,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 6000,
+        centerMode: true,
+        prevArrow: '<span class="gp-icon gp-icon-prev gp-icon-white gp-valign" style="left: -30px;""></span>',
+        nextArrow: '<span class="gp-icon gp-icon-next gp-icon-white gp-valign" style="right: -30px;"></span>',
+        responsive: [
+            {
+                breakpoint: 1440,
+                settings: {
+                    slidesToShow: 2,
+                }
+            },
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 1,
+                }
+            }
+        ]
+    });
 });
