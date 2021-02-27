@@ -2,18 +2,17 @@
 /** 
  * Template Name: login page 
  */  
- get_header();   
-   
-   
+ get_header();
+
 if($_POST) 
 {  
    
     global $wpdb;  
    
     //We shall SQL escape all inputs  
-    $username = $wpdb->escape($_REQUEST['username']);  
-    $password = $wpdb->escape($_REQUEST['password']);  
-    $remember = $wpdb->escape($_REQUEST['rememberme']);  
+    $username = esc_sql($_REQUEST['username']);
+    $password = esc_sql($_REQUEST['password']);
+    $remember = esc_sql($_REQUEST['rememberme']);
    
     if($remember) $remember = "true";  
     else $remember = "false";  
@@ -24,11 +23,7 @@ if($_POST)
     $login_data['remember'] = $remember;  
    
     $user_verify = wp_signon( $login_data, true );   
-   
-   //print_r($user_verify);
-   
-   //die;
-   
+
     if ( is_wp_error($user_verify) )   
     {  
         echo "Invalid login details";  
