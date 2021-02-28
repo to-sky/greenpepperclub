@@ -3,22 +3,23 @@
 /**
  * Testimonials slider on homepage
  */
-add_shortcode('gp_testimonials_slider', 'gp_testimonials_slider');
+add_shortcode( 'gp_testimonials_slider', 'gp_testimonials_slider' );
 function gp_testimonials_slider() {
-    $query = new WP_Query([
-        'post_type' => 'testimonial',
-        'post_status' => 'publish',
-    ]);
+	$query = new WP_Query( [
+		'post_type'   => 'testimonial',
+		'post_status' => 'publish',
+	] );
 
-    $data = '';
+	$data = '';
 
-    if ($query->have_posts()) {
-        $data .= '<div class="gp-testimonials-container mb-5">';
-        $data .= '<div id="gpTestimonialsSlider" class="gp-testimonials">';
+	if ( $query->have_posts() ) {
+		$data .= '<div class="gp-testimonials-container mb-5">';
+		$data .= '<div id="gpTestimonialsSlider" class="gp-testimonials">';
 
-        while ($query->have_posts()) {
-            $query->the_post();
-            $data .= '<div class="gp-testimonial-item mx-3 p-4 text-center" data-mh="testimonial">
+		while ( $query->have_posts() ) {
+			$query->the_post();
+			$data .= '<div class="gp-testimonial-item mx-3 p-4 text-center">
+						<div class="gp-testimonial-content">
                             <div class="gp-testimonial-symbol mb-4">
                                 <svg width="40px" height="33px" viewBox="0 0 40 33">
                                     <path d="M29.480315,7.65354331 C27.5485468,10.0682535
@@ -40,17 +41,20 @@ function gp_testimonials_slider() {
                                 </svg>
                             </div>';
 
-            $data .= '<div class="gp-testimonial-content mb-5" data-mh="testimonial-content">' . get_the_content() . '</div>';
-            $data .= '<div class="gp-testimonial-author">' . get_the_title() . '</div>';
-            $data .= '<div class="gp-testimonial-company">' . get_field('company') . '</div>';
-            $data .= '</div>';
-        }
+			$data .= '<div class="gp-testimonial-text mb-5" data-mh="testimonial-text">' . get_the_content() . '</div>';
+			$data .= '<div class="gp-testimonial-author" data-mh="testimonial-author">' . get_the_title() . '</div>';
+			$data .= '<div class="gp-testimonial-company"  data-mh="testimonial-company">' . get_field( 'company' ) . '</div>';
+			$data .= '</div>'; // gp-testimonial-content
+			$data .= '</div>'; // gp-testimonial-item
+		}
 
-        wp_reset_postdata();
-        $data .= '</div>';
-        $data .= '</div>';
-    }
+		wp_reset_postdata();
+		$data .= '</div>'; // gp-testimonials-container
+		$data .= '</div>'; // gp-testimonials
+	}
 
-    return $data;
-};
+	return $data;
+}
+
+;
 

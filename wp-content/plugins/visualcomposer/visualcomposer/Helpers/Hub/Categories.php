@@ -36,6 +36,7 @@ class Categories implements Helper
             $hubCategories = $this->getHubCategories();
         }
 
+        $hubCategories = vcfilter('vcv:helpers:hub:getCategories', $hubCategories);
         $categoriesDiffer->set($hubCategories);
 
         $categoriesDiffer->onUpdate(
@@ -43,7 +44,9 @@ class Categories implements Helper
                 if (empty($oldValue)) {
                     return []; // Do not allow to create 'new' categories
                 }
-                $mergedValue['elements'] = array_values(array_unique(array_merge($oldValue['elements'], $newValue['elements'])));
+                $mergedValue['elements'] = array_values(
+                    array_unique(array_merge($oldValue['elements'], $newValue['elements']))
+                );
 
                 return $mergedValue;
             }
@@ -130,13 +133,26 @@ class Categories implements Helper
             ],
             'Tabs' => [
                 'title' => 'Tabs',
-                'elements' => ['tabsWithSlide', 'classicTabs', 'pageableContainer'],
+                'elements' => [
+                    'tabsWithSlide',
+                    'classicTabs',
+                    'pageableContainer',
+                    'contentSlider',
+                    'toggleContainer',
+                    'faqGroup',
+                ],
                 'icon' => $urlHelper->to('public/categories/icons/Container.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Container.svg'),
             ],
             'Tab' => [
                 'title' => 'Tab',
-                'elements' => ['tab', 'classicTab', 'pageableTab'],
+                'elements' => [
+                    'tab',
+                    'classicTab',
+                    'pageableTab',
+                    'contentSlide',
+                    'toggleContainerTab',
+                ],
                 'icon' => $urlHelper->to('public/categories/icons/Container.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Container.svg'),
             ],
@@ -171,11 +187,13 @@ class Categories implements Helper
                     'animatedIconButton',
                     'animatedTwoColorButton',
                     'separatedButton',
-                    'buttonGroup',
                     'basicShadowButton',
                     'growShadowButton',
                     '3ColorButton',
                     'doubleTextButton',
+                    'callToActionButton',
+                    'iconButton',
+                    'buttonGroup',
                 ],
                 'icon' => $urlHelper->to('public/categories/icons/Button.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Button.svg'),
@@ -183,13 +201,14 @@ class Categories implements Helper
             'Header & Footer' => [
                 'title' => 'Header & Footer',
                 'elements' => [
-                    'sandwichMenu',
                     'logoWidget',
                     'copyright',
                     'basicMenu',
+                    'sandwichMenu',
+                    'sandwichSideMenu',
                     'sidebarMenu',
                     'verticalSandwichMenu',
-                    'sandwichSideMenu',
+                    'linkDropdown',
                 ],
                 'icon' => $urlHelper->to('public/categories/icons/Header-Footer.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Header-Footer.svg'),
@@ -208,7 +227,15 @@ class Categories implements Helper
             ],
             'Section' => [
                 'title' => 'Section',
-                'elements' => ['section'],
+                'elements' => [
+                    'section',
+                    'popupRoot',
+                    'layoutWpContentArea',
+                    'layoutWpCommentsArea',
+                    'layoutHeaderArea',
+                    'layoutFooterArea',
+                    'layoutSidebarArea',
+                ],
                 'icon' => $urlHelper->to('public/categories/icons/Section.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Section.svg'),
             ],
@@ -232,29 +259,29 @@ class Categories implements Helper
             ],
             'Single image' => [
                 'title' => 'Single Image',
-                'elements' => ['singleImage', 'hoverImage', 'phoneMockup', 'browserMockup', 'parallaxSingleImage'],
+                'elements' => ['singleImage', 'hoverImage', 'phoneMockup', 'browserMockup', 'parallaxSingleImage', 'giphy', 'gifAnimation'],
                 'icon' => $urlHelper->to('public/categories/icons/Single-Image.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Single-Image.svg'),
             ],
             'Image gallery' => [
                 'title' => 'Image Gallery',
                 'elements' => [
-                    'imageMasonryGallery',
                     'imageGallery',
+                    'imageMasonryGallery',
                     'multipleImageCollage',
-                    'imageGalleryWithScaleUp',
-                    'imageGalleryWithIcon',
-                    'imageGalleryWithZoom',
                     'imageMasonryGalleryWithZoom',
                     'imageMasonryGalleryWithIcon',
                     'imageMasonryGalleryWithScaleUp',
+                    'imageGalleryWithIcon',
+                    'imageGalleryWithScaleUp',
+                    'imageGalleryWithZoom',
                 ],
                 'icon' => $urlHelper->to('public/categories/icons/Image-Gallery.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Image-Gallery.svg'),
             ],
             'Text block' => [
                 'title' => 'Text Block',
-                'elements' => ['textBlock', 'googleFontsHeading', 'typewriterHeading', 'marqueeElement'],
+                'elements' => ['textBlock', 'googleFontsHeading', 'typewriterHeading', 'marqueeElement', 'doubleTitle'],
                 'icon' => $urlHelper->to('public/categories/icons/Text-Block.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Text-Block.svg'),
             ],
@@ -270,14 +297,20 @@ class Categories implements Helper
                     'bannerElement',
                     'profileWithIcon',
                     'soundcloudPlayer',
-                    'simpleContactForm'
+                    'simpleContactForm',
+                    'foodAndDrinksMenu',
+                    'starRanking',
                 ],
                 'icon' => $urlHelper->to('public/categories/icons/Misc.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Misc.svg'),
             ],
             'Pricing table' => [
                 'title' => 'Pricing Table',
-                'elements' => ['pricingTable', 'outlinePricingTable'],
+                'elements' => [
+                    'pricingTable',
+                    'outlinePricingTable',
+                    'shadowPricingTable',
+                ],
                 'icon' => $urlHelper->to('public/categories/icons/Pricing-Table.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Pricing-Table.svg'),
             ],
@@ -291,7 +324,6 @@ class Categories implements Helper
                     'flickrImage',
                     'flickrWidget',
                     'instagramImage',
-                    'googlePlusButton',
                     'pinterestPinit',
                     'facebookLike',
                     'facebookShare',
@@ -303,13 +335,20 @@ class Categories implements Helper
                     'facebookEmbeddedComments',
                     'facebookEmbeddedPosts',
                     'socialProfileIcons',
+                    'monoSocialIcons',
                 ],
                 'icon' => $urlHelper->to('public/categories/icons/Social.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Social.svg'),
             ],
             'Videos' => [
                 'title' => 'Videos',
-                'elements' => ['youtubePlayer', 'vimeoPlayer', 'videoPlayer', 'videoPopup'],
+                'elements' => [
+                    'youtubePlayer',
+                    'vimeoPlayer',
+                    'videoPlayer',
+                    'videoPopup',
+                    'videoButtonPopup',
+                ],
                 'icon' => $urlHelper->to('public/categories/icons/Video.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Video.svg'),
             ],
@@ -370,6 +409,8 @@ class Categories implements Helper
                     'backgroundImagePostGrid',
                     'postGridWithBox',
                     'postSliderBlock',
+                    'portfolioPostGrid',
+                    'postGridWithHoverButton',
                 ],
                 'icon' => $urlHelper->to('public/categories/icons/Post-Grid.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Post-Grid.svg'),
@@ -377,6 +418,7 @@ class Categories implements Helper
             '_postsGridSources' => [
                 'title' => 'Post Grid Data Sources',
                 'elements' => [
+                    'postsGridDataSourceArchive',
                     'postsGridDataSourcePost',
                     'postsGridDataSourcePage',
                     'postsGridDataSourceCustomPostType',
@@ -396,8 +438,10 @@ class Categories implements Helper
                     'sidePostGridItem',
                     'newsPostGridItem',
                     'backgroundImagePostGridItem',
+                    'portfolioPostGridItem',
                     'postGridWithBoxItem',
                     'postSliderBlockItem',
+                    'postGridWithHoverButtonItem',
                 ],
                 'icon' => $urlHelper->to('public/categories/icons/Post-Grid.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Post-Grid.svg'),
@@ -424,28 +468,28 @@ class Categories implements Helper
                 'title' => 'WordPress',
                 'elements' => [
                     'shortcode',
+                    'addToAnyShareButtons',
                     'wpWidgetsCustom',
                     'wpWidgetsDefault',
                     'widgetizedSidebar',
-                    'contactForm7',
-                    'ninjaForms',
-                    'gravityForms',
-                    'sliderRevolution',
-                    'layerSlider',
-                    'essentialGrid',
-                    'addToAnyShareButtons',
-                    'nextGenGallery',
-                    'wpForms',
-                    'eventOnCalendar',
-                    'enviraGallery',
-                    'advancedCustomFields',
-                    'mailChimpForWordPress',
-                    'gutenberg',
-                    'calderaForms',
-                    'wpDataTables',
-                    'captainForm',
                     'simpleSearch',
+                    'advancedCustomFields',
+                    'calderaForms',
+                    'captainForm',
+                    'contactForm7',
+                    'enviraGallery',
+                    'essentialGrid',
+                    'eventOnCalendar',
+                    'gravityForms',
+                    'gutenberg',
+                    'mailChimpForWordPress',
+                    'layerSlider',
+                    'nextGenGallery',
+                    'wpDataTables',
+                    'ninjaForms',
+                    'sliderRevolution',
                     'translatePressLanguageSwitcher',
+                    'wpForms',
                 ],
                 'icon' => $urlHelper->to('public/categories/icons/WordPress.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/WordPress.svg'),
@@ -470,7 +514,11 @@ class Categories implements Helper
             ],
             'Testimonial' => [
                 'title' => 'Testimonial',
-                'elements' => ['testimonial', 'basicTestimonial'],
+                'elements' => [
+                    'testimonial',
+                    'basicTestimonial',
+                    'starTestimonials',
+                ],
                 'icon' => $urlHelper->to('public/categories/icons/Testimonial.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Testimonial.svg'),
             ],

@@ -33,6 +33,7 @@ class WooCommerceController extends Container implements Module
         $this->addFilter('vcv:themeEditor:layoutController:getTemplatePartId', 'getTemplatePartId');
         $this->addFilter('vcv:editors:editPostLinks:adminRowLinks', 'isShop');
         $this->addFilter('vcv:themeEditor:layoutController:getOtherPageTemplatePartData:isArchive', 'isCategory');
+        $this->addFilter('vcv:ajax:elements:ajaxShortcode:adminNonce', 'removeGeoLocation', -1);
     }
 
     /**
@@ -121,10 +122,12 @@ class WooCommerceController extends Container implements Module
     {
         $sourceId = get_the_ID();
         $optionsHelper = vchelper('Options');
-        if ($sourceId && wc_get_page_id('terms') === $sourceId
+        if (
+            $sourceId && wc_get_page_id('terms') === $sourceId
             && $optionsHelper->get(
                 'headerFooterSettingsPageType-woocommerce-terms'
-            )) {
+            )
+        ) {
             $templatePartId = $optionsHelper->get(
                 'headerFooterSettingsPageType' . ucfirst($templatePart) . '-woocommerce-terms'
             );
@@ -421,7 +424,7 @@ class WooCommerceController extends Container implements Module
         if ($fileData) {
             $fileLinks = [];
             foreach ($fileData as $file) {
-                $fileLinks[] = '<a href="' . esc_url($file['file']) . '" target="_blank">' . esc_html($file['name'])
+                $fileLinks[] = '<a href="' . esc_url($file['file']) . '" target="_blank" rel="noopener noreferrer">' . esc_html($file['name'])
                     . '</a>';
             }
 
@@ -571,5 +574,25 @@ class WooCommerceController extends Container implements Module
         $product = wc_get_product($sourceId);
 
         return get_the_term_list($product->get_id(), 'product_cat', null, ', ');
+    }
+
+    /**
+     * Deregister WooCommerce GeoLocation Script
+     *
+     * @param $response
+     *
+     * @return mixed
+     */
+    protected function removeGeoLocation($response)
+    {
+        $this->wpAddAction(
+            'wp_footer',
+            function () {
+                wp_deregister_script('wc-geolocation');
+            },
+            1
+        );
+
+        return $response;
     }
 }

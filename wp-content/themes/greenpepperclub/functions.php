@@ -330,12 +330,7 @@ function app_output_buffer() {
 add_action('init', 'app_output_buffer');
 
 //disable admin bar on frontend for users
-add_action('after_setup_theme', 'remove_admin_bar');
-function remove_admin_bar() {
-    if ( ! current_user_can('administrator') && ! is_admin() ) {
-        show_admin_bar(false);
-    }
-}
+show_admin_bar(false);
 
 //Run shortcode inside sidebar widget
 add_filter( 'widget_text', 'do_shortcode' );

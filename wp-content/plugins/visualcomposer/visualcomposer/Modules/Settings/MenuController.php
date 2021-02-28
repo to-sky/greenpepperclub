@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
 
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
-use VisualComposer\Helpers\Settings\TabsRegistry;
 use VisualComposer\Helpers\Traits\WpFiltersActions;
 use VisualComposer\Helpers\Url;
 use VisualComposer\Modules\Settings\Pages\Settings;
@@ -31,14 +30,19 @@ class MenuController extends Container implements Module
             0
         );
 
+        /** @see \VisualComposer\Modules\Settings\MenuController::removeFirstMenuItem */
+        $this->wpAddAction(
+            'admin_menu',
+            'removeFirstMenuItem'
+        );
+
         /** @see \VisualComposer\Modules\Settings\MenuController::addMenuPage */
         $this->wpAddAction(
             'network_admin_menu',
             'addMenuPage'
         );
 
-        /** @see \VisualComposer\Modules\Settings\MenuController::addGeneralTab */
-        $this->wpAddAction('admin_menu', 'addGeneralTab', -1);
+        $this->wpAddAction('admin_head', 'addMenuCss');
     }
 
     /**
@@ -62,8 +66,32 @@ class MenuController extends Container implements Module
         }
     }
 
-    protected function addGeneralTab(TabsRegistry $tabsRegistry)
+    /**
+     * Remove first menu item if user has no access for settings
+     *
+     * @param \VisualComposer\Modules\Settings\Pages\Settings $settingsController
+     *
+     * @throws \Exception
+     */
+    protected function removeFirstMenuItem(Settings $settingsController)
     {
-        $tabsRegistry->set('vcv-settings', ['name' => __('General', 'vcwb')]);
+        $currentUserAccess = vchelper('AccessCurrentUser');
+        $hasAccess = $currentUserAccess->wpAll('edit_pages')->part('settings')->can('vcv-settings')->get();
+        $mainPageSlug = $settingsController->getMainPageSlug();
+
+        if (!$hasAccess && !is_network_admin()) {
+            remove_submenu_page($mainPageSlug, $mainPageSlug);
+        }
+    }
+
+    protected function addMenuCss()
+    {
+        echo <<<CSS
+    <style>
+        #toplevel_page_vcv-settings .wp-submenu .vcv-ui-state--hidden {
+            display: none;
+        }
+    </style>
+CSS;
     }
 }

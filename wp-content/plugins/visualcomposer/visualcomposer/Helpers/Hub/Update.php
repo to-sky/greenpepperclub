@@ -32,8 +32,6 @@ class Update implements Helper
                     // Everything is ok need to parse $requiredActions['actions']
                     $json = $savedJson['json'];
                 } else {
-                    // TODO: Errors
-                    // Logger::add error
                     $loggerHelper->log('Failed to update required actions list #10012');
                 }
             }
@@ -108,9 +106,11 @@ class Update implements Helper
     public function getVariables()
     {
         $urlHelper = vchelper('Url');
+        $utmHelper = vchelper('Utm');
+        $licenseHelper = vchelper('License');
         $currentUserAccessHelper = vchelper('AccessCurrentUser');
         $editorPostTypeHelper = vchelper('AccessEditorPostType');
-        $requiredHelper = vchelper('Request');
+        $requestHelper = vchelper('Request');
 
         if (vchelper('Options')->get('bundleUpdateRequired')) {
             $requiredActions = vchelper('HubUpdate')->getRequiredActions();
@@ -157,6 +157,11 @@ class Update implements Helper
             'value' => VCV_VERSION,
             'type' => 'constant',
         ];
+        $variables[] = [
+            'key' => 'VCV_UPDATE_URL',
+            'value' => admin_url('admin.php?page=vcv-update'),
+            'type' => 'constant',
+        ];
         if ($currentUserAccessHelper->wpAll('edit_pages')->get() && $editorPostTypeHelper->isEditorEnabled('page')) {
             $variables[] = [
                 'key' => 'VCV_CREATE_NEW_URL',
@@ -165,13 +170,12 @@ class Update implements Helper
             ];
             $variables[] = [
                 'key' => 'VCV_CREATE_NEW_TEXT',
-                'value' => __('Create new page', 'visualcomposer'),
+                'value' => __('Create a new page', 'visualcomposer'),
                 'type' => 'constant',
             ];
-        } elseif ($currentUserAccessHelper->wpAll('edit_posts')->get()
-            && $editorPostTypeHelper->isEditorEnabled(
-                'post'
-            )
+        } elseif (
+            $currentUserAccessHelper->wpAll('edit_posts')->get()
+            && $editorPostTypeHelper->isEditorEnabled('post')
         ) {
             $variables[] = [
                 'key' => 'VCV_CREATE_NEW_URL',
@@ -181,19 +185,27 @@ class Update implements Helper
 
             $variables[] = [
                 'key' => 'VCV_CREATE_NEW_TEXT',
-                'value' => __('Create new post', 'visualcomposer'),
+                'value' => __('Create a new post', 'visualcomposer'),
                 'type' => 'constant',
             ];
         }
 
-        $vcvRef = $requiredHelper->input('vcv-ref');
+        $vcvRef = $requestHelper->input('vcv-ref');
         if (!$vcvRef) {
-            $vcvRef = 'getting-started';
+            // default UTMs if page opened directly without vcv-ref
+            $vcvRef = 'activatepremium';
         }
 
+        // Used in vcv-activate-license page
         $variables[] = [
-            'key' => 'VCV_PREMIUM_URL',
-            'value' => admin_url('admin.php?page=vcv-go-premium&vcv-ref=' . $vcvRef),
+            'key' => 'vcvGoPremiumUrlWithRef',
+            'value' => $utmHelper->premiumBtnUtm($vcvRef),
+            'type' => 'variable',
+        ];
+
+        $variables[] = [
+            'key' => 'VCV_SUPPORT_URL',
+            'value' => vcvenv('VCV_SUPPORT_URL'),
             'type' => 'constant',
         ];
 
@@ -203,18 +215,39 @@ class Update implements Helper
             'type' => 'constant',
         ];
 
+        $licenseType = $licenseHelper->getType();
+        $variables[] = [
+            'key' => 'VCV_LICENSE_TYPE',
+            'value' => $licenseType ? $licenseType : '',
+            'type' => 'constant',
+        ];
+
+        if (defined('VCV_AUTHOR_API_KEY')) {
+            $variables[] = [
+                'key' => 'VCV_AUTHOR_API_KEY',
+                'value' => VCV_AUTHOR_API_KEY,
+                'type' => 'constant',
+            ];
+        }
+
         return $variables;
     }
 
     /**
+     * @param array $payload
+     *
      * @return array|bool
      * @throws \ReflectionException
      */
-    public function checkVersion()
+    public function checkVersion($payload = [])
     {
         $hubBundleHelper = vchelper('HubBundle');
         $tokenHelper = vchelper('Token');
-        $token = $tokenHelper->getToken();
+        if (is_array($payload) && isset($payload['token'])) {
+            $token = $payload['token'];
+        } else {
+            $token = $tokenHelper->getToken();
+        }
         if ($token) {
             $url = $hubBundleHelper->getJsonDownloadUrl(['token' => $token]);
             $json = $hubBundleHelper->getRemoteBundleJson($url);
@@ -239,7 +272,7 @@ class Update implements Helper
             $optionsHelper = vchelper('Options');
             $hubUpdateHelper = vchelper('HubUpdate');
             if ($hubUpdateHelper->checkIsUpdateRequired($json)) {
-                $optionsHelper->set('bundleUpdateRequired', true);
+                $optionsHelper->set('bundleUpdateRequired', 1);
                 // Save in database cache for 30m
                 $optionsHelper->setTransient('bundleUpdateJson', $json, 1800);
             }
@@ -252,8 +285,11 @@ class Update implements Helper
 
     protected function processTeasers($actions)
     {
+
         if (isset($actions['hubTeaser'])) {
             vcevent('vcv:hub:process:action:hubTeaser', ['teasers' => $actions['hubTeaser']]);
+            $optionsHelper = vchelper('Options');
+            $optionsHelper->set('hubAction:hubTeaser', $actions['hubTeaser']['version']);
         }
         if (isset($actions['hubAddons'])) {
             vcevent('vcv:hub:process:action:hubAddons', ['teasers' => $actions['hubAddons']]);

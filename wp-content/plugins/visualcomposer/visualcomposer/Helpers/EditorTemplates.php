@@ -32,11 +32,7 @@ class EditorTemplates implements Helper
             '_' . VCV_PREFIX . 'type'
         );
         $dataHelper = vchelper('Data');
-        $outputTemplates = [
-            'predefined' => ['templates' => []],
-            'hub' => ['templates' => []],
-            'custom' => ['templates' => []],
-        ];
+        $outputTemplates = [];
         if (!empty($templatesGroups)) {
             foreach ($templatesGroups as $groupKey => $templates) {
                 $groupTemplates = [];
@@ -80,16 +76,25 @@ class EditorTemplates implements Helper
                 $name = __('My Templates', 'visualcomposer');
                 break;
             case 'hub':
-                $name = __('Premium Templates', 'visualcomposer');
-                break;
             case 'predefined':
-                $name = __('Content Templates', 'visualcomposer');
+                $name = __('Hub Templates', 'visualcomposer');
                 break;
         }
 
         $name = vcfilter('vcv:template:groupName', $name, ['key' => $key]);
 
         return $name;
+    }
+
+    public function isUserTemplateType($type)
+    {
+        $result = false;
+        if ($type === '' || $type === 'popup' || strpos($type, 'custom') !== false) {
+            $result = true;
+        }
+        $result = vcfilter('vcv:template:isUserTemplateType', $result, ['type' => $type]);
+
+        return $result;
     }
 
     /**
@@ -178,7 +183,7 @@ class EditorTemplates implements Helper
         $templateGroups = $this->all();
         $options = [];
         $options[] = [
-            'label' => __('Select your template', 'visualcomposer'),
+            'label' => __('Select a template', 'visualcomposer'),
             'value' => '',
         ];
 
@@ -207,5 +212,45 @@ class EditorTemplates implements Helper
         }
 
         return $options;
+    }
+
+    public function create($type = 'custom')
+    {
+        $postTypeHelper = vchelper('PostType');
+        $data = [
+            'post_type' => 'vcv_templates',
+            'post_status' => 'vcv_templates',
+        ];
+
+        $templateId = $postTypeHelper->create($data);
+        update_post_meta($templateId, '_' . VCV_PREFIX . 'id', uniqid('', true));
+
+        update_post_meta($templateId, '_' . VCV_PREFIX . 'type', $type);
+
+        vcevent('vcv:editor:template:create', ['templateId' => $templateId]);
+
+        return $templateId;
+    }
+
+    public function read($id)
+    {
+        $template = $this->get($id);
+        $postTypeHelper = vchelper('PostType');
+        $postTypeHelper->setupPost($id);
+        if ($template) {
+            return [
+                'status' => true,
+                'data' => $template->vcvTemplateElements,
+                'allData' => vcfilter(
+                    'vcv:ajax:getData:adminNonce',
+                    [],
+                    [
+                        'sourceId' => $id,
+                    ]
+                ),
+            ];
+        }
+
+        return false;
     }
 }

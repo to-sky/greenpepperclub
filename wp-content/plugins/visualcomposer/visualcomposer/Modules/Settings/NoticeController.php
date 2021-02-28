@@ -50,13 +50,14 @@ class NoticeController extends Container implements Module
         $notices = $noticeHelper->all();
         if (!empty($notices)) {
             foreach ($notices as $notice) {
-                if (!$currentUserHelper->wpAll('manage_options')->get()
+                if (
+                    !$currentUserHelper->wpAll('manage_options')->get()
                     || get_user_meta(
                         get_current_user_id(),
                         'vcv:' . $notice['name'] . ':notice:' . $notice['time']
                     )
                 ) {
-                    return;
+                    continue;
                 }
 
                 $class = 'notice notice-' . $notice['type'];
@@ -96,8 +97,8 @@ class NoticeController extends Container implements Module
     {
         $name = $requestHelper->input('vcv-notice-name');
         $noticeHelper->dismissNotice($name);
-        // TODO: Check https://app.asana.com/0/356196207854892/868627110533984
-        wp_redirect($_SERVER['HTTP_REFERER']);
+
+        wp_safe_redirect($_SERVER['HTTP_REFERER']);
         exit;
     }
 }

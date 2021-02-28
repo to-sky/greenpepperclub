@@ -37,20 +37,54 @@ trait SubMenu
             global $submenu;
 
             if (isset($page['external'])) {
-                $submenu[$parentSlug][] = array($page['title'], $capability, $page['external']);
+                $submenu[ $parentSlug ][] = [$page['title'], $capability, $page['external']];
             } else {
+                if (isset($page['isDashboardPage']) && $page['isDashboardPage']) {
+                    $tabsHelper = vchelper('SettingsTabsRegistry');
+                    $tabsHelper->set(
+                        $page['slug'],
+                        [
+                            'name' => isset($page['innerTitle']) ? $page['innerTitle'] : $page['title'],
+                            'subTitle' => isset($page['subTitle']) ? $page['subTitle'] : '',
+                            'capability' => $capability,
+                            'parent' => $parentSlug,
+                            'layout' => $page['layout'],
+                            'isDashboardPage' => true,
+                            'hideTitle' => (isset($page['hideTitle']) && $page['hideTitle']),
+                            'iconClass' => isset($page['iconClass']) && $page['iconClass'] ? $page['iconClass'] : '',
+                            'callback' => function () use ($page) {
+                                if (isset($page['isPremiumTeaser']) && $page['isPremiumTeaser']) {
+                                    $page['layout'] = 'dashboard-premium-teaser';
+                                }
+
+                                /** @see \VisualComposer\Modules\Settings\Traits\SubMenu::renderPage */
+                                echo $this->call('renderPage', ['page' => $page]);
+                            },
+                        ]
+                    );
+                }
+
                 add_submenu_page(
-                    isset($page['hidePage']) && $page['hidePage'] ? null : $parentSlug,
+                    isset($page['isDashboardPage']) && $page['isDashboardPage'] ? 'vcv-settings' : $parentSlug,
                     $page['title'],
                     $page['title'],
                     $capability,
                     $page['slug'],
                     function () use ($page) {
                         /** @see \VisualComposer\Modules\Settings\Traits\SubMenu::renderPage::renderPage */
-                        // @codingStandardsIgnoreLine
+                        if (isset($page['isDashboardPage']) && $page['isDashboardPage']) {
+                            $page['layout'] = 'dashboard-main-layout';
+                        }
+
                         echo $this->call('renderPage', ['page' => $page]);
                     }
                 );
+
+                // After add_submenu_page called last index of $submenu['vcv-settings'] will be recently added item
+                // So we can adjust it to add extra-class to hide
+                if (isset($page['hideInWpMenu']) && $page['hideInWpMenu']) {
+                    $submenu['vcv-settings'][ count($submenu['vcv-settings']) - 1 ][4] = 'vcv-ui-state--hidden';
+                }
             }
         }
     }
@@ -69,17 +103,25 @@ trait SubMenu
         if (isset($page['layout'])) {
             $layout = $page['layout'];
         }
-        /** @var \visualComposer\Modules\Settings\Traits\Page $controller */
-        $controller = $page['controller'];
 
-        return vcview(
-            'settings/layouts/' . $layout,
-            [
-                'content' => $controller->render($page),
-                'tabs' => $pages,
-                'activeSlug' => $page['slug'],
-                'page' => $page,
-            ]
-        );
+        if (isset($page['isDashboardPage']) && $page['isDashboardPage']) {
+            add_action(
+                'admin_head',
+                function () {
+                    remove_all_actions('admin_notices');
+                },
+                1
+            );
+        }
+
+        $pageData = [
+            'content' => $this->call('render', [$page]),
+            'tabs' => $pages,
+            'activeSlug' => $page['slug'],
+            'slug' => $page['slug'],
+            'page' => $page,
+        ];
+
+        return vcview('settings/layouts/' . $layout, $pageData);
     }
 }

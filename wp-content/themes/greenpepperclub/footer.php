@@ -12,7 +12,7 @@
 ?>
 <?php if(!is_page_template( 'blank-page.php' ) && !is_page_template( 'blank-page-with-container.php' )): ?>
 
-    <?php if ( ! is_page_template( 'fullwidth.php' ) ) : ?>
+    <?php if ( ! is_page_template( 'fullwidth.php' ) && ! is_front_page()) : ?>
 			</div><!-- .row -->
 		</div><!-- .container -->
 	<?php endif; ?>

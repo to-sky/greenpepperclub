@@ -40,6 +40,10 @@ class PostFieldsController extends Container implements Module
      */
     protected function getPostFields($response, $payload, Request $requestHelper)
     {
+        if (isset($response['forceAddField'])) {
+            $payload = array_merge($payload, ['forceAddField' => $response['forceAddField']]);
+        }
+
         if (!is_array($response)) {
             $response = ['status' => true];
         }
@@ -196,13 +200,13 @@ class PostFieldsController extends Container implements Module
             'url' => [
                 'post' => [
                     'group' => [
-                        'label' => __('Post URLs', 'visualcomposer'),
+                        'label' => __('Post', 'visualcomposer'),
                         'values' => [],
                     ],
                 ],
                 'site' => [
                     'group' => [
-                        'label' => __('Site URLs', 'visualcomposer'),
+                        'label' => __('Site', 'visualcomposer'),
                         'values' => [],
                     ],
                 ],

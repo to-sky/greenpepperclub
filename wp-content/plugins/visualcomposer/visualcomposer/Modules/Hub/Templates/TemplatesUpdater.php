@@ -10,8 +10,8 @@ if (!defined('ABSPATH')) {
 
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
+use VisualComposer\Helpers\EditorTemplates;
 use VisualComposer\Helpers\File;
-use VisualComposer\Helpers\Hub\Actions\HubTemplatesBundle;
 use VisualComposer\Helpers\Hub\Templates;
 use VisualComposer\Helpers\Traits\EventsFilters;
 use VisualComposer\Helpers\WpMedia;
@@ -20,6 +20,10 @@ use WP_Query;
 class TemplatesUpdater extends Container implements Module
 {
     use EventsFilters;
+
+    protected $importedImages = [];
+
+    protected $templatePostType;
 
     /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct()
@@ -35,8 +39,8 @@ class TemplatesUpdater extends Container implements Module
         $payload,
         File $fileHelper,
         Templates $hubTemplatesHelper,
-        HubTemplatesBundle $hubTemplatesBundleHelper,
-        WpMedia $wpMediaHelper
+        WpMedia $wpMediaHelper,
+        EditorTemplates $editorTemplatesHelper
     ) {
         $bundleJson = isset($payload['archive']) ? $payload['archive'] : false;
         if (vcIsBadResponse($response) || !$bundleJson || is_wp_error($bundleJson)) {
@@ -57,14 +61,17 @@ class TemplatesUpdater extends Container implements Module
         $template = $bundleJson;
         $template['id'] = $payload['actionData']['data']['id'];
         // File is locally available
+        $hubTemplatesBundleHelper = vchelper('HubBundle');
+        $hubTemplatesBundleHelper->setTempBundleFolder(
+            VCV_PLUGIN_ASSETS_DIR_PATH . '/temp-bundle-' . str_replace('/', '-', $payload['actionData']['action'])
+        );
         $tempTemplatePath = $hubTemplatesBundleHelper->getTempBundleFolder('templates/' . $template['id']);
         if (is_dir($tempTemplatePath)) {
             // We have local assets for template, so we need to copy them to real templates folder
             $createDirResult = $fileHelper->createDirectory($hubTemplatesHelper->getTemplatesPath($template['id']));
-            if (vcIsBadResponse($createDirResult)
-                && !$fileHelper->isDir(
-                    $hubTemplatesHelper->getTemplatesPath($template['id'])
-                )
+            if (
+                vcIsBadResponse($createDirResult)
+                && !$fileHelper->isDir($hubTemplatesHelper->getTemplatesPath($template['id']))
             ) {
                 return false;
             }
@@ -77,23 +84,28 @@ class TemplatesUpdater extends Container implements Module
             }
         }
 
+        $this->templatePostType = isset($payload['actionData']['action']) && $payload['actionData']['action'] === 'template/tutorial' ? 'vcv_tutorials' : 'vcv_templates';
+        $template['name'] = $this->templatePostType === 'vcv_tutorials' ? 'Tutorial Page' : $payload['actionData']['data']['name'];
+        $templateElements = $template['data'];
         $templateMeta = $this->processTemplateMetaImages(
             [
                 'id' => $template['id'],
-                'preview' => $payload['actionData']['data']['preview'],
-                'thumbnail' => $payload['actionData']['data']['thumbnail'],
+                'preview' => $this->templatePostType === 'vcv_tutorials' ? '' : $payload['actionData']['data']['preview'],
+                'thumbnail' => $this->templatePostType === 'vcv_tutorials' ? '' : $payload['actionData']['data']['thumbnail'],
             ]
         );
-        $template['name'] = $payload['actionData']['data']['name'];
-        $templateElements = $template['data'];
-        $elementsImages = $wpMediaHelper->getTemplateElementMedia($templateElements);
-        $templateElements = $this->processTemplateImages($elementsImages, $template, $templateElements);
-        $templateElements = $this->processDesignOptions($templateElements, $template);
+        if ($this->templatePostType !== 'vcv_tutorials') {
+            $elementsImages = $wpMediaHelper->getTemplateElementMedia($templateElements);
+            $templateElements = $this->processTemplateImages($elementsImages, $template, $templateElements);
+            $templateElements = $this->processDesignOptions($templateElements, $template);
+        }
+        // Check if menu source is exist or not
+        $templateElements = $this->isMenuExist($templateElements);
         $templateElements = json_decode(
             str_replace(
                 '[publicPath]',
                 $hubTemplatesHelper->getTemplatesUrl($template['id']),
-                json_encode($templateElements)
+                wp_json_encode($templateElements)
             ),
             true
         );
@@ -101,7 +113,8 @@ class TemplatesUpdater extends Container implements Module
 
         $savedTemplates = new WP_Query(
             [
-                'post_type' => 'vcv_templates',
+                'post_type' => $this->templatePostType,
+                'post_status' => ['publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'trash'],
                 'meta_query' => [
                     [
                         'key' => '_' . VCV_PREFIX . 'id',
@@ -121,7 +134,7 @@ class TemplatesUpdater extends Container implements Module
             $templateId = wp_insert_post(
                 [
                     'post_title' => $template['name'],
-                    'post_type' => 'vcv_templates',
+                    'post_type' => $this->templatePostType,
                     'post_status' => 'publish',
                 ]
             );
@@ -133,7 +146,7 @@ class TemplatesUpdater extends Container implements Module
                 [
                     'ID' => $templateId,
                     'post_title' => $payload['actionData']['data']['name'],
-                    'post_type' => 'vcv_templates',
+                    'post_type' => $this->templatePostType,
                     'post_status' => 'publish',
                 ]
             );
@@ -148,13 +161,7 @@ class TemplatesUpdater extends Container implements Module
             $type = 'hub';
         }
 
-        update_post_meta($templateId, '_' . VCV_PREFIX . 'description', $template['description']);
-        update_post_meta($templateId, '_' . VCV_PREFIX . 'type', $type);
-        update_post_meta($templateId, '_' . VCV_PREFIX . 'thumbnail', $template['thumbnail']);
-        update_post_meta($templateId, '_' . VCV_PREFIX . 'preview', $template['preview']);
-        update_post_meta($templateId, '_' . VCV_PREFIX . 'id', $template['id']);
-        update_post_meta($templateId, '_' . VCV_PREFIX . 'bundle', $payload['actionData']['action']);
-        update_post_meta($templateId, 'vcvEditorTemplateElements', $templateElements);
+        $this->updatePostMetas($templateId, $template, $type, $payload, $templateElements);
 
         $response['templates'][] = [
             'id' => $templateId,
@@ -167,8 +174,50 @@ class TemplatesUpdater extends Container implements Module
             'preview' => $template['preview'],
             'type' => $type,
         ];
+        $response['templateGroup'] = [
+            'name' => $editorTemplatesHelper->getGroupName($type),
+            'type' => $type,
+        ];
 
         return $response;
+    }
+
+    /**
+     * Update post metas for template
+     *
+     * @param $templateId
+     * @param $template
+     * @param $type
+     * @param $payload
+     * @param $templateElements
+     */
+    protected function updatePostMetas($templateId, $template, $type, $payload, $templateElements)
+    {
+        update_post_meta($templateId, '_' . VCV_PREFIX . 'description', $template['description']);
+        update_post_meta($templateId, '_' . VCV_PREFIX . 'type', $type);
+        update_post_meta($templateId, '_' . VCV_PREFIX . 'thumbnail', $template['thumbnail']);
+        update_post_meta($templateId, '_' . VCV_PREFIX . 'preview', $template['preview']);
+        update_post_meta($templateId, '_' . VCV_PREFIX . 'id', $template['id']);
+        update_post_meta($templateId, '_' . VCV_PREFIX . 'bundle', $payload['actionData']['action']);
+        update_post_meta($templateId, 'vcvEditorTemplateElements', $templateElements);
+
+        if ($this->templatePostType === 'vcv_tutorials') {
+            if (isset($template['postMeta']['vcvSourceCss'][0])) {
+                update_post_meta(
+                    $templateId,
+                    'vcvSourceCss',
+                    $template['postMeta']['vcvSourceCss'][0]
+                );
+            }
+
+            if (isset($template['postMeta']['vcvSettingsSourceCustomCss'][0])) {
+                update_post_meta(
+                    $templateId,
+                    'vcvSettingsSourceCustomCss',
+                    $template['postMeta']['vcvSettingsSourceCustomCss'][0]
+                );
+            }
+        }
     }
 
     /**
@@ -223,23 +272,19 @@ class TemplatesUpdater extends Container implements Module
 
         if ($urlHelper->isUrl($url)) {
             $imageFile = $fileHelper->download($url);
-            $localImagePath = $template['id'] . '/' . strtolower($prefix . '' . basename($url));
+            $localImagePath = strtolower($prefix . '' . basename($url));
             if (!vcIsBadResponse($imageFile)) {
-                $createDirResult = $fileHelper->createDirectory(
-                    $hubTemplatesHelper->getTemplatesPath($template['id'])
+                $templatePath = $hubTemplatesHelper->getTemplatesPath($template['id']);
+                $fileHelper->createDirectory(
+                    $templatePath
                 );
-                if (vcIsBadResponse($createDirResult)) {
+                if (!file_exists($templatePath)) {
                     return false;
                 }
 
-                if (rename(
-                    $imageFile,
-                    $hubTemplatesHelper->getTemplatesPath(
-                        $localImagePath
-                    )
-                )) {
+                if (rename($imageFile, $templatePath . '/' . $localImagePath)) {
                     return $assetsHelper->getAssetUrl(
-                        'templates/' . $localImagePath
+                        'templates/' . $template['id'] . '/' . $localImagePath
                     );
                 }
             } else {
@@ -251,11 +296,13 @@ class TemplatesUpdater extends Container implements Module
                 $url = str_replace('[publicPath]', '', $url);
 
                 return $hubTemplatesHelper->getTemplatesUrl($template['id'] . '/' . ltrim($url, '\\/'));
-            } elseif (strpos($url, 'assets/elements/') !== false) {
-                return $hubTemplatesHelper->getTemplatesUrl($template['id'] . '/' . ltrim($url, '\\/'));
-            } else {
-                return $url; // it is local file url (default file)
             }
+
+            if (strpos($url, 'assets/elements/') !== false) {
+                return $hubTemplatesHelper->getTemplatesUrl($template['id'] . '/' . ltrim($url, '\\/'));
+            }
+
+            return $url; // it is local file url (default file)
         }
 
         return false;
@@ -270,7 +317,8 @@ class TemplatesUpdater extends Container implements Module
      */
     protected function processWpMedia($imageData, $template, $prefix = '')
     {
-        $newImages = [];
+        $newMedia = [];
+        $newIds = [];
 
         $value = $imageData['value'];
         $images = is_array($value) && isset($value['urls']) ? $value['urls'] : $value;
@@ -282,19 +330,34 @@ class TemplatesUpdater extends Container implements Module
         if (!empty($images) && is_array($images)) {
             foreach ($images as $key => $image) {
                 if (is_string($image)) {
-                    $newUrl = $this->processSimple($image, $template, $prefix . $key . '-');
+                    $newMediaData = $this->processSimple($image, $template, $prefix . $key . '-');
                 } else {
-                    $newUrl = $this->processSimple($image['full'], $template, $prefix . $key . '-');
+                    $newMediaData = $this->processSimple($image['full'], $template, $prefix . $key . '-');
                 }
-                if ($newUrl) {
-                    $newImages[] = $newUrl;
+                if ($newMediaData) {
+                    $attachment = $this->addImageToMediaLibrary($newMediaData);
+
+                    if (is_string($image)) {
+                        $image = $attachment['url'];
+                    } else {
+                        $image['url'] = $attachment['url'];
+                    }
+                    $newMedia[] = $image;
+                    $newIds[] = $attachment['id'];
                 }
             }
         }
 
-        return $newImages;
+        return ['newMedia' => $newMedia, 'newIds' => $newIds];
     }
 
+    /**
+     * @param $templateElements
+     * @param $template
+     * @param $newTemplateId
+     *
+     * @return mixed
+     */
     protected function processDesignOptions($templateElements, $template)
     {
         $arrayIterator = new \RecursiveArrayIterator($templateElements);
@@ -309,29 +372,60 @@ class TemplatesUpdater extends Container implements Module
             if (is_array($value) && in_array($key, $keys, true) && isset($value['urls'])) {
                 $newValue = $this->processWpMedia(['value' => $value], $template);
 
-                // Get the current depth and traverse back up the tree, saving the modifications
-                $currentDepth = $recursiveIterator->getDepth();
-                for ($subDepth = $currentDepth; $subDepth >= 0; $subDepth--) {
-                    // Get the current level iterator
-                    $subIterator = $recursiveIterator->getSubIterator($subDepth);
-                    // If we are on the level we want to change
-                    // use the replacements ($value) other wise set the key to the parent iterators value
-                    if ($subDepth === $currentDepth) {
-                        $val = $newValue;
-                    } else {
-                        $val = $recursiveIterator->getSubIterator(
-                            ($subDepth + 1)
-                        )->getArrayCopy();
+                if ($newValue) {
+                    $newMedia = [];
+                    $newMedia['ids'] = $newValue['newIds'];
+                    $newMedia['urls'] = $newValue['newMedia'];
+                    // Get the current depth and traverse back up the tree, saving the modifications
+                    $currentDepth = $recursiveIterator->getDepth();
+                    for ($subDepth = $currentDepth; $subDepth >= 0; $subDepth--) {
+                        // Get the current level iterator
+                        $subIterator = $recursiveIterator->getSubIterator($subDepth);
+                        // If we are on the level we want to change
+                        // use the replacements ($value) other wise set the key to the parent iterators value
+                        if ($subDepth === $currentDepth) {
+                            $subIterator->offsetSet(
+                                $subIterator->key(),
+                                $newMedia
+                            );
+                        } else {
+                            $subIterator->offsetSet(
+                                $subIterator->key(),
+                                $recursiveIterator->getSubIterator(
+                                    ($subDepth + 1)
+                                )->getArrayCopy()
+                            );
+                        }
                     }
-                    $subIterator->offsetSet(
-                        $subIterator->key(),
-                        $val
-                    );
                 }
             }
         }
 
         return $recursiveIterator->getArrayCopy();
+    }
+
+    /**
+     * @param $templateElements
+     *
+     * @return mixed
+     */
+    protected function isMenuExist($templateElements)
+    {
+        foreach ($templateElements as $element) {
+            if (isset($element['menuSource']) && !empty($element['menuSource'])) {
+                $menusFromKey = get_terms(
+                    [
+                        'taxonomy' => 'nav_menu',
+                        'slug' => $element['menuSource'],
+                    ]
+                );
+                if (empty($menusFromKey)) {
+                    $templateElements[ $element['id'] ]['menuSource'] = '';
+                }
+            }
+        }
+
+        return $templateElements;
     }
 
     /**
@@ -344,7 +438,7 @@ class TemplatesUpdater extends Container implements Module
     protected function processTemplateImages($elementsImages, $template, $templateElements)
     {
         foreach ($elementsImages as $element) {
-            foreach ($element['media'] as $media) {
+            foreach ($element['media'] as $key => $media) {
                 if (isset($media['complex']) && $media['complex']) {
                     $imageData = $this->processWpMedia(
                         $media,
@@ -359,12 +453,73 @@ class TemplatesUpdater extends Container implements Module
                         $element['elementId'] . '-' . $media['key'] . '-'
                     );
                 }
-                if ($imageData) {
-                    $templateElements[ $element['elementId'] ][ $media['key'] ] = $imageData;
+                $newImageData = $imageData['newMedia'];
+                if (!is_wp_error($newImageData) && $newImageData) {
+                    if (isset($templateElements[ $element['elementId'] ][ $media['key'] ]['urls'])) {
+                        $templateElements[ $element['elementId'] ][ $media['key'] ]['urls'] = $imageData['newMedia'];
+                        $templateElements[ $element['elementId'] ][ $media['key'] ]['ids'] = $imageData['newIds'];
+                    } else {
+                        $templateElements[ $element['elementId'] ][ $media['key'] ][ $key ] = $newImageData[0];
+                    }
                 }
             }
         }
 
         return $templateElements;
+    }
+
+    /**
+     * Add image to media library
+     *
+     * @param $imageUrl
+     *
+     * @return array
+     */
+    protected function addImageToMediaLibrary($imageUrl)
+    {
+        if (array_key_exists($imageUrl, $this->importedImages) === false) {
+            $fileHelper = vchelper('File');
+            $wpUploadDir = wp_upload_dir();
+            $localMediaPath = str_replace($wpUploadDir['baseurl'], $wpUploadDir['basedir'], $imageUrl);
+            $fileType = wp_check_filetype(basename($localMediaPath), null);
+            $imageNewUrl = $wpUploadDir['path'] . '/' . basename($localMediaPath);
+            $fileHelper->copyFile($localMediaPath, $imageNewUrl);
+
+            $attachment = [
+                'guid' => $wpUploadDir['url'] . '/' . basename($localMediaPath),
+                'post_mime_type' => $fileType['type'],
+                'post_title' => preg_replace('/\.[^.]+$/', '', basename($localMediaPath)),
+                'post_content' => '',
+                'post_status' => 'inherit',
+            ];
+
+            $attachment = wp_insert_attachment(
+                $attachment,
+                $wpUploadDir['path'] . '/' . basename($localMediaPath),
+                get_the_ID()
+            );
+
+            if (version_compare(get_bloginfo('version'), '5.3', '>=')) {
+                wp_generate_attachment_metadata(
+                    $attachment,
+                    $imageNewUrl
+                );
+            } else {
+                wp_update_attachment_metadata(
+                    $attachment,
+                    wp_generate_attachment_metadata(
+                        $attachment,
+                        $imageNewUrl
+                    )
+                );
+            }
+
+            $this->importedImages[ $imageUrl ] = [
+                'id' => $attachment,
+                'url' => $wpUploadDir['url'] . '/' . basename($localMediaPath),
+            ];
+        }
+
+        return $this->importedImages[ $imageUrl ];
     }
 }

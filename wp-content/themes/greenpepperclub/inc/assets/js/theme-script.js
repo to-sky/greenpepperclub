@@ -82,7 +82,6 @@ jQuery( function ( $ ) {
         slidesToScroll: 1,
         autoplay: true,
         autoplaySpeed: 6000,
-        centerMode: true,
         prevArrow: '<span class="gp-icon gp-icon-prev gp-icon-white gp-valign" style="left: -30px;""></span>',
         nextArrow: '<span class="gp-icon gp-icon-next gp-icon-white gp-valign" style="right: -30px;"></span>',
         responsive: [

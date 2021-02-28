@@ -33,28 +33,23 @@ class CategoriesUpdater extends Container implements Module
         if (!is_array($bundleJson) || !isset($bundleJson['categories'])) {
             return $response;
         }
-        $hubBundleHelper = vchelper('HubActionsCategoriesBundle');
         $hubHelper = vchelper('HubCategories');
+        $optionHelper = vchelper('Options');
         /** @var Differ $categoriesDiffer */
-        $hubCategories = $hubHelper->getCategories('hub');
-
+        $storedInDbCategories = $optionHelper->get('hubCategories', []);
         $categoriesDiffer = vchelper('Differ');
-        if (!empty($hubCategories)) {
-            $categoriesDiffer->set($hubCategories);
+        if (!empty($storedInDbCategories)) {
+            $categoriesDiffer->set($storedInDbCategories);
         }
 
-        $fileHelper = vchelper('File');
-        $fileHelper->createDirectory($hubHelper->getCategoriesPath());
-        $fileHelper->copyDirectory(
-            $hubBundleHelper->getTempBundleFolder('categories'),
-            $hubHelper->getCategoriesPath(),
-            false
-        );
         $categoriesDiffer->onUpdate(
             [$hubHelper, 'updateCategory']
         )->set(
             $bundleJson['categories']
         );
+
+        // Save in DB downloaded element category.
+        // Will be updated in HubCategories helper -> getCategories()
         $hubHelper->setCategories($categoriesDiffer->get());
 
         if (isset($bundleJson['categories'])) {

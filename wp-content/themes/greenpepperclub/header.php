@@ -86,7 +86,7 @@
     </header><!-- #masthead -->
 
     <div id="content" class="site-content">
-        <?php if ( ! is_page_template( 'fullwidth.php' ) ) : ?>
+        <?php if ( ! is_page_template( 'fullwidth.php' ) && ! is_front_page()) : ?>
         <div class="container">
             <div class="row">
         <?php endif; ?>

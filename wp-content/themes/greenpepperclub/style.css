@@ -3308,6 +3308,14 @@ a:hover {
   background: #969696 !important;
 }
 
+.have-questions-form .submit-block {
+  text-align: center;
+}
+
+.have-questions-form .submit-block .ajax-loader {
+  margin-top: 5px;
+}
+
 .have-questions-form input:not([type="submit"]):hover,
 .have-questions-form input:not([type="submit"]):focus,
 .have-questions-form textarea:hover,

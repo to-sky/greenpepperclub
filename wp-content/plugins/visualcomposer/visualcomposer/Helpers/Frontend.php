@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 use VisualComposer\Framework\Illuminate\Support\Helper;
 
 /**
- * Class Options.
+ * Class Frontend.
  */
 class Frontend implements Helper
 {
@@ -27,7 +27,7 @@ class Frontend implements Helper
         }
 
         $link = get_edit_post_link($post, 'url');
-        $question = (preg_match('/\?/', $link) ? '&' : '?');
+        $question = (false !== strpos($link, '?') ? '&' : '?');
         $query = [
             'vcv-action' => 'frontend',
             'vcv-source-id' => $post->ID,
@@ -46,11 +46,11 @@ class Frontend implements Helper
     public function getEditableUrl($sourceId)
     {
         $link = set_url_scheme(get_permalink($sourceId), 'admin');
-        $question = (preg_match('/\?/', $link) ? '&' : '?');
+        $question = (false !== strpos($link, '?') ? '&' : '?');
         $query = [
             'vcv-editable' => '1',
             'vcv-source-id' => $sourceId,
-            'vcv-nonce' => vchelper('Nonce')->admin(),
+            'vcv-nonce' => vchelper('Nonce')->pageEditable(),
         ];
 
         $editableUrl = $link . $question . http_build_query($query, '', '&');
@@ -68,7 +68,8 @@ class Frontend implements Helper
         $requestHelper = vchelper('Request');
         $currentUserAccessHelper = vchelper('AccessCurrentUser');
 
-        if ('post-new.php' === $pagenow && $currentUserAccessHelper->wpAll('edit_posts')->get()
+        if (
+            ('post-new.php' === $pagenow && $currentUserAccessHelper->wpAll('edit_posts')->get())
             || ($requestHelper->exists('vcv-source-id')
                 && $currentUserAccessHelper->wpAll(
                     ['edit_posts', $requestHelper->input('vcv-source-id')]
@@ -93,9 +94,10 @@ class Frontend implements Helper
         $currentUserAccessHelper = vchelper('AccessCurrentUser');
 
         if ($sourceId && $currentUserAccessHelper->wpAll(['edit_posts', $sourceId])->get()) {
-            if ($requestHelper->exists('vcv-editable')
+            if (
+                $requestHelper->exists('vcv-editable')
                 && $requestHelper->exists('vcv-nonce')
-                && $nonceHelper->verifyAdmin($requestHelper->input('vcv-nonce'))
+                && $nonceHelper->verifyPageEditable($requestHelper->input('vcv-nonce'))
             ) {
                 return true;
             }
@@ -115,17 +117,66 @@ class Frontend implements Helper
 
     public function renderContent($sourceId)
     {
+        // @codingStandardsIgnoreLine
+        global $wp_version;
+
         if (!$sourceId || get_post_status($sourceId) !== 'publish') {
             return false;
         }
+        $sourceId = apply_filters(
+            'wpml_object_id',
+            $sourceId,
+            get_post_type($sourceId)
+        );
 
-        global $post;
-        // @codingStandardsIgnoreStart
-        $post = get_post($sourceId);
-        setup_postdata($post);
-        the_content();
-        vcevent('vcv:assets:enqueueAssets', ['sourceIds' => [$sourceId]]);
-        wp_reset_postdata();
-        // @codingStandardsIgnoreEnd
+        $previousDynamicContent = \VcvEnv::get('DYNAMIC_CONTENT_SOURCE_ID');
+        \VcvEnv::set('DYNAMIC_CONTENT_SOURCE_ID', $sourceId);
+        vchelper('AssetsEnqueue')->addToEnqueueList($sourceId);
+
+        // @codingStandardsIgnoreLine
+        if (version_compare($wp_version, '5.2', '>=')) {
+            $sourceContent = get_the_content('', false, $sourceId);
+        } else {
+            $post = get_post($sourceId);
+            setup_postdata($post);
+            $sourceContent = get_the_content('', false);
+            wp_reset_postdata();
+        }
+        if (strpos($sourceContent, '<!--vcv no format-->') === false) {
+            // Call wpautop for non VCWB sourceId
+            $sourceContent = wpautop($sourceContent);
+        }
+        // Call the_content filter callbacks separately
+        if (function_exists('do_blocks')) {
+            $sourceContent = do_blocks($sourceContent);
+        }
+        $sourceContent = shortcode_unautop($sourceContent);
+        $sourceContent = prepend_attachment($sourceContent);
+        if (function_exists('wp_filter_content_tags')) {
+            $sourceContent = wp_filter_content_tags($sourceContent);
+        } else {
+            $sourceContent = wp_make_content_images_responsive($sourceContent);
+        }
+        $sourceContent = do_shortcode($sourceContent);
+        $sourceContent = convert_smilies($sourceContent);
+        $sourceContent = str_replace(
+            '<!--vcv no format-->',
+            '',
+            $sourceContent
+        );
+        $sourceContent = vcfilter('vcv:frontend:content', $sourceContent);
+        \VcvEnv::set('DYNAMIC_CONTENT_SOURCE_ID', $previousDynamicContent);
+
+        return $sourceContent;
+    }
+
+    public function getCurrentBlockId()
+    {
+        $currentBlockId = \VcvEnv::get('DYNAMIC_CONTENT_SOURCE_ID');
+        if (empty($currentBlockId)) {
+            $currentBlockId = get_the_ID();
+        }
+
+        return $currentBlockId;
     }
 }

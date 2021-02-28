@@ -43,15 +43,10 @@ class SystemStatus extends Container implements Module
 
     public function __construct(Status $statusHelper, Options $optionsHelper)
     {
-        if (!vcvenv('VCV_ENV_FT_SYSTEM_CHECK_LIST')) {
-            return;
-        }
-
-        $this->addFilter('vcv:settings:tabs', 'addSettingsTab', 10);
-
         $this->wpAddAction(
             'admin_menu',
-            'addPage'
+            'addPage',
+            80
         );
 
         $this->wpAddAction(
@@ -63,29 +58,10 @@ class SystemStatus extends Container implements Module
 
         $this->wpAddFilter('submenu_file', 'subMenuHighlight');
 
-        $this->wpAddAction(
-            'in_admin_header',
-            'addCss'
-        );
-
         $this->addFilter('vcv:ajax:vcv:settings:systemStatus:refresh:adminNonce', 'refreshStatusPage');
 
         $this->statusHelper = $statusHelper;
         $this->optionsHelper = $optionsHelper;
-    }
-
-    /**
-     * @param $tabs
-     *
-     * @return mixed
-     */
-    protected function addSettingsTab($tabs)
-    {
-        $tabs[$this->slug] = [
-            'name' => __('System Status', 'visualcomposer'),
-        ];
-
-        return $tabs;
     }
 
     protected function subMenuHighlight($submenuFile)
@@ -138,7 +114,7 @@ class SystemStatus extends Container implements Module
     {
         $check = $this->statusHelper->getWpDebugStatus();
 
-        $textResponse = $check ? __('WP_DEBUG is FALSE', 'visualcomposer') : __('WP_DEBUG is TRUE', 'visualcomposer');
+        $textResponse = $check ? __('WP_DEBUG, false', 'visualcomposer') : __('WP_DEBUG, true', 'visualcomposer');
 
         return ['text' => $textResponse, 'status' => $this->getStatusCssClass($check)];
     }
@@ -244,7 +220,7 @@ class SystemStatus extends Container implements Module
     protected function getZipStatusForView()
     {
         $zipStatus = $this->statusHelper->getZipStatus();
-        $textResponse = $zipStatus ? __('Enabled', 'visualcomposer') : __('Zip extension is not installed', 'visualcomposer');
+        $textResponse = $zipStatus ? __('Enabled', 'visualcomposer') : __('The Zip extension is not installed.', 'visualcomposer');
 
         return ['text' => $textResponse, 'status' => $this->getStatusCssClass($zipStatus)];
     }
@@ -273,12 +249,21 @@ class SystemStatus extends Container implements Module
         return ['text' => $textResponse, 'status' => $this->getStatusCssClass($check)];
     }
 
+    protected function getPluginFolderStatusForView()
+    {
+        $check = VCV_PLUGIN_DIRNAME === 'visualcomposer';
+        $textResponse = $check ? VCV_PLUGIN_DIRNAME : sprintf(__('Incorrect plugin folder name: %s. Plugin folder name must be ‘visualcomposer’', 'visualcomposer'), VCV_PLUGIN_DIRNAME);
+
+        return ['text' => $textResponse, 'status' => $this->getStatusCssClass($check)];
+    }
+
     protected function getRenderArgs()
     {
         return [
             'refreshUrl' => $this->getRefreshUrl(),
             'phpVersion' => $this->getPhpVersionStatusForView(),
             'wpVersion' => $this->getWpVersionStatusForView(),
+            'pluginFolder' => $this->getPluginFolderStatusForView(),
             'vcVersion' => $this->statusHelper->getVcvVersion(),
             'wpDebug' => $this->getWpDebugStatusForView(),
             'memoryLimit' => $this->getMemoryLimitStatusForView(),
@@ -304,12 +289,12 @@ class SystemStatus extends Container implements Module
         $this->statusHelper->checkSystemStatusAndSetFlag();
         $urlHelper = vchelper('Url');
         wp_register_style(
-            'vcv:wpUpdate:style',
-            $urlHelper->to('public/dist/wpUpdate.bundle.css'),
+            'vcv:wpVcSettings:style',
+            $urlHelper->to('public/dist/wpVcSettings.bundle.css'),
             [],
             VCV_VERSION
         );
-        wp_enqueue_style('vcv:wpUpdate:style');
+        wp_enqueue_style('vcv:wpVcSettings:style');
 
         wp_register_script(
             'vcv:wpVcSettings:script',
@@ -318,6 +303,7 @@ class SystemStatus extends Container implements Module
             VCV_VERSION
         );
         wp_enqueue_script('vcv:wpVcSettings:script');
+        wp_enqueue_script('vcv:assets:runtime:script');
     }
 
     /**
@@ -327,10 +313,11 @@ class SystemStatus extends Container implements Module
     {
         $page = [
             'slug' => $this->getSlug(),
-            'title' => __('System status', 'visualcomposer'),
-            'layout' => 'settings-standalone-with-tabs',
-            'showTab' => false,
-            'controller' => $this,
+            'title' => __('System Status', 'visualcomposer'),
+            'layout' => 'dashboard-tab-content-standalone',
+            'capability' => 'manage_options',
+            'isDashboardPage' => true,
+            'hideInWpMenu' => true,
         ];
         $this->addSubmenuPage($page);
     }
@@ -355,7 +342,7 @@ class SystemStatus extends Container implements Module
                     'systemCheckStatus',
                     sprintf(
                         __(
-                            'It seems that you have a problem with your server configuration that might affect Visual Composer. For more details, please visit <a href="%s">system status</a> page.',
+                            'It seems that there is a problem with your server configuration that might affect Visual Composer. For more details, visit <a href="%s">System Status</a> page.',
                             'visualcomposer'
                         ),
                         admin_url('admin.php?page=' . $systemStatus->slug)
@@ -367,11 +354,6 @@ class SystemStatus extends Container implements Module
         } else {
             $noticeHelper->removeNotice('systemCheckStatus');
         }
-    }
-
-    protected function addCss()
-    {
-        evcview('settings/partials/system-status-css');
     }
 
     protected function refreshStatusPage(Status $statusHelper)

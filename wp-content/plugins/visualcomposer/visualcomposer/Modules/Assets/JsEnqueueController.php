@@ -36,7 +36,13 @@ class JsEnqueueController extends Container implements Module
     protected function initialize(Frontend $frontendHelper)
     {
         $this->wpAddAction('wp_print_scripts', 'migrateSourceJs', 1);
-        if (!$frontendHelper->isPreview() && !$frontendHelper->isPageEditable()) {
+        if (
+            !$frontendHelper->isPreview()
+            && !$frontendHelper->isPageEditable()
+            && (
+                !is_admin() || $frontendHelper->isFrontend()
+            )
+        ) {
             /** @see \VisualComposer\Modules\Assets\JsEnqueueController::enqueueHeadHtml */
             if ($frontendHelper->isFrontend()) {
                 $this->addEvent('vcv:frontend:render', 'enqueueHeadHtml');
@@ -74,12 +80,12 @@ class JsEnqueueController extends Container implements Module
             $globalJs = $optionsHelper->get('settingsGlobalJsHead');
             $this->globalJSHeadAdded = true;
         }
-        if (!in_array($sourceId, $this->localJsHeadEnqueueList)) {
+        if (!in_array($sourceId, $this->localJsHeadEnqueueList) && is_singular()) {
             $this->localJsHeadEnqueueList[] = $sourceId;
             $localJs = get_post_meta($sourceId, 'vcv-settingsLocalJsHead', true);
         }
 
-        $this->printJs($globalJs, $localJs);
+        $this->printJs($globalJs, $localJs, $sourceId, 'head');
     }
 
     /**
@@ -96,20 +102,26 @@ class JsEnqueueController extends Container implements Module
             $globalJs = $optionsHelper->get('settingsGlobalJsFooter');
             $this->globalJSFooterAdded = true;
         }
-        if (!in_array($sourceId, $this->localJsFooterEnqueueList)) {
+        if (!in_array($sourceId, $this->localJsFooterEnqueueList) && is_singular()) {
             $this->localJsFooterEnqueueList[] = $sourceId;
             $localJs = get_post_meta($sourceId, 'vcv-settingsLocalJsFooter', true);
         }
 
-        $this->printJs($globalJs, $localJs);
+        $this->printJs($globalJs, $localJs, $sourceId, 'footer');
     }
 
     /**
      * @param $globalJs
      * @param $localJs
+     * @param $sourceId
+     * @param $part
      */
-    protected function printJs($globalJs, $localJs)
+    protected function printJs($globalJs, $localJs, $sourceId, $part)
     {
+        if (vcvenv('VCV_DEBUG')) {
+            echo '<!-- \VisualComposer\Modules\Assets\JsEnqueueController::printJs ' . $sourceId . '-' . $part
+                . ' START -->';
+        }
         $frontendHelper = vchelper('Frontend');
         if (!$frontendHelper->isPageEditable()) {
             if (!empty($globalJs)) {
@@ -118,6 +130,10 @@ class JsEnqueueController extends Container implements Module
             if (!empty($localJs)) {
                 echo $localJs;
             }
+        }
+        if (vcvenv('VCV_DEBUG')) {
+            echo '<!-- \VisualComposer\Modules\Assets\JsEnqueueController::printJs ' . $sourceId . '-' . $part
+                . ' END -->';
         }
     }
 }

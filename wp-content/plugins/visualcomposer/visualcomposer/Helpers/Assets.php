@@ -14,6 +14,87 @@ use VisualComposer\Framework\Container;
 
 class Assets extends Container implements Helper
 {
+    /**
+     * Returns an array that includes current page/post template ids
+     *
+     * @param $sourceId
+     *
+     * @return array
+     */
+    public function getTemplateIds($sourceId)
+    {
+        $idList = [];
+
+        $headerId = get_post_meta(
+            $sourceId,
+            '_' . VCV_PREFIX . 'HeaderTemplateId',
+            true
+        );
+        $footerId = get_post_meta(
+            $sourceId,
+            '_' . VCV_PREFIX . 'FooterTemplateId',
+            true
+        );
+
+        if (isset($headerId) && $headerId === 'default') {
+            $headerId = $this->getTemplatePartId('header');
+        }
+        if (isset($footerId) && $footerId === 'default') {
+            $footerId = $this->getTemplatePartId('footer');
+        }
+
+        if ($headerId) {
+            $idList[] = $headerId;
+        }
+        if ($footerId) {
+            $idList[] = $footerId;
+        }
+        $idList[] = $sourceId;
+
+        return $idList;
+    }
+
+    /**
+     * @param $templatePart
+     *
+     * @return bool|mixed
+     */
+    public function getTemplatePartId($templatePart)
+    {
+        $optionsHelper = vchelper('Options');
+
+        $headerFooterSettings = $optionsHelper->get('headerFooterSettings');
+        if ($headerFooterSettings === 'allSite') {
+            return intval($this->allContent($templatePart));
+        } elseif ($headerFooterSettings === 'customPostType') {
+            $customTemplatePart = vcfilter(
+                'vcv:themeEditor:layoutController:getTemplatePartId',
+                ['pageFound' => false, 'replaceTemplate' => true, 'sourceId' => false],
+                ['templatePart' => $templatePart]
+            );
+            if ($customTemplatePart && $customTemplatePart['replaceTemplate'] && $customTemplatePart['pageFound']) {
+                return intval($customTemplatePart['sourceId']);
+            }
+        }
+    }
+
+    /**
+     * @param $templatePart
+     *
+     * @return integer|bool
+     */
+    public function allContent($templatePart)
+    {
+        $optionsHelper = vchelper('Options');
+        $templatePartId = $optionsHelper->get('headerFooterSettingsAll' . ucfirst($templatePart));
+
+        if ($templatePart) {
+            return $templatePartId;
+        }
+
+        return false;
+    }
+
     public function getFilePath($filename = '')
     {
         $destinationDir = VCV_PLUGIN_ASSETS_DIR_PATH . '/assets-bundles/';
@@ -37,14 +118,10 @@ class Assets extends Container implements Helper
             return $filePath;
         }
 
-        if (vcvenv('VCV_TF_ASSETS_IN_UPLOADS')) {
-            $uploadDir = wp_upload_dir();
-            $url = set_url_scheme(
-                $uploadDir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim($filePath, '/\\')
-            );
-        } else {
-            $url = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim($filePath, '/\\');
-        }
+        $uploadDir = wp_upload_dir();
+        $url = set_url_scheme(
+            $uploadDir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim($filePath, '/\\')
+        );
 
         return $url;
     }
@@ -63,11 +140,8 @@ class Assets extends Container implements Helper
         $content = $content ? $content : '';
         $concatenatedFilename = $extension;
         $bundle = $this->getFilePath($concatenatedFilename);
-        if (vcvenv('VCV_TF_ASSETS_IN_UPLOADS')) {
-            $bundleUrl = '/assets-bundles/' . $concatenatedFilename;
-        } else {
-            $bundleUrl = $this->getAssetUrl('/assets-bundles/' . $concatenatedFilename);
-        }
+        $bundleUrl = '/assets-bundles/' . $concatenatedFilename;
+
         if (!$fileHelper->setContents($bundle, $content)) {
             return false;
         }
@@ -125,19 +199,17 @@ class Assets extends Container implements Helper
     {
         $bundleUrl = $path;
 
-        if (vcvenv('VCV_TF_ASSETS_IN_UPLOADS')) {
-            if (preg_match('/' . VCV_PLUGIN_ASSETS_DIRNAME . '/', $path)) {
-                $url = $this->getAssetUrl();
-                $url = str_replace(['http://', 'https://'], '', $url);
-                $contentUrl = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/';
-                $contentUrl = str_replace(['http://', 'https://'], '', $contentUrl);
-                $path = str_replace(['http://', 'https://'], '', $path);
+        if (preg_match('/' . VCV_PLUGIN_ASSETS_DIRNAME . '/', $path)) {
+            $url = $this->getAssetUrl();
+            $url = str_replace(['http://', 'https://'], '', $url);
+            $contentUrl = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/';
+            $contentUrl = str_replace(['http://', 'https://'], '', $contentUrl);
+            $path = str_replace(['http://', 'https://'], '', $path);
 
-                if (strpos($path, $url) !== false) {
-                    $bundleUrl = str_replace($url, '', $path);
-                } elseif (strpos($path, $contentUrl) !== false) {
-                    $bundleUrl = str_replace($contentUrl, '', $path);
-                }
+            if (strpos($path, $url) !== false) {
+                $bundleUrl = str_replace($url, '', $path);
+            } elseif (strpos($path, $contentUrl) !== false) {
+                $bundleUrl = str_replace($contentUrl, '', $path);
             }
         }
 

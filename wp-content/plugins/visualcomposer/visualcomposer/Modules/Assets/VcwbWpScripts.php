@@ -8,12 +8,15 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use \WP_Scripts;
+use WP_Scripts;
 
 class VcwbWpScripts extends WP_Scripts
 {
+    protected $localizedHandles = [];
+
     /**
      * @codingStandardsIgnoreStart
+     *
      * @param bool|array $handles
      * @param bool $group
      *
@@ -58,5 +61,23 @@ class VcwbWpScripts extends WP_Scripts
         }
 
         return parent::do_item($handle, $group);
+    }
+
+    public function localize($handle, $objectName, $l10n)
+    {
+        // Avoid multiple localizations for same handle objectName in case when inner items (HFS, global template, etc), initiate localization for same handle
+        if (vcvenv('ENQUEUE_INNER_ASSETS') && isset($this->localizedHandles[ $handle ][ $objectName ])) {
+            // This handle was already localized before, skip
+            return true;
+        }
+
+        if (!isset($this->localizedHandles[ $handle ])) {
+            $this->localizedHandles[ $handle ] = [];
+        }
+        if (!isset($this->localizedHandles[ $handle ][ $objectName ])) {
+            $this->localizedHandles[ $handle ][ $objectName ] = true;
+        }
+
+        return parent::localize($handle, $objectName, $l10n);
     }
 }

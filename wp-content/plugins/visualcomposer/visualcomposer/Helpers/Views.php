@@ -93,15 +93,11 @@ class Views extends container implements Helper
             echo '</table>';
         }
         if (isset($section['children']) && !empty($section['children'])) {
-            ?>
-            <div class="vcv-child-section">
-                <?php
-                foreach ($section['children'] as $child) {
-                    $this->call('doNestedSection', [$child, $slug]);
-                }
-                ?>
-            </div>
-            <?php
+            echo '<div class="vcv-child-section">';
+            foreach ($section['children'] as $child) {
+                $this->call('doNestedSection', [$child, $slug]);
+            }
+            echo '</div>';
         }
         echo '</div>';
     }
@@ -118,11 +114,13 @@ class Views extends container implements Helper
 
             echo "<tr{$class}>";
 
-            if (!empty($field['args']['label_for'])) {
-                echo '<th scope="row"><label for="' . esc_attr($field['args']['label_for']) . '">' . $field['title']
-                    . '</label></th>';
-            } else {
-                echo '<th scope="row">' . $field['title'] . '</th>';
+            if (empty($field['args']['vcv-no-label'])) {
+                if (!empty($field['args']['label_for'])) {
+                    echo '<th scope="row"><label for="' . esc_attr($field['args']['label_for']) . '">' . $field['title']
+                        . '</label></th>';
+                } else {
+                    echo '<th scope="row">' . $field['title'] . '</th>';
+                }
             }
 
             echo '<td>';
@@ -135,10 +133,12 @@ class Views extends container implements Helper
     public function renderedFieldsList()
     {
         // Redirect back referer
-        echo '<input type="hidden" name="_wp_http_referer" value="' . esc_attr(wp_unslash($_SERVER['REQUEST_URI'])) . '" />';
+        echo '<input type="hidden" name="_wp_http_referer" value="' . esc_attr(wp_unslash($_SERVER['REQUEST_URI']))
+            . '" />';
         echo sprintf(
             '<input type="hidden" name="vcv-settings-rendered-fields" value="%s" />',
             htmlentities(wp_json_encode(array_values(array_unique($this->renderedFields))))
         );
+        $this->renderedFields = [];
     }
 }
