@@ -157,7 +157,6 @@ class Controller extends Container implements Module
      *
      * @return mixed
      */
-    // @codingStandardsIgnoreStart
     protected function checkAction($action, $returnValue, Request $requestHelper, $token, $tokenLabels)
     {
         switch ($action) {
@@ -184,18 +183,6 @@ class Controller extends Container implements Module
                     $tokenLabels[ $token ] = $term->name;
                 }
                 break;
-            case 'event_type':
-                $term = get_term_by('id', $token, 'event_type');
-                if ($term) {
-                    $tokenLabels[ $token ] = $term->name;
-                }
-                break;
-            case 'event_type_2':
-                $term = get_term_by('id', $token, 'event_type_2');
-                if ($term) {
-                    $tokenLabels[ $token ] = $term->name;
-                }
-                break;
             default:
                 $post = get_post((int)$token);
                 // @codingStandardsIgnoreLine
@@ -204,6 +191,7 @@ class Controller extends Container implements Module
                     $tokenLabels[ (int)$token ] = $post->post_title . ' (' . $post->ID . ')';
                 }
         }
+
         $tokenLabels = vcfilter(
             'vcv:editor:autocomplete:checkAction',
             $tokenLabels,
@@ -212,5 +200,4 @@ class Controller extends Container implements Module
 
         return $tokenLabels;
     }
-    // @codingStandardsIgnoreEnd
 }

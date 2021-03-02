@@ -23,12 +23,12 @@ trait Page
     }
 
     /**
-     * @return mixed
      * @deprecated
+     * @return mixed
      */
     public function getTemplatePath()
     {
-        return isset($this->templatePath) ? $this->templatePath : '';
+        return $this->templatePath;
     }
 
     /**
@@ -55,21 +55,16 @@ trait Page
         $args = array_merge(
             method_exists($this, 'getRenderArgs') ? (array)$this->call('getRenderArgs') : [],
             [
+                'controller' => $this,
                 'slug' => $this->slug,
-                'path' => $this->getTemplatePath(),
+                'path' => $this->templatePath,
                 'page' => $page,
             ]
         );
-        if (!$this->getTemplatePath()) {
-            $response = '';
-        } else {
-            $response = vcview($this->getTemplatePath(), $args);
+        if (!$this->templatePath) {
+            return '';
         }
 
-        if (method_exists($this, 'afterRender')) {
-            return $this->call('afterRender', [$response]);
-        }
-
-        return $response;
+        return vcview($this->templatePath, $args);
     }
 }

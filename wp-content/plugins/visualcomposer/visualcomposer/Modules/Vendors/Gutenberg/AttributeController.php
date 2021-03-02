@@ -23,7 +23,6 @@ class AttributeController extends Container implements Module
 {
     use WpFiltersActions;
     use EventsFilters;
-
     /**
      * @var string
      */
@@ -46,17 +45,11 @@ class AttributeController extends Container implements Module
         global $pagenow;
         $requestHelper = vchelper('Request');
         $currentUserAccessHelper = vchelper('AccessCurrentUser');
-        $postID = $requestHelper->input('post');
-        $isGutentebergPostType = $postID && get_post_type($postID) === $this->postTypeSlug;
-        if (
-            $isGutentebergPostType
-            || (
-                'post-new.php' === $pagenow
-                && $requestHelper->input('post_type') === $this->postTypeSlug
-                && $currentUserAccessHelper->wpAll(
-                    'edit_posts'
-                )->get()
-            )
+        if ('post-new.php' === $pagenow
+            && $requestHelper->input('post_type') === $this->postTypeSlug
+            && $currentUserAccessHelper->wpAll(
+                'edit_posts'
+            )->get()
         ) {
             $this->registerGutenbergAttributeType();
             /** @see \VisualComposer\Modules\Vendors\Gutenberg\AttributeController::removeUiMetaboxes */
@@ -113,7 +106,7 @@ class AttributeController extends Container implements Module
                 'visualcomposer'
             ),
             'use_featured_image' => _x(
-                'Use as a cover image',
+                'Use as cover image',
                 'Overrides the “Use as featured image” phrase for this post type. Added in 4.3',
                 'visualcomposer'
             ),
@@ -170,47 +163,46 @@ class AttributeController extends Container implements Module
      */
     protected function removeAdminUi()
     {
-        echo '
+        ?>
         <style>
-          #adminmenumain, #wpadminbar {
-            display: none;
-          }
+            #adminmenumain, #wpadminbar {
+                display: none;
+            }
 
-          html.wp-toolbar {
-            padding: 0 !important;
-          }
+            html.wp-toolbar {
+                padding: 0 !important;
+            }
 
-          .wp-toolbar #wpcontent {
-            margin: 0;
-          }
+            .wp-toolbar #wpcontent {
+                margin: 0;
+            }
 
-          .wp-toolbar #wpbody {
-            padding-top: 0;
-          }
+            .wp-toolbar #wpbody {
+                padding-top: 0;
+            }
 
-          .gutenberg .gutenberg__editor .edit-post-layout .edit-post-header, html .block-editor-page .edit-post-header {
-            top: 0;
-            left: 0;
-          }
+            .gutenberg .gutenberg__editor .edit-post-layout .edit-post-header, html .block-editor-page .edit-post-header {
+                top: 0;
+                left: 0;
+            }
 
-          .gutenberg .gutenberg__editor .edit-post-layout.is-sidebar-opened .edit-post-layout__content, html .block-editor-page .edit-post-layout.is-sidebar-opened .edit-post-layout__content {
-            margin-right: 0;
-          }
+            .gutenberg .gutenberg__editor .edit-post-layout.is-sidebar-opened .edit-post-layout__content, html .block-editor-page .edit-post-layout.is-sidebar-opened .edit-post-layout__content {
+                margin-right: 0;
+            }
 
-          .gutenberg .gutenberg__editor .edit-post-layout .editor-post-publish-panel, html .block-editor-page .edit-post-layout .editor-post-publish-panel, html .block-editor-page .edit-post-header__settings {
-            display: none;
-          }
+            .gutenberg .gutenberg__editor .edit-post-layout .editor-post-publish-panel, html .block-editor-page .edit-post-layout .editor-post-publish-panel, html .block-editor-page .edit-post-header__settings {
+                display: none;
+            }
 
-          .components-panel__header.edit-post-sidebar-header.edit-post-sidebar__panel-tabs li:first-child {
-            display: none;
-          }
+            .components-panel__header.edit-post-sidebar-header.edit-post-sidebar__panel-tabs li:first-child {
+                display: none;
+            }
 
-          .post-type-vcv_gutenberg_attr .edit-post-layout.block-editor-editor-skeleton {
-            left: 0;
-            top: 0;
-          }
-
-        </style>';
+            .edit-post-sidebar .components-panel > :not(.edit-post-settings-sidebar__panel-block) {
+                display: none;
+            }
+        </style>
+        <?php
     }
 
     /**

@@ -29,24 +29,29 @@ class Groups extends Container implements Module
     public function __construct()
     {
         /** @see \VisualComposer\Modules\Hub\Groups::outputGroups */
-        $this->addFilter('vcv:editor:variables', 'addVariables');
+        $this->addFilter('vcv:frontend:body:extraOutput', 'outputGroups');
     }
 
     /**
-     * @param $variables
+     * @param $response
      * @param $payload
      * @param HubGroups $hubHelper
      *
      * @return array
      */
-    protected function addVariables($variables, $payload, HubGroups $hubHelper)
+    protected function outputGroups($response, $payload, HubGroups $hubHelper)
     {
-        $variables[] = [
-            'key' => 'VCV_HUB_GET_GROUPS',
-            'value' => array_values($hubHelper->getGroups()),
-            'type' => 'constant',
-        ];
-
-        return $variables;
+        return array_merge(
+            $response,
+            [
+                vcview(
+                    'partials/constant-script',
+                    [
+                        'key' => 'VCV_HUB_GET_GROUPS',
+                        'value' => array_values($hubHelper->getGroups()),
+                    ]
+                ),
+            ]
+        );
     }
 }

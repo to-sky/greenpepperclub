@@ -5,14 +5,12 @@ namespace VisualComposer\Modules\Editors\Frontend;
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\Access\EditorPostType;
-use VisualComposer\Helpers\Traits\EventsFilters;
 use VisualComposer\Helpers\Traits\WpFiltersActions;
 use VisualComposer\Helpers\Url;
 
 class MenuController extends Container implements Module
 {
     use WpFiltersActions;
-    use EventsFilters;
 
     protected $bufferStarted = false;
 
@@ -30,12 +28,6 @@ class MenuController extends Container implements Module
         $this->wpAddAction(
             'admin_footer',
             'endBuffer'
-        );
-
-        $this->addFilter(
-            'vcv:ajax:dropdown:menu:updateList:adminNonce',
-            'getMenuList',
-            11
         );
     }
 
@@ -64,14 +56,15 @@ class MenuController extends Container implements Module
             $this->bufferStarted = false;
             // @codingStandardsIgnoreLine
             $postType = !empty($matches[1]) ? $matches[1] : $post_type;
-            $postTypesList = [
-                'vcv_headers',
-                'vcv_footers',
-                'vcv_sidebars',
-            ];
-            if (
-                $editorPostTypeHelper->isEditorEnabled($postType)
-                && !in_array($postType, $postTypesList)
+            if ($editorPostTypeHelper->isEditorEnabled($postType)
+                && !in_array(
+                    $postType,
+                    [
+                        'vcv_headers',
+                        'vcv_footers',
+                        'vcv_sidebars',
+                    ]
+                )
             ) {
                 $content = preg_replace_callback(
                     '/\<[a] href="(.[^\"]+)" class="page-title-action"\>(.[^\<\/]+)\<\/a\>/',
@@ -165,32 +158,5 @@ class MenuController extends Container implements Module
                 }
             }
         }
-    }
-
-    /**
-     * Return all menus
-     *
-     * @return array
-     */
-    protected function getMenuList()
-    {
-        $menuList = get_terms('nav_menu');
-
-        $values = [];
-        foreach ($menuList as $key => $menu) {
-            $values[] = [
-                'label' => $menu->name,
-                'value' => $menu->slug,
-            ];
-        }
-
-        if (empty($values)) {
-            $values[] = [
-                'label' => __('Select your menu', 'visualcomposer'),
-                'value' => '',
-            ];
-        }
-
-        return ['status' => true, 'data' => $values];
     }
 }

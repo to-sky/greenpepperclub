@@ -22,8 +22,30 @@ class JsonActionsController extends Container implements Module
 
     public function __construct()
     {
+        $this->addFilter('vcv:hub:download:json', 'ajaxGetRequiredActions');
         $this->addFilter('vcv:ajax:hub:action:adminNonce', 'ajaxProcessAction');
         $this->addEvent('vcv:system:factory:reset', 'unsetOptions');
+    }
+
+    protected function ajaxGetRequiredActions(
+        $response,
+        $payload
+    ) {
+        if (!vcIsBadResponse($response)) {
+            if ($payload['json'] && !empty($payload['json']['actions'])) {
+                $hubBundle = vchelper('HubBundle');
+                $hubUpdateHelper = vchelper('HubUpdate');
+                list($needUpdatePost, $requiredActions) = $hubBundle->loopActions($payload['json']);
+                $reRenderPosts = array_unique($needUpdatePost);
+                $response['actions'] = $requiredActions;
+                if (count($reRenderPosts) > 0) {
+                    $postsActions = $hubUpdateHelper->createPostUpdateObjects($reRenderPosts);
+                    $response['actions'] = array_merge($response['actions'], $postsActions);
+                }
+            }
+        }
+
+        return $response;
     }
 
     protected function ajaxProcessAction(
@@ -83,6 +105,7 @@ class JsonActionsController extends Container implements Module
         }
         if (!$newActionData) {
             sleep(5);
+            // TODO: How?!
             $loggerHelper->log('The update action does not exists #10057');
 
             return $response;

@@ -22,11 +22,11 @@ use VisualComposer\Helpers\Hub\Elements;
  */
 class ApiController extends Container implements Module
 {
-    use ApiRegisterTrait;
-
     protected $apiHook = 'elements';
 
     protected $publicMethods = ['add'];
+
+    use ApiRegisterTrait;
 
     /**
      * @param $manifestPath
@@ -83,7 +83,7 @@ class ApiController extends Container implements Module
                 str_replace(
                     '[publicPath]',
                     $elementBaseUrl . '/' . $tag . '/public',
-                    wp_json_encode($elementSettings)
+                    json_encode($elementSettings)
                 ),
                 true
             );

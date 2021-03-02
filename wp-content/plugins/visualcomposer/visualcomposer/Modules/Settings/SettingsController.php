@@ -11,45 +11,26 @@ if (!defined('ABSPATH')) {
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\Access\CurrentUser;
-use VisualComposer\Helpers\License;
-use VisualComposer\Helpers\Options;
 use VisualComposer\Helpers\Request;
 use VisualComposer\Helpers\Settings\TabsRegistry;
 use VisualComposer\Helpers\Traits\EventsFilters;
 use VisualComposer\Helpers\Traits\WpFiltersActions;
 
-/**
- * Class SettingsController
- * @package VisualComposer\Modules\Settings
- */
 class SettingsController extends Container implements Module
 {
     use EventsFilters;
     use WpFiltersActions;
 
-    /**
-     * SettingsController constructor.
-     */
     public function __construct()
     {
-        /** @see \VisualComposer\Modules\Settings\SettingsController::saveSettings */
         $this->addFilter('vcv:ajax:settings:save:adminNonce', 'saveSettings');
-        /** @see \VisualComposer\Modules\Settings\SettingsController::saveNotice */
         $this->wpAddAction(
             'admin_notices',
             'saveNotice'
         );
-        /** @see \VisualComposer\Modules\Settings\SettingsController::beforeRenderRedirect */
         $this->wpAddAction('admin_init', 'beforeRenderRedirect', 100);
     }
 
-    /**
-     * @param $response
-     * @param $payload
-     * @param \VisualComposer\Helpers\Access\CurrentUser $currentUserAccess
-     *
-     * @throws \Exception
-     */
     protected function saveSettings($response, $payload, CurrentUser $currentUserAccess)
     {
         if ($currentUserAccess->can('manage_options')->get()) {
@@ -83,41 +64,24 @@ class SettingsController extends Container implements Module
         exit;
     }
 
-    /**
-     *
-     */
     protected function saveNotice()
     {
         if (isset($_REQUEST['message']) && $_REQUEST['message'] === 'vcv-saved') {
             echo sprintf(
                 '<div class="notice notice-success"><p>%s</p></div>',
-                __('Your settings are saved.', 'visualcomposer')
+                __('Settings Saved', 'visualcomposer')
             );
         }
     }
 
-    /**
-     * @param \VisualComposer\Helpers\Request $requestHelper
-     * @param \VisualComposer\Helpers\Settings\TabsRegistry $tabsRegistry
-     * @param \VisualComposer\Helpers\License $licenseHelper
-     * @param \VisualComposer\Helpers\Options $optionsHelper
-     */
-    protected function beforeRenderRedirect(
-        Request $requestHelper,
-        TabsRegistry $tabsRegistry,
-        License $licenseHelper,
-        Options $optionsHelper
-    ) {
+    protected function beforeRenderRedirect(Request $requestHelper, TabsRegistry $tabsRegistry)
+    {
         $page = $requestHelper->input('page');
-        if (
-            $page
-            && !in_array($page, ['vcv-settings', 'vcv-update', 'vcv-license'], true)
-            && strpos($page, 'vcv-') !== false
-        ) {
+        if ($page && $page !== 'vcv-settings' && $page !== 'vcv-update' && strpos($page, 'vcv-') !== false) {
             $updateRequired = vchelper('Options')->get('bundleUpdateRequired');
-            if (($licenseHelper->isPremiumActivated() || $optionsHelper->get('agreeHubTerms')) && $updateRequired) {
+            if ($updateRequired) {
                 $tabs = vcfilter('vcv:settings:tabs', $tabsRegistry->all());
-                // Redirect only if requested page is settings tab page
+                // Redirect only if requested page is settings page
                 if (array_key_exists($page, $tabs)) {
                     // Redirect if bundle update available
                     // Redirect only if slug !== vcv-settings (to allow reset)

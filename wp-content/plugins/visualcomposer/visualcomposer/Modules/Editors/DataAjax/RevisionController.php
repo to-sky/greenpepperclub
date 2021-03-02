@@ -48,7 +48,7 @@ class RevisionController extends Container implements Module
         $vcvdata = $requestHelper->input('vcv-data');
         $data = $requestHelper->input('data');
 
-        if (!$vcvdata && $data && isset($data['wp_autosave']['post_id'], $data['wp_autosave']['vcv-data'])) {
+        if (!$vcvdata && $data && isset($data['wp_autosave'])) {
             $sourceId = $data['wp_autosave']['post_id'];
             $vcvdata = $data['wp_autosave']['vcv-data'];
         }

@@ -42,11 +42,31 @@ class CssJsSettings extends Container implements Module
 
         $this->wpAddAction(
             'admin_menu',
-            'addPage',
-            3
+            'addPage'
         );
 
         $this->wpAddFilter('submenu_file', 'subMenuHighlight');
+
+        $this->wpAddAction(
+            'in_admin_header',
+            'addCss'
+        );
+
+        $this->addFilter('vcv:settings:tabs', 'addSettingsTab', 3);
+    }
+
+    /**
+     * @param $tabs
+     *
+     * @return mixed
+     */
+    protected function addSettingsTab($tabs)
+    {
+        $tabs['vcv-global-css-js'] = [
+            'name' => __('CSS, HTML & JavaScript', 'visualcomposer'),
+        ];
+
+        return $tabs;
     }
 
     protected function subMenuHighlight($submenuFile)
@@ -66,12 +86,12 @@ class CssJsSettings extends Container implements Module
     {
         $urlHelper = vchelper('Url');
         wp_register_style(
-            'vcv:wpVcSettings:style',
-            $urlHelper->to('public/dist/wpVcSettings.bundle.css'),
+            'vcv:wpUpdate:style',
+            $urlHelper->to('public/dist/wpUpdate.bundle.css'),
             [],
             VCV_VERSION
         );
-        wp_enqueue_style('vcv:wpVcSettings:style');
+        wp_enqueue_style('vcv:wpUpdate:style');
 
         wp_register_script(
             'vcv:wpVcSettings:script',
@@ -79,9 +99,7 @@ class CssJsSettings extends Container implements Module
             ['vcv:assets:vendor:script'],
             VCV_VERSION
         );
-
         wp_enqueue_script('vcv:wpVcSettings:script');
-        wp_enqueue_script('vcv:assets:runtime:script');
     }
 
     /**
@@ -92,12 +110,15 @@ class CssJsSettings extends Container implements Module
         $page = [
             'slug' => $this->getSlug(),
             'title' => __('CSS, HTML & JavaScript', 'visualcomposer'),
-            'layout' => 'dashboard-tab-content-standalone',
-            'capability' => 'manage_options',
-            'iconClass' => 'vcv-ui-icon-dashboard-css',
-            'isDashboardPage' => true,
-            'hideInWpMenu' => true,
+            'layout' => 'settings-standalone-with-tabs',
+            'showTab' => false,
+            'controller' => $this,
         ];
-        $this->addSubmenuPage($page, false);
+        $this->addSubmenuPage($page);
+    }
+
+    protected function addCss()
+    {
+        evcview('settings/partials/global-css-js-settings-css');
     }
 }

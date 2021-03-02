@@ -14,49 +14,37 @@ use VisualComposer\Helpers\Traits\EventsFilters;
 use VisualComposer\Helpers\Traits\WpFiltersActions;
 use VisualComposer\Helpers\Wp;
 
-/**
- * Class UpdatesController
- * @package VisualComposer\Modules\Updates
- */
 class UpdatesController extends Container implements Module
 {
     use WpFiltersActions;
     use EventsFilters;
 
     /**
-     * UpdatesController constructor.
+     * Update path
+     *
+     * @var string
      */
+
+
     public function __construct()
     {
-        /** @see \VisualComposer\Modules\Updates\UpdatesController::addPluginUpdateNoticeVariable */
         $this->addFilter('vcv:editor:variables', 'addPluginUpdateNoticeVariable');
-        /** @see \VisualComposer\Modules\Updates\UpdatesController::resetUpdateMessageCookies */
         $this->wpAddAction('upgrader_process_complete', 'resetUpdateMessageCookies');
     }
 
-    /**
-     * @param $variables
-     * @param \VisualComposer\Helpers\Wp $wpHelper
-     *
-     * @return array
-     */
     protected function addPluginUpdateNoticeVariable($variables, Wp $wpHelper)
     {
         $key = 'VCV_PLUGIN_UPDATE';
         $value = $wpHelper->getUpdateVersionFromWordpressOrg();
         $variables[] = [
             'key' => $key,
-            'value' => (bool)$value,
+            'value' => !!$value,
             'type' => 'constant',
         ];
 
         return $variables;
     }
 
-    /**
-     * @param $upgraderObject
-     * @param $options
-     */
     protected function resetUpdateMessageCookies($upgraderObject, $options)
     {
         // Delete message cookie from editor on update of any Wp plugins

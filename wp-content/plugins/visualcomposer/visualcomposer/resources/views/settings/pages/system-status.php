@@ -8,7 +8,6 @@ if (!defined('ABSPATH')) {
 
 /** @var array $wpVersion */
 /** @var array $phpVersion */
-/** @var array $pluginFolder */
 /** @var array $wpDebug */
 /** @var string $vcVersion */
 /** @var string $refreshUrl */
@@ -23,8 +22,9 @@ if (!defined('ABSPATH')) {
 /** @var array $aws */
 ?>
 <div class="vcv-ui-settings-status-table-container">
+    <h2><?php echo esc_html__('System status', 'visualcomposer') ?></h2>
     <div class="vcv-description">
-        <p class="description"><?php echo esc_html__('Check system status and WordPress configuration for compliance with Visual Composer requirements.', 'visualcomposer'); ?></p>
+        <p><?php echo esc_html__('Check system status and WordPress configuration for compliance with Visual Composer requirements.', 'visualcomposer'); ?></p>
         <a href="<?php echo esc_url($refreshUrl); ?>" class="button vcv-system-refresh"><?php echo esc_html__('Refresh', 'visualcomposer'); ?></a>
     </div>
     <style>
@@ -77,21 +77,21 @@ if (!defined('ABSPATH')) {
             </thead>
             <tbody>
             <tr>
-                <td><?php echo esc_html__('WordPress version', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('WordPress Version', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
-                        <?php echo esc_html__('WordPress version currently installed on your site.', 'visualcomposer'); ?>
+                        <?php echo esc_html__('The version of WordPress installed on your site', 'visualcomposer'); ?>
                     </span>
                 </td>
                 <td class="<?php echo $wpVersion['status'] ?>"><?php echo $wpVersion['text']; ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('PHP version', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('PHP Version', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
-                        <?php echo esc_html__('PHP version currently installed on your site.', 'visualcomposer'); ?>
+                        <?php echo esc_html__('The version of PHP installed on your hosting server', 'visualcomposer'); ?>
                     </span>
                 </td>
                 <td class="<?php echo $phpVersion['status'] ?>"><?php echo $phpVersion['text']; ?></td>
@@ -107,10 +107,10 @@ if (!defined('ABSPATH')) {
                 <td class="<?php echo $wpDebug['status'] ?> vcv-no-icon"><?php echo $wpDebug['text'] ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('Visual Composer version', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('Visual Composer Version', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
-                    <span class="vcv-help-tooltip"><?php echo esc_html__('Visual Composer version installed on your site.', 'visualcomposer'); ?>
+                    <span class="vcv-help-tooltip"><?php echo esc_html__('The version of Visual Composer installed on your site', 'visualcomposer'); ?>
                 </span>
                 </td>
                 <td>
@@ -143,25 +143,12 @@ if (!defined('ABSPATH')) {
             </thead>
             <tbody>
             <tr>
-                <td><?php echo esc_html__('Plugin folder', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('Memory Limit', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
                         <?php echo esc_html__(
-                            'Plugin folder must be `visualcomposer`.',
-                            'visualcomposer'
-                        ); ?>
-                    </span>
-                </td>
-                <td class="<?php echo $pluginFolder['status'] ?>"><?php echo $pluginFolder['text']; ?></td>
-            </tr>
-            <tr>
-                <td><?php echo esc_html__('Memory limit', 'visualcomposer') ?>:</td>
-                <td class="vcv-help">
-                    <span class="vcv-help-tooltip-icon"></span>
-                    <span class="vcv-help-tooltip">
-                        <?php echo esc_html__(
-                            'The maximum amount of memory (RAM) that your site can use at one time.',
+                            'The maximum amout of memory (RAM) that your site can use at one time',
                             'visualcomposer'
                         ); ?>
                     </span>
@@ -169,12 +156,12 @@ if (!defined('ABSPATH')) {
                 <td class="<?php echo $memoryLimit['status'] ?>"><?php echo $memoryLimit['text']; ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('Post max size', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('Post Max Size', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
                         <?php echo esc_html__(
-                            'The maximum size of the post data allowed that also affects file upload.',
+                            'Sets max size of post data allowed. This setting also affects file upload.',
                             'visualcomposer'
                         ) ?>
                     </span>
@@ -182,12 +169,12 @@ if (!defined('ABSPATH')) {
                 <td class="<?php echo $postMaxSize['status'] ?>"><?php echo $postMaxSize['text']; ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('Max input nesting level', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('Max Input Nesting Level', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
                         <?php echo esc_html__(
-                            'The maximum nesting depth of input variables (i.e. $_GET, $_POST.). ',
+                            'Sets the max nesting depth of input variables (i.e. $_GET, $_POST.)',
                             'visualcomposer'
                         ) ?>
                     </span>
@@ -195,12 +182,12 @@ if (!defined('ABSPATH')) {
                 <td class="<?php echo $maxInputNestingLevel['status']; ?>"><?php echo $maxInputNestingLevel['text']; ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('PHP Max Input Vars', 'visualcomposer'); ?>:</td>
+                <td><?php echo esc_html__('Max Input Vars', 'visualcomposer'); ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
                         <?php echo esc_html__(
-                            'The number of input variables that may be accepted (limit is applied to $_GET, $_POST, and $_COOKIE superglobal separately).',
+                            'How many input variables may be accepted (limit is applied to $_GET, $_POST and $_COOKIE superglobal separately)',
                             'visualcomposer'
                         ); ?>
                     </span>
@@ -212,18 +199,18 @@ if (!defined('ABSPATH')) {
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
-                        <?php echo esc_html__('The maximum execution time for PHP scripts.', 'visualcomposer') ?>
+                        <?php echo esc_html__('Amount of max execution time', 'visualcomposer') ?>
                     </span>
                 </td>
                 <td class="<?php echo $timeout['status'] ?>"><?php echo $timeout['text']; ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('Max upload file size', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('Upload Max Filesize', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
                         <?php echo esc_html__(
-                            'The largest file size that can be uploaded to your WordPress site.',
+                            'The largest filesize that can be uploaded to your WordPress installation',
                             'visualcomposer'
                         ) ?>
                     </span>
@@ -231,12 +218,12 @@ if (!defined('ABSPATH')) {
                 <td class="<?php echo $fileUploadSize['status'] ?>"><?php echo $fileUploadSize['text']; ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('Access to the upload folder', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('Access to Uploads Directory', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
                         <?php echo esc_html__(
-                            'Visual Composer stores assets in the WordPress uploads folder. The folder must be writable for this to happen.',
+                            'Visual Composer stores assets in the WordPress uploads directory. The directory must be writable for this to happen.',
                             'visualcomposer'
                         ) ?>
                     </span>
@@ -244,11 +231,11 @@ if (!defined('ABSPATH')) {
                 <td class="<?php echo $uploadDirAccess['status'] ?>"><?php echo $uploadDirAccess['text']; ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('File system method', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('File System Method', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
-                        <?php echo esc_html__('The file system method should be direct.', 'visualcomposer') ?>
+                        <?php echo esc_html__('The File System method should be direct', 'visualcomposer') ?>
                     </span>
                 </td>
                 <td class="<?php echo $fsMethod['status'] ?>"><?php echo $fsMethod['text']; ?></td>
@@ -264,7 +251,7 @@ if (!defined('ABSPATH')) {
             </thead>
             <tbody>
             <tr>
-                <td><?php echo esc_html__('.zip extension', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('Zip Extension', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
@@ -274,11 +261,11 @@ if (!defined('ABSPATH')) {
                 <td class="<?php echo $zipExt['status'] ?>"><?php echo $zipExt['text']; ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('cURL extension', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('Curl Extension', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
-                        <?php echo esc_html__('The version of cURL installed on your server.', 'visualcomposer') ?>
+                        <?php echo esc_html__('The version of cURL installed on your server', 'visualcomposer') ?>
                     </span>
                 </td>
                 <td class="<?php echo $curlExt['status'] ?>"><?php echo $curlExt['text']; ?></td>
@@ -298,7 +285,7 @@ if (!defined('ABSPATH')) {
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
-                        <?php echo esc_html__('Connection with your account.', 'visualcomposer') ?>
+                        <?php echo esc_html__('Connection with the Account', 'visualcomposer') ?>
                     </span>
                 </td>
                 <td class="<?php echo $account['status'] ?>"><?php echo $account['text']; ?></td>
@@ -308,13 +295,13 @@ if (!defined('ABSPATH')) {
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
-                        <?php echo esc_html__('The connection with the AWS.', 'visualcomposer') ?>
+                        <?php echo esc_html__('The connection with the AWS', 'visualcomposer') ?>
                     </span>
                 </td>
                 <td class="<?php echo $aws['status'] ?>"><?php echo $aws['text']; ?></td>
             </tr>
             <tr>
-                <td><?php echo esc_html__('Large data transfer', 'visualcomposer') ?>:</td>
+                <td><?php echo esc_html__('Large Data Transfer', 'visualcomposer') ?>:</td>
                 <td class="vcv-help">
                     <span class="vcv-help-tooltip-icon"></span>
                     <span class="vcv-help-tooltip">
@@ -329,4 +316,3 @@ if (!defined('ABSPATH')) {
             </tbody>
         </table>
     </div>
-</div>

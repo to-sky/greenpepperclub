@@ -11,7 +11,6 @@ if (!defined('ABSPATH')) {
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\Hub\Update;
-use VisualComposer\Helpers\License;
 use VisualComposer\Helpers\Options;
 use VisualComposer\Helpers\Request;
 use VisualComposer\Helpers\Traits\EventsFilters;
@@ -19,10 +18,6 @@ use VisualComposer\Helpers\Traits\WpFiltersActions;
 use VisualComposer\Modules\Settings\Traits\Page;
 use VisualComposer\Modules\Settings\Traits\SubMenu;
 
-/**
- * Class UpdateBePage
- * @package VisualComposer\Modules\Hub\Pages
- */
 class UpdateBePage extends Container implements Module
 {
     use Page;
@@ -36,31 +31,28 @@ class UpdateBePage extends Container implements Module
     protected $slug = 'vcv-update';
 
     /**
-     * UpdateBePage constructor.
+     * @var string
      */
+    protected $templatePath = 'license/layout';
+
     public function __construct()
     {
         $this->wpAddAction(
             'admin_menu',
-            function (License $licenseHelper, Options $optionsHelper, Request $requestHelper, Update $updateHelper) {
-                if (
-                    ($licenseHelper->isPremiumActivated() || $optionsHelper->get('agreeHubTerms'))
-                    && $optionsHelper->get('bundleUpdateRequired')
-                ) {
+            function (Options $optionsHelper, Request $requestHelper, Update $updateHelper) {
+                if ($optionsHelper->get('bundleUpdateRequired')) {
                     $actions = $updateHelper->getRequiredActions();
                     if (!empty($actions['actions']) || !empty($actions['posts'])) {
                         $this->call('addPage');
 
                         return;
                     }
-
-                    $optionsHelper->set('bundleUpdateRequired', false);
                 }
 
                 // Bundle Update not required, or Actions was empty
                 if ($requestHelper->input('page') === $this->getSlug()) {
                     $optionsHelper->set('bundleUpdateRequired', false);
-                    wp_redirect(admin_url('admin.php?page=vcv-getting-started'));
+                    wp_redirect(admin_url('admin.php?page=vcv-about'));
                     exit;
                 }
             },
@@ -81,14 +73,13 @@ class UpdateBePage extends Container implements Module
             VCV_VERSION
         );
         wp_register_style(
-            'vcv:wpVcSettings:style',
-            $urlHelper->to('public/dist/wpVcSettings.bundle.css'),
+            'vcv:wpUpdate:style',
+            $urlHelper->to('public/dist/wpUpdate.bundle.css'),
             [],
             VCV_VERSION
         );
         wp_enqueue_script('vcv:wpUpdate:script');
-        wp_enqueue_style('vcv:wpVcSettings:style');
-        wp_enqueue_script('vcv:assets:runtime:script');
+        wp_enqueue_style('vcv:wpUpdate:style');
     }
 
     /**
@@ -101,18 +92,9 @@ class UpdateBePage extends Container implements Module
             'title' => __('Update', 'visualcomposer'),
             'showTab' => false,
             'layout' => 'standalone',
+            'controller' => $this,
             'capability' => 'edit_posts',
         ];
         $this->addSubmenuPage($page);
-    }
-
-    /**
-     * @param $response
-     *
-     * @return string
-     */
-    protected function afterRender($response)
-    {
-        return $response . implode('', vcfilter('vcv:update:extraOutput', []));
     }
 }

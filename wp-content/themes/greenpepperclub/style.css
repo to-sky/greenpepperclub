@@ -3225,6 +3225,60 @@ a:hover {
 
 
 /* Homepage */
+.fullheight-video-background{
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: -10;
+}
+
+.fullheight-video-background > div {
+  height: 100%;
+}
+
+.gp-site-title h1 {
+  font-size: 44px;
+  text-align: center;
+}
+
+.gp-site-subtitle {
+  font-size: 14px !important;
+}
+
+.gp-how-it-work-title h2 {
+  font-size: 36px;
+}
+
+@media only screen and (min-width: 768px) {
+  .gp-site-title h1 {
+    font-size: 68px;
+  }
+
+  .gp-site-subtitle {
+    font-size: 22px !important;
+  }
+
+  .gp-how-it-work-title h2 {
+    font-size: 52px;
+  }
+
+  .gp-how-it-work-text p span {
+    font-size: 14px !important;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .gp-how-it-work-text p span {
+    font-size: 16px !important;
+  }
+}
+
+.gp-how-it-work p {
+ margin-bottom: 0;
+}
+
 
 /* Grid with modal */
 #gridItems .gp-about-grid-item,

@@ -51,17 +51,10 @@ class PostType implements Helper
             if ($currentUserAccessHelper->wpAll([get_post_type_object($post->post_type)->cap->read, $post->ID])->get()
             ) {
                 if ($metaValue) {
-                    if (!is_string($metaValue)) {
-                        $results[ $post->ID ] = [
-                            'post' => $post,
-                            'value' => $metaValue,
-                        ];
-                    } else {
-                        if (!isset($results[ $metaValue ])) {
-                            $results[ $metaValue ] = [];
-                        }
-                        $results[ $metaValue ][] = $post;
+                    if (!isset($results[ $metaValue ])) {
+                        $results[ $metaValue ] = [];
                     }
+                    $results[ $metaValue ][] = $post;
                 } elseif (!$skipEmpty) {
                     if (!isset($results[''])) {
                         $results[''] = [];
@@ -82,14 +75,11 @@ class PostType implements Helper
      */
     public function get($id = null, $postType = '')
     {
-        if (!vcvenv('VCV_IS_ARCHIVE_TEMPLATE')) {
-            if (is_home()) {
-                $id = get_option('page_for_posts');
-            } elseif (is_front_page()) {
-                $id = get_option('page_on_front');
-            }
+        if (is_home()) {
+            $id = get_option('page_for_posts');
+        } elseif (is_front_page()) {
+            $id = get_option('page_on_front');
         }
-
 
         $post = get_post($id);
         // @codingStandardsIgnoreLine
@@ -152,11 +142,10 @@ class PostType implements Helper
         $currentUserAccessHelper = vchelper('AccessCurrentUser');
         $post = $this->get($id);
 
+        if ($currentUserAccessHelper->wpAll(
         // @codingStandardsIgnoreLine
-        $postTypeObject = get_post_type_object($post->post_type);
-        if (
-            $postTypeObject
-            && $currentUserAccessHelper->wpAll([$postTypeObject->cap->delete_posts, $post->ID])->get()
+            [get_post_type_object($post->post_type)->cap->delete_posts, $post->ID]
+        )->get()
         ) {
             if ($postType) {
                 // @codingStandardsIgnoreLine
@@ -164,34 +153,6 @@ class PostType implements Helper
             }
 
             return (bool)wp_delete_post($id);
-        }
-
-        return !$post;
-    }
-
-    /**
-     * @param $id
-     * @param string $postType
-     *
-     * @return bool
-     */
-    public function trash($id, $postType = '')
-    {
-        $currentUserAccessHelper = vchelper('AccessCurrentUser');
-        $post = $this->get($id);
-
-        // @codingStandardsIgnoreLine
-        $postTypeObject = get_post_type_object($post->post_type);
-        if (
-            $postTypeObject
-            && $currentUserAccessHelper->wpAll([$postTypeObject->cap->delete_posts, $post->ID])->get()
-        ) {
-            if ($postType) {
-                // @codingStandardsIgnoreLine
-                return $post && $post->post_type == $postType ? (bool)wp_trash_post($id) : !$post;
-            }
-
-            return (bool)wp_trash_post($id);
         }
 
         return !$post;
@@ -221,7 +182,6 @@ class PostType implements Helper
                 $wp_query->posts = [];
             }
             $wp_query->posts[0] = $post;
-            $wp_query->post = $post;
             $wp_query->queried_object_id = $post->ID;
             $wp_query->is_singular = true;
             $post_type = $post->post_type;
@@ -269,10 +229,6 @@ class PostType implements Helper
         $data['backendEditorUrl'] = str_replace('&classic-editor', '', get_edit_post_link($post->ID, 'url'));
         $data['adminDashboardUrl'] = self_admin_url('index.php');
         $data['adminDashboardPostTypeListUrl'] = self_admin_url('edit.php?post_type=' . get_post_type());
-        $data['vcvCustomPostType'] = 0;
-        if (substr(get_post_type(), 0, 4) === 'vcv_') {
-            $data['vcvCustomPostType'] = 1;
-        }
         // @codingStandardsIgnoreLine
         $data['viewText'] = sprintf(__('View %s', 'visualcomposer'), $post_type_object->labels->singular_name);
 
@@ -298,8 +254,9 @@ class PostType implements Helper
         if (is_array($postTypes) && !empty($postTypes)) {
             foreach ($postTypes as $postType) {
                 if (!in_array($postType, $excludedPostTypes, true)) {
+                    $label = ucfirst($postType);
                     $postTypesList[] = [
-                        'label' => $this->getPostLabel($postType),
+                        'label' => $label,
                         'value' => $postType,
                     ];
                 }
@@ -341,24 +298,5 @@ class PostType implements Helper
         }
 
         return $categories;
-    }
-
-    /**
-     * Get post plural label
-     *
-     * @param $postType
-     *
-     * @return mixed
-     */
-    public function getPostLabel($postType)
-    {
-        $postTypeObject = get_post_type_object($postType);
-        if (isset($postTypeObject)) {
-            $label = esc_html($postTypeObject->label);
-        } else {
-            $label = ucfirst($postType);
-        }
-
-        return $label;
     }
 }

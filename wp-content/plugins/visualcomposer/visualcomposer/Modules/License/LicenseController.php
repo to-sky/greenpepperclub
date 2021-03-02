@@ -10,12 +10,14 @@ if (!defined('ABSPATH')) {
 
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
+use VisualComposer\Helpers\Access\CurrentUser;
 use VisualComposer\Helpers\License;
-use VisualComposer\Helpers\Logger;
 use VisualComposer\Helpers\Notice;
 use VisualComposer\Helpers\Options;
 use VisualComposer\Helpers\Request;
+use VisualComposer\Helpers\Token;
 use VisualComposer\Helpers\Traits\EventsFilters;
+use VisualComposer\Helpers\Traits\WpFiltersActions;
 
 /**
  * Class LicenseController
@@ -24,151 +26,155 @@ use VisualComposer\Helpers\Traits\EventsFilters;
 class LicenseController extends Container implements Module
 {
     use EventsFilters;
+    use WpFiltersActions;
 
     /**
      * LicenseController constructor.
      */
     public function __construct()
     {
-        /** @see \VisualComposer\Modules\License\LicenseController::activate */
-        $this->addFilter('vcv:ajax:license:activate:adminNonce', 'activate');
-
-        /** @see \VisualComposer\Modules\License\LicenseController::refresh */
-        $this->addFilter('vcv:ajax:license:refresh:adminNonce', 'refresh');
-
-        /** @see \VisualComposer\Modules\License\LicenseController::unsetOptions */
+        $this->addFilter('vcv:ajax:license:activate:adminNonce', 'getLicenseKey');
+        $this->addFilter('vcv:ajax:license:deactivate:adminNonce', 'unsetLicenseKey');
         $this->addEvent('vcv:system:factory:reset', 'unsetOptions');
     }
 
     /**
-     * @param \VisualComposer\Helpers\Request $requestHelper
-     * @param \VisualComposer\Helpers\Logger $loggerHelper
-     * @param \VisualComposer\Helpers\License $licenseHelper
-     * @param \VisualComposer\Helpers\Options $optionsHelper
+     * Receive licence key and store it in DB
      *
-     * @return array|mixed|object
-     */
-    protected function activate(
-        Request $requestHelper,
-        Logger $loggerHelper,
-        License $licenseHelper,
-        Options $optionsHelper
-    ) {
-        $body = [
-            'url' => VCV_PLUGIN_URL,
-            'license' => $requestHelper->input('vcv-license-key'),
-        ];
-
-        if (defined('VCV_AUTHOR_API_KEY')) {
-            $body['author_api_key'] = VCV_AUTHOR_API_KEY;
-        }
-
-        $url = vchelper('Url')->query(vcvenv('VCV_ACTIVATE_LICENSE_URL'), $body);
-        $result = wp_remote_get(
-            $url,
-            [
-                'timeout' => 30,
-            ]
-        );
-
-        $resultBody = [];
-        if (is_array($result) && isset($result['body'])) {
-            $resultBody = json_decode($result['body'], true);
-        }
-
-        if ($resultBody && isset($resultBody['success'], $resultBody['error']) && !$resultBody['success']) {
-            $code = $resultBody['error'];
-            $message = $licenseHelper->licenseErrorCodes($code);
-            $loggerHelper->log(
-                $message,
-                [
-                    'result' => $body,
-                ]
-            );
-
-            return ['status' => false, 'response' => $resultBody];
-        }
-
-        if (!vcIsBadResponse($resultBody)) {
-            $licenseType = $resultBody['license_type'];
-            if ($licenseType !== 'free') {
-                $licenseHelper->setKey($requestHelper->input('vcv-license-key'));
-                $licenseHelper->setType($licenseType);
-                $licenseHelper->setExpirationDate(
-                    $resultBody['expires'] !== 'lifetime' ? strtotime($resultBody['expires']) : 'lifetime'
-                );
-                $licenseHelper->updateUsageDate(true);
-                $optionsHelper->deleteTransient('lastBundleUpdate');
-
-                return ['status' => true];
-            }
-
-            $message = $licenseHelper->licenseErrorCodes('item_name_mismatch');
-            $loggerHelper->log(
-                $message,
-                [
-                    'result' => $body,
-                ]
-            );
-
-            return ['status' => false, 'response' => $resultBody];
-        }
-
-        $loggerHelper->log(
-            esc_html__('Failed to activate the license, try again.', 'visualcomposer'),
-            [
-                'result' => $body,
-            ]
-        );
-
-        return ['status' => false];
-    }
-
-    /**
      * @param $response
-     * @param $payload
+     * @param \VisualComposer\Helpers\Request $requestHelper
+     * @param \VisualComposer\Helpers\Access\CurrentUser $currentUserHelper
      * @param \VisualComposer\Helpers\License $licenseHelper
-     *
+     * @param \VisualComposer\Helpers\Notice $noticeHelper
+     * @param Token $tokenHelper
      * @param \VisualComposer\Helpers\Options $optionsHelper
      *
      * @return mixed
      */
-    protected function refresh($response, $payload, License $licenseHelper, Options $optionsHelper)
-    {
-        $optionsHelper->deleteTransient('lastBundleUpdate');
-        $licenseHelper->refresh('vcv-license');
+    protected function getLicenseKey(
+        $response,
+        Request $requestHelper,
+        CurrentUser $currentUserHelper,
+        License $licenseHelper,
+        Notice $noticeHelper,
+        Token $tokenHelper,
+        Options $optionsHelper
+    ) {
+        if (!$currentUserHelper->wpAll('manage_options')->get()) {
+            return $response;
+        }
 
-        wp_redirect(admin_url('admin.php?page=vcv-license'));
+        if ($requestHelper->input('activate')) {
+            $token = $requestHelper->input('activate');
+
+            if ($licenseHelper->isValidToken($token)) {
+                if ($requestHelper->exists('type') && $requestHelper->input('type') === 'free') {
+                    $tokenHelper->setSiteAuthorized();
+                    $optionsHelper->deleteTransient('lastBundleUpdate');
+                    wp_redirect(admin_url('admin.php?page=vcv-update'));
+                    exit;
+                } else {
+                    $body = [
+                        'token' => $licenseHelper->getKeyToken(),
+                        'id' => get_site_url(),
+                        'hoster_id' => vcvenv('VCV_ENV_ADDONS_ID'),
+                        'domain' => get_site_url(),
+                        'url' => VCV_PLUGIN_URL,
+                    ];
+                    $url = vcvenv('VCV_LICENSE_ACTIVATE_FINISH_URL');
+                    $url = vchelper('Url')->query($url, $body);
+
+                    $result = wp_remote_get(
+                        $url,
+                        [
+                            'timeout' => 30,
+                        ]
+                    );
+
+                    if (!vcIsBadResponse($result)) {
+                        $result = json_decode($result['body'], true);
+                        $licenseHelper->setKey($result['license_key']);
+                        $tokenHelper->setSiteAuthorized();
+                        $noticeHelper->removeNotice('premium:deactivated');
+                        $optionsHelper->deleteTransient('lastBundleUpdate');
+                        wp_redirect(admin_url('admin.php?page=vcv-update'));
+                        exit;
+                    }
+                }
+            } else {
+                $noticeHelper->addNotice(
+                    'activation:failed',
+                    // TODO: Error texts
+                    __('Invalid token -> Failed licence activation - Invalid token', 'visualcomposer')
+                );
+            }
+        }
+
+        wp_redirect(admin_url('index.php'));
         exit;
     }
 
     /**
-     * @param \VisualComposer\Helpers\Options $optionsHelper
-     * @param \VisualComposer\Helpers\Notice $noticeHelper
+     * Receive licence key and store it in DB
      *
-     * @return bool
+     * @param $response
+     * @param \VisualComposer\Helpers\Request $requestHelper
+     * @param \VisualComposer\Helpers\Access\CurrentUser $currentUserHelper
+     * @param \VisualComposer\Helpers\License $licenseHelper
+     * @param \VisualComposer\Helpers\Options $optionsHelper
+     *
+     * @return mixed
      */
-    protected function unsetOptions(Options $optionsHelper, Notice $noticeHelper)
+    protected function unsetLicenseKey(
+        $response,
+        Request $requestHelper,
+        CurrentUser $currentUserHelper,
+        License $licenseHelper,
+        Options $optionsHelper
+    ) {
+        if (!$currentUserHelper->wpAll('manage_options')->get()) {
+            return $response;
+        }
+
+        if ($requestHelper->input('deactivate')) {
+            $token = $requestHelper->input('deactivate');
+
+            if ($licenseHelper->isValidToken($token)) {
+                $body = [
+                    'token' => $licenseHelper->getKeyToken(),
+                    'url' => VCV_PLUGIN_URL,
+                    'domain' => get_site_url(),
+                ];
+
+                $url = vcvenv('VCV_LICENSE_DEACTIVATE_FINISH_URL');
+                $url = vchelper('Url')->query($url, $body);
+
+                $result = wp_remote_get(
+                    $url,
+                    [
+                        'timeout' => 30,
+                    ]
+                );
+
+                if (!vcIsBadResponse($result)) {
+                    $licenseHelper->setKey('');
+                    $licenseHelper->setKeyToken('');
+                    $optionsHelper->deleteTransient('lastBundleUpdate');
+                    wp_redirect(admin_url('index.php'));
+                    exit;
+                }
+            }
+        }
+
+        wp_redirect(admin_url('index.php'));
+        exit;
+    }
+
+    protected function unsetOptions(Options $optionsHelper)
     {
-        $noticeHelper->removeNotice('premium:deactivated');
-        $noticeHelper->removeNotice('license:expiration');
-
         $optionsHelper
+            ->delete('license-key-token')
             ->delete('siteRegistered')
-            ->delete('siteId')
-            ->delete('siteSecret')
-            ->delete('siteAuthState')
-            ->deleteTransient('siteAuthToken')
-            ->deleteTransient('vcv:activation:request')
-            ->deleteTransient('vcv:hub:action:request')
-            ->delete('siteAuthRefreshToken')
-            ->delete('siteAuthTokenTtl')
-            ->delete('lastBundleUpdate')
-            ->delete('license-key')
-            ->delete('license-type')
-            ->delete('license-expiration')
-            ->delete('license-key-token');
-
-        return true;
+            ->delete('license-key');
     }
 }

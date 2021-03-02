@@ -57,8 +57,13 @@ class Controller extends Container implements Module
         $response = [
             'status' => true,
         ];
-        if ($currentUserAccessHelper->wpAll(['edit_posts'])->get()) {
-            $response['vcvGlobals'] = vcfilter('vcv:editor:variables', []);
+        if ($currentUserAccessHelper->wpAll(['activate_plugins'])->get()) {
+            $response['vcvGlobals'] = [
+                'VCV_HUB_GET_ELEMENTS' => $hubElements->getElements(false, false),
+                'VCV_HUB_GET_CATEGORIES' => $hubCategories->getCategories(),
+                'VCV_HUB_GET_GROUPS' => $hubGroups->getGroups(),
+                'VCV_GET_SHARED_ASSETS' => $assetsSharedHelper->getSharedAssets(),
+            ];
         }
 
         return $response;

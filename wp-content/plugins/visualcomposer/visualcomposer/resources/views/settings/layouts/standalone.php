@@ -5,28 +5,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$variables = vcfilter(
-    'vcv:wp:dashboard:variables',
-    [
-        [
-            'key' => 'VCV_SLUG',
-            'value' => $slug,
-            'type' => 'constant',
-        ],
-    ],
-    ['slug' => $slug]
-);
-if (is_array($variables)) {
-    foreach ($variables as $variable) {
-        if (is_array($variable) && isset($variable['key'], $variable['value'])) {
-            $type = isset($variable['type']) ? $variable['type'] : 'variable';
-            evcview('partials/variableTypes/' . $type, $variable);
-        }
-    }
-    unset($variable);
-}
-
+evcview('settings/partials/admin-nonce');
 ?>
+
+<script>
+  window.vcvAjaxUrl = '<?php echo vchelper('Url')->ajax(); ?>';
+  window.vcvAdminAjaxUrl = '<?php echo vchelper('Url')->adminAjax(); ?>';
+</script>
 <div class="wrap vcv-settings">
     <?php
     // @codingStandardsIgnoreLine

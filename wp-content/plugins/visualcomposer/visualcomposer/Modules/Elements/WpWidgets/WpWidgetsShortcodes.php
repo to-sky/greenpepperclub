@@ -69,9 +69,6 @@ class WpWidgetsShortcodes extends Container implements Module
         if (is_array($instance) && isset($instance['widget-form'])) {
             $instance = $instance['widget-form'][1];
         }
-        if (is_array($instance) && isset($instance['widget-rss'])) {
-            $instance = $instance['widget-rss'][1];
-        }
         $args = json_decode(rawurldecode($atts['args']), true);
         $output = $widgets->render($atts['key'], $args, $instance);
 

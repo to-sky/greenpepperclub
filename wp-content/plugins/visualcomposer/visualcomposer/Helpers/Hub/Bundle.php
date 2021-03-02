@@ -19,14 +19,14 @@ class Bundle implements Helper
         $this->bundlePath = VCV_PLUGIN_ASSETS_DIR_PATH . '/temp-bundle';
     }
 
-    public function requestBundleDownload($url)
+    public function requestBundleDownload()
     {
         $urlHelper = vchelper('Url');
         $fileHelper = vchelper('File');
         $downloadUrl = $urlHelper->query(
             sprintf(
                 '%s/download/bundle/lite?plugin=%s',
-                rtrim(vcvenv('VCV_HUB_URL'), '\//'),
+                vcvenv('VCV_HUB_URL'),
                 VCV_VERSION
             )
         );
@@ -42,7 +42,7 @@ class Bundle implements Helper
             $downloadUrl = $urlHelper->query(
                 sprintf(
                     '%s/download/json?plugin=%s',
-                    rtrim(vcvenv('VCV_HUB_URL'), '\//'),
+                    vcvenv('VCV_HUB_URL'),
                     VCV_VERSION
                 ),
                 $requestedData
@@ -51,7 +51,7 @@ class Bundle implements Helper
             $downloadUrl = $urlHelper->query(
                 sprintf(
                     '%s/download/json/lite?plugin=%s',
-                    rtrim(vcvenv('VCV_HUB_URL'), '\//'),
+                    vcvenv('VCV_HUB_URL'),
                     VCV_VERSION
                 ),
                 $requestedData
@@ -67,7 +67,7 @@ class Bundle implements Helper
         $downloadUrl = $urlHelper->query(
             sprintf(
                 '%s/download/element?plugin=%s',
-                rtrim(vcvenv('VCV_HUB_URL'), '\//'),
+                vcvenv('VCV_HUB_URL'),
                 VCV_VERSION
             ),
             $requestedData
@@ -82,7 +82,7 @@ class Bundle implements Helper
         $downloadUrl = $urlHelper->query(
             sprintf(
                 '%s/download/addon?plugin=%s',
-                rtrim(vcvenv('VCV_HUB_URL'), '\//'),
+                vcvenv('VCV_HUB_URL'),
                 VCV_VERSION
             ),
             $requestedData
@@ -97,7 +97,7 @@ class Bundle implements Helper
         $downloadUrl = $urlHelper->query(
             sprintf(
                 '%s/download/template?plugin=%s',
-                rtrim(vcvenv('VCV_HUB_URL'), '\//'),
+                vcvenv('VCV_HUB_URL'),
                 VCV_VERSION
             ),
             $requestedData
@@ -116,19 +116,12 @@ class Bundle implements Helper
 
     public function getTempBundleFolder($path = '')
     {
-        $bundleFolder = rtrim($this->bundlePath, '\//');
+        $bundleFolder = $this->bundlePath;
         if ($path) {
             $bundleFolder .= '/' . ltrim($path, '\//');
         }
 
         return $bundleFolder;
-    }
-
-    public function setTempBundleFolder($bundlePath)
-    {
-        $this->bundlePath = $bundlePath;
-
-        return $this->bundlePath;
     }
 
     public function readBundleJson($bundleJsonPath)
@@ -162,15 +155,12 @@ class Bundle implements Helper
             $result = json_decode($response['body'], true);
         } else {
             $messages = [];
-            $messages[] = __('Failed to read remote bundle JSON.', 'visualcomposer') . ' #10006';
+            $messages[] = __('Failed to read remote bundle json', 'visualcomposer') . ' #10006';
             if (is_array($response) && isset($response['body'])) {
                 // @codingStandardsIgnoreLine
-                $resultDetails = json_decode($response['body'], 1);
+                $resultDetails = @json_decode($result['body'], 1);
                 if (is_array($resultDetails) && isset($resultDetails['message'])) {
                     $messages[] = $resultDetails['message'] . ' #10026';
-                }
-                if (is_array($resultDetails) && isset($resultDetails['error'])) {
-                    $messages[] = $resultDetails['error'] . ' #10026_1';
                 }
             }
 
@@ -203,8 +193,7 @@ class Bundle implements Helper
         $requiredActions = [];
         if (isset($json['actions'])) {
             foreach ($json['actions'] as $key => $value) {
-                if (
-                    isset($value['action'])
+                if (isset($value['action'])
                     && !in_array(
                         $value['action'],
                         ['hubTeaser', 'hubTemplates', 'hubAddons']
@@ -323,8 +312,7 @@ class Bundle implements Helper
     ) {
         $optionsHelper = vchelper('Options');
         $downloadHelper = vchelper('HubDownload');
-        if (
-            isset($value['last_post_update']) && version_compare($value['last_post_update'], $previousVersion, '>')
+        if (isset($value['last_post_update']) && version_compare($value['last_post_update'], $previousVersion, '>')
         ) {
             $posts = vcfilter('vcv:hub:findUpdatePosts:' . $action, [], ['action' => $action]);
             if (!empty($posts) && is_array($posts) && is_array($needUpdatePost)) {
@@ -369,13 +357,13 @@ class Bundle implements Helper
             $result = json_decode(file_get_contents($response), true);
         } else {
             $messages = [];
-            $messages[] = __('Failed to read remote bundle JSON.', 'visualcomposer') . ' #10006';
+            $messages[] = __('Failed to read remote bundle json', 'visualcomposer') . ' #10006';
             if (is_wp_error($response)) {
                 /** @var \WP_Error $result */
                 $messages[] = implode('. ', $response->get_error_messages()) . ' #10007';
             } elseif (is_array($response) && isset($response['body'])) {
                 // @codingStandardsIgnoreLine
-                $resultDetails = json_decode($result['body'], 1);
+                $resultDetails = @json_decode($result['body'], 1);
                 if (is_array($resultDetails) && isset($resultDetails['message'])) {
                     $messages[] = $resultDetails['message'] . ' #10026';
                 }

@@ -32,6 +32,7 @@ class Image implements Helper
 
             $dynamic = false;
             if (vcvenv('VCV_JS_FT_DYNAMIC_FIELDS')) {
+                // TODO: Change key featured to more specific like featured_image
                 $isMatches = preg_match('(\sdata-dynamic=["|\'](.*?)["|\'])', $matches[1], $matchesDynamic);
                 if ($isMatches) {
                     $dynamic = $matchesDynamic[1];
@@ -84,8 +85,6 @@ class Image implements Helper
         $image = wp_get_image_editor($imageData['path']);
         $srcset = [];
         if (!$dynamic && !is_wp_error($image) && $width && $height) {
-            $originalSizes = $image->get_size();
-            $originalWidth = $originalSizes['width'];
             $image->resize($width, $height, true);
 
             $uploadDir = wp_upload_dir();
@@ -97,22 +96,12 @@ class Image implements Helper
                 $src = $uploadDir['url'] . '/' . $newfile['file'];
             }
 
-            $resizedWidth = $width;
-            $retinaImage = false;
-            $sizes = [
-                '320w' => 320,
-                '480w' => 480,
-                '800w' => 800,
-            ];
-            $sizes[ (int)$resizedWidth . 'w' ] = (int)$resizedWidth;
-            if ($resizedWidth * 2 <= $originalWidth) {
-                $retinaImage = $resizedWidth * 2;
-                $sizes['2x'] = (int)$retinaImage;
-            }
-            $aspectRatio = $resizedWidth / $height;
+            $originalWidth = $width;
+            $sizes = [320, 480, 800, (int)$originalWidth];
+            $aspectRatio = $originalWidth / $height;
 
-            foreach ($sizes as $widthAttr => $width) {
-                if ($width > $resizedWidth && !$retinaImage) {
+            foreach ($sizes as $width) {
+                if ($width > $originalWidth) {
                     continue;
                 }
                 $image = wp_get_image_editor($imageData['path']);
@@ -124,11 +113,11 @@ class Image implements Helper
                     . '.' . $imageData['extension'];
                 $newfile = $image->save($newPath);
 
-                $srcset[] = $uploadDir['url'] . '/' . $newfile['file'] . ' ' . $widthAttr;
+                array_push($srcset, $uploadDir['url'] . '/' . $newfile['file'] . ' ' . $width . 'w');
             }
         }
 
-        $newSrc = ' src="' . set_url_scheme($src) . '"';
+        $newSrc = 'src="' . set_url_scheme($src) . '"';
         if (!empty($srcset) && !$dynamic) {
             $newSrc .= ' srcset="' . implode(',', $srcset) . '"';
         }

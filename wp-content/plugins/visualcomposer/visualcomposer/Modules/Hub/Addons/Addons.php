@@ -28,8 +28,7 @@ class Addons extends Container implements Module
      */
     public function __construct()
     {
-        $this->addFilter('vcv:editor:variables', 'addAddonsVariables');
-        $this->addFilter('vcv:hub:variables', 'addAddonsVariables');
+        $this->addFilter('vcv:editor:variables', 'outputAddons');
     }
 
     /**
@@ -39,7 +38,7 @@ class Addons extends Container implements Module
      *
      * @return array
      */
-    protected function addAddonsVariables($variables, $payload, HubAddons $hubHelper)
+    protected function outputAddons($variables, $payload, HubAddons $hubHelper)
     {
         $key = 'VCV_HUB_GET_ADDONS';
 

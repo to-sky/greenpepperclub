@@ -28,24 +28,29 @@ class Categories extends Container implements Module
      */
     public function __construct()
     {
-        $this->addFilter('vcv:editor:variables', 'addVariables');
+        $this->addFilter('vcv:frontend:body:extraOutput', 'outputCategories');
     }
 
     /**
-     * @param $variables
+     * @param $response
      * @param $payload
      * @param HubCategories $hubHelper
      *
      * @return array
      */
-    protected function addVariables($variables, $payload, HubCategories $hubHelper)
+    protected function outputCategories($response, $payload, HubCategories $hubHelper)
     {
-        $variables[] = [
-            'key' => 'VCV_HUB_GET_CATEGORIES',
-            'value' => $hubHelper->getCategories(),
-            'type' => 'constant',
-        ];
-
-        return $variables;
+        return array_merge(
+            $response,
+            [
+                vcview(
+                    'partials/constant-script',
+                    [
+                        'key' => 'VCV_HUB_GET_CATEGORIES',
+                        'value' => $hubHelper->getCategories(),
+                    ]
+                ),
+            ]
+        );
     }
 }

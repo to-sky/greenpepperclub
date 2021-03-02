@@ -32,7 +32,7 @@ class PostUpdateAction extends Container implements Module
         $vcvPosts = new WP_Query(
             [
                 'post_type' => get_post_types(['public' => true], 'names'),
-                'post_status' => ['publish', 'pending', 'draft', 'auto-draft'],
+                'post_status' => ['publish', 'pending', 'draft', 'auto-draft'], // TODO: future, private
                 'posts_per_page' => -1,
                 'meta_key' => VCV_PREFIX . 'pageContent',
                 'meta_value' => rawurlencode('"tag":"' . str_replace('element/', '', $event) . '"'),
@@ -43,8 +43,11 @@ class PostUpdateAction extends Container implements Module
         while ($vcvPosts->have_posts()) {
             $vcvPosts->the_post();
             $postId = get_the_ID();
-            $postTypeObject = get_post_type_object($vcvPosts->post->post_type);
-            if ($currentUserAccessHelper->wpAll([$postTypeObject->cap->edit_posts, $postId])->get()) {
+            if ($currentUserAccessHelper->wpAll(
+            // @codingStandardsIgnoreLine
+                [get_post_type_object($vcvPosts->post->post_type)->cap->edit_posts, $postId]
+            )->get()
+            ) {
                 $posts[] = $postId;
             }
         }
@@ -57,12 +60,6 @@ class PostUpdateAction extends Container implements Module
     {
         $optionsHelper = vchelper('Options');
         $updatePosts = $optionsHelper->get('hubAction:updatePosts', []);
-        if (!is_array($updatePosts)) {
-            $updatePosts = [];
-            $optionsHelper->set('hubAction:updatePosts', $updatePosts);
-
-            return true;
-        }
         $key = array_search($id, $updatePosts);
         if ($key !== false) {
             unset($updatePosts[ $key ]);
@@ -76,7 +73,7 @@ class PostUpdateAction extends Container implements Module
     protected function ajaxSkipPost($response, $payload, Request $requestHelper)
     {
         if ($requestHelper->exists('vcv-source-id')) {
-            $this->removePostFromUpdatesList((int)$requestHelper->input('vcv-source-id'));
+            $this->removePostFromUpdatesList(intval($requestHelper->input('vcv-source-id')));
 
             return ['status' => true];
         }

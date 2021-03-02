@@ -10,84 +10,57 @@ if (!defined('ABSPATH')) {
 
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
+use VisualComposer\Helpers\Assets;
 use VisualComposer\Helpers\Traits\EventsFilters;
-use VisualComposer\Helpers\Traits\WpFiltersActions;
 use VisualComposer\Helpers\Url;
 
-/**
- * Class BundleController
- * @package VisualComposer\Modules\Editors\Frontend
- */
 class BundleController extends Container implements Module
 {
-    use WpFiltersActions;
     use EventsFilters;
 
-    /**
-     * BundleController constructor.
-     */
     public function __construct()
     {
-        /** @see \VisualComposer\Modules\Editors\Frontend\BundleController::registerEditorAssets */
-        $this->wpAddAction('init', 'registerEditorAssets', 10);
-
         /** @see \VisualComposer\Modules\Editors\Frontend\BundleController::addHeadBundleStyle */
-        $this->addEvent('vcv:frontend:render', 'addHeadBundleStyle');
+        $this->addFilter('vcv:frontend:head:extraOutput', 'addHeadBundleStyle');
 
         /** @see \VisualComposer\Modules\Editors\Frontend\BundleController::addFooterBundleScript */
-        $this->addEvent('vcv:frontend:render:footer', 'addFooterBundleScript');
-        $this->addEvent('vcv:frontend:render:footer vcv:frontend:postUpdate:render:footer', 'addFooterRuntimeScript');
+        $this->addFilter('vcv:frontend:footer:extraOutput', 'addFooterBundleScript');
     }
 
-    /**
-     * @param \VisualComposer\Helpers\Url $urlHelper
-     */
-    protected function registerEditorAssets(Url $urlHelper)
-    {
-        wp_register_script(
-            'vcv:editors:frontend:script',
-            $urlHelper->to('public/dist/wp.bundle.js'),
-            [
-                'vcv:assets:vendor:script',
-            ],
-            VCV_VERSION,
-            true
-        );
-        wp_register_style(
-            'vcv:editors:frontend:style',
-            $urlHelper->to('public/dist/wp.bundle.css'),
-            [],
-            VCV_VERSION
-        );
-    }
-
-    /**
-     * Enqueue styles for frontend editor
-     */
-    protected function addHeadBundleStyle()
+    protected function addHeadBundleStyle($response, $payload, Url $urlHelper, Assets $assetsHelper)
     {
         if (vcfilter('vcv:frontend:enqueue:bundle', true)) {
-            wp_enqueue_style('vcv:editors:frontend:style');
+            // Add CSS
+            $response = array_merge(
+                (array)$response,
+                [
+                    sprintf(
+                        '<link id="vcv-style-fe-bundle" 
+rel="stylesheet" property="stylesheet" type="text/css" href="%s" />',
+                        $urlHelper->to('public/dist/wp.bundle.css?v=' . VCV_VERSION)
+                    ),
+                ]
+            );
         }
+
+        return $response;
     }
 
-    /**
-     * Enqueue scripts for frontend editor
-     */
-    protected function addFooterBundleScript()
+    protected function addFooterBundleScript($response, $payload, Url $urlHelper, Assets $assetsHelper)
     {
         if (vcfilter('vcv:frontend:enqueue:bundle', true)) {
-            wp_enqueue_script('vcv:editors:frontend:script');
-            // Runtime script must be present on the page
-            wp_enqueue_script('vcv:assets:runtime:script');
+            // Add JS
+            $response = array_merge(
+                (array)$response,
+                [
+                    sprintf(
+                        '<script id="vcv-script-fe-bundle" type="text/javascript" src="%s"></script>',
+                        $urlHelper->to('public/dist/wp.bundle.js?v=' . VCV_VERSION)
+                    ),
+                ]
+            );
         }
-    }
 
-    /**
-     * Add runtime script
-     */
-    protected function addFooterRuntimeScript()
-    {
-        wp_enqueue_script('vcv:assets:runtime:script');
+        return $response;
     }
 }

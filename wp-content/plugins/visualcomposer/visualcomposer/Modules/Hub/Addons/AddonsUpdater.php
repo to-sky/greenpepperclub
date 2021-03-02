@@ -11,7 +11,6 @@ if (!defined('ABSPATH')) {
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\Differ;
-use VisualComposer\Helpers\Hub\Addons as HubAddons;
 use VisualComposer\Helpers\Traits\EventsFilters;
 
 class AddonsUpdater extends Container implements Module
@@ -23,7 +22,7 @@ class AddonsUpdater extends Container implements Module
         $this->addFilter('vcv:hub:download:bundle vcv:hub:download:bundle:addon/*', 'updateAddons');
     }
 
-    protected function updateAddons($response, $payload, HubAddons $addonsHelper)
+    protected function updateAddons($response, $payload)
     {
         if (vcvenv('VCV_ENV_DEV_ADDONS')) {
             return ['status' => true];
@@ -66,38 +65,9 @@ class AddonsUpdater extends Container implements Module
                     );
                 }
             }
-            $addonsData = $this->updateAddonImages($addonsHelper, $addonsData);
-
             $response['addons'][] = $addonsData;
         }
 
         return $response;
-    }
-
-    /**
-     * @param \VisualComposer\Helpers\Hub\Addons $addonsHelper
-     * @param $addonsData
-     *
-     * @return mixed
-     */
-    protected function updateAddonImages(HubAddons $addonsHelper, $addonsData)
-    {
-        if (isset($addonsData['settings']['metaThumbnailUrl'])) {
-            $addonsData['settings']['metaThumbnailUrl'] = $addonsHelper->getAddonUrl(
-                $addonsData['settings']['metaThumbnailUrl']
-            );
-        }
-        if (isset($addonsData['settings']['metaPreviewUrl'])) {
-            $addonsData['settings']['metaPreviewUrl'] = $addonsHelper->getAddonUrl(
-                $addonsData['settings']['metaPreviewUrl']
-            );
-        }
-        if (isset($addonsData['settings']['metaAddonImageUrl'])) {
-            $addonsData['settings']['metaAddonImageUrl'] = $addonsHelper->getAddonUrl(
-                $addonsData['settings']['metaAddonImageUrl']
-            );
-        }
-
-        return $addonsData;
     }
 }

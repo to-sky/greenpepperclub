@@ -66,24 +66,22 @@ class SlugController extends Container implements Module
         $postTitle = $requestHelper->input('vcv-page-title');
         $slug = $postName ? $postName : $postTitle;
         if (is_object($post)) {
-            if (
+            // @codingStandardsIgnoreLine
+            if (!$post->post_name
                 // @codingStandardsIgnoreLine
-                !$post->post_name
-                // @codingStandardsIgnoreLine
-                || ($postName !== $post->post_name && get_option('permalink_structure'))
-            ) {
-                $postName = wp_unique_post_slug(
+                || ($postName !== $post->post_name
+                    && get_option(
+                        'permalink_structure'
+                    ))) {
+                // @codingStandardsIgnoreStart
+                $postName = $post->post_name = wp_unique_post_slug(
                     sanitize_title($slug),
                     $sourceId,
                     $this->getPostStatus($post),
-                    // @codingStandardsIgnoreLine
                     $post->post_type,
-                    // @codingStandardsIgnoreLine
                     $post->post_parent
                 );
-                // Update post name
-                // @codingStandardsIgnoreLine
-                $post->post_name = $postName;
+                // @codingStandardsIgnoreEnd
                 $response['permalinkHtml'] = get_sample_permalink_html($sourceId, $postTitle, $postName);
 
                 $nonce = wp_create_nonce('post_preview_' . $sourceId);
@@ -91,6 +89,13 @@ class SlugController extends Container implements Module
                 $response['permalinkHtml'] = get_sample_permalink_html($sourceId, $postTitle, $postName);
 
                 wp_update_post($post);
+
+                $response['postData']['previewUrl'] = $previewUrl;
+                $permalink = get_permalink($sourceId);
+                if (!$permalink) {
+                    $permalink = '';
+                }
+                $response['postData']['permalink'] = $permalink;
             }
         }
 

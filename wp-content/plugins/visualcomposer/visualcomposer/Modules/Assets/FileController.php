@@ -60,17 +60,20 @@ class FileController extends Container implements Module
      * @param $response
      * @param $payload
      * @param \VisualComposer\Helpers\Assets $assetsHelper
+     *
      * @param \VisualComposer\Helpers\File $fileHelper
+     *
+     * @param \VisualComposer\Helpers\Options $optionsHelper
      *
      * @return bool|string URL to generated bundle.
      * @throws \ReflectionException
-     * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
      */
     protected function generateSourceCssFile(
         $response,
         $payload,
         Assets $assetsHelper,
-        File $fileHelper
+        File $fileHelper,
+        Options $optionsHelper
     ) {
         $globalElementsBaseCss = [];
         $globalElementsMixinsCss = [];
@@ -91,16 +94,16 @@ class FileController extends Container implements Module
                 }
             }
         }
+        $globalCss = $optionsHelper->get('globalElementsCss', '');
 
         $globalElementsAttributesCssContent = join('', array_values($globalElementsAttributesCss));
         $globalElementsBaseCssContent = join('', array_values($globalElementsBaseCss));
         $globalElementsMixinsCssContent = join('', array_values($globalElementsMixinsCss));
-        $sourceCssContent = $globalElementsBaseCssContent . $globalElementsMixinsCssContent
+        $sourceCssContent = $globalElementsBaseCssContent . $globalElementsMixinsCssContent . $globalCss
             . $globalElementsAttributesCssContent . $sourceCss;
 
         $sourceChecksum = wp_hash($sourceCssContent);
         $oldSourceChecksum = get_post_meta($sourceId, '_' . VCV_PREFIX . 'sourceChecksum', true);
-
         $sourceCssName = $sourceChecksum . '.source.css';
 
         $bundleUrl = $assetsHelper->updateBundleFile(
@@ -127,23 +130,17 @@ class FileController extends Container implements Module
      * @param \VisualComposer\Helpers\PostType $postTypeHelper
      *
      * @throws \ReflectionException
-     * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
      */
-    protected function checkGenerateSourceCss(PostType $postTypeHelper, Options $optionsHelper)
+    protected function checkGenerateSourceCss(PostType $postTypeHelper)
     {
         $sourcePost = $postTypeHelper->get();
         if ($sourcePost && $sourcePost->ID) {
-            $postSourceCssResetInitiated = get_post_meta(
-                $sourcePost->ID,
-                '_' . VCV_PREFIX . 'postSourceCssResetInitiated',
-                true
-            );
-            $settingsResetInitiated = $optionsHelper->get('settingsResetInitiated');
-            $isResetInitiated = $settingsResetInitiated
-                && $settingsResetInitiated >= $postSourceCssResetInitiated
-                //@codingStandardsIgnoreLine
-                && $settingsResetInitiated >= strtotime($sourcePost->post_date);
-            if ($isResetInitiated) {
+            if (!get_post_meta($sourcePost->ID, VCV_PREFIX . 'globalElementsCssDataMigration', true)
+                && get_post_meta(
+                    $sourcePost->ID,
+                    VCV_PREFIX . 'pageContent',
+                    true
+                )) {
                 /** @see \VisualComposer\Modules\Assets\FileController::generateSourceCssFile */
                 $this->call(
                     'generateSourceCssFile',
@@ -154,7 +151,7 @@ class FileController extends Container implements Module
                         ],
                     ]
                 );
-                update_post_meta($sourcePost->ID, '_' . VCV_PREFIX . 'postSourceCssResetInitiated', time());
+                update_post_meta($sourcePost->ID, VCV_PREFIX . 'globalElementsCssDataMigration', true);
             }
         }
     }
@@ -165,28 +162,8 @@ class FileController extends Container implements Module
         $assetsHelper->deleteAssetsBundles($extension);
 
         $sourceChecksum = get_post_meta($sourceId, '_' . VCV_PREFIX . 'sourceChecksum', true);
-        $checksumArgs = [
-            'meta_key' => '_' . VCV_PREFIX . 'sourceChecksum',
-            'meta_value' => $sourceChecksum,
-            'post_type' => 'any',
-            'post_status' => 'any',
-        ];
-        $checksumQuery = new WP_Query($checksumArgs);
-        //@codingStandardsIgnoreLine
-        $postCount = $checksumQuery->post_count;
-        if ($postCount === 1) { // Do not remove if this post is not match with deleting id
-            $post = $checksumQuery->post; // Fetch the post that is using that checksum
-            $postID = $post->ID;
-            if ($postID !== $sourceId) {
-                return true;
-            } else {
-                $extension = $sourceChecksum . '.source.css';
-                $assetsHelper->deleteAssetsBundles($extension);
-            }
-        } elseif ($postCount < 1) {
-            $extension = $sourceChecksum . '.source.css';
-            $assetsHelper->deleteAssetsBundles($extension);
-        }
+        $extension = $sourceChecksum . '.source.css';
+        $assetsHelper->deleteAssetsBundles($extension);
 
         return true;
     }

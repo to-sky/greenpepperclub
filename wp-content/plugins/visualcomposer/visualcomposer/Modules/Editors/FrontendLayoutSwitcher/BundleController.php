@@ -52,12 +52,7 @@ class BundleController extends Container implements Module
             } else {
                 $editor = $currentEditor;
             }
-            echo sprintf(
-                '<input type="hidden" name="vcv-be-editor" id="vcv-be-editor" value="%s">',
-                esc_attr(
-                    vcfilter('vcv:editors:frontendLayoutSwitcher:currentEditor', $editor)
-                )
-            );
+            echo '<input type="hidden" name="vcv-be-editor" id="vcv-be-editor" value="' . esc_attr(vcfilter('vcv:editors:frontendLayoutSwitcher:currentEditor', $editor)) . '">';
         }
     }
 
@@ -67,12 +62,9 @@ class BundleController extends Container implements Module
         EditorPostType $editorPostTypeHelper
     ) {
         $screen = get_current_screen();
-        if (
-            // @codingStandardsIgnoreLine
-            $screen->post_type === get_post_type()
-            && $editorPostTypeHelper->isEditorEnabled(get_post_type())
-            && !$frontendHelper->isFrontend()
-        ) {
+        // @codingStandardsIgnoreLine
+        if ($screen->post_type === get_post_type() && $editorPostTypeHelper->isEditorEnabled(get_post_type())
+            && !$frontendHelper->isFrontend()) {
             // Add CSS
             wp_enqueue_style(
                 'vcv:editors:backendswitcher:style',
@@ -86,27 +78,42 @@ class BundleController extends Container implements Module
     protected function addBundleScript(
         Url $urlHelper,
         Frontend $frontendHelper,
-        EditorPostType $editorPostTypeHelper
+        EditorPostType $editorPostTypeHelper,
+        Request $requestHelper
     ) {
         $screen = get_current_screen();
-        if (
-            // @codingStandardsIgnoreLine
-            $screen->post_type === get_post_type()
-            && !$frontendHelper->isFrontend()
-            && $editorPostTypeHelper->isEditorEnabled(get_post_type())
-        ) {
-            wp_register_script(
+        // @codingStandardsIgnoreLine
+        if ($screen->post_type === get_post_type() && $editorPostTypeHelper->isEditorEnabled(get_post_type())
+            && !$frontendHelper->isFrontend()) {
+            wp_enqueue_script(
                 'vcv:editors:backendswitcher:script',
                 $urlHelper->to('public/dist/wpbackendswitch.bundle.js'),
                 ['vcv:assets:vendor:script'],
                 VCV_VERSION
             );
-            wp_enqueue_script('vcv:editors:backendswitcher:script');
 
             // Add JS
             $scriptBody = sprintf('window.vcvFrontendEditorLink = "%s";', $frontendHelper->getFrontendUrl());
             wp_add_inline_script('vcv:editors:backendswitcher:script', $scriptBody, 'before');
-            wp_enqueue_script('vcv:assets:runtime:script');
+            // Disable TinyMCE to avoid markup break, empty tags removal and etc VC-516
+            $savedEditor = get_post_meta(get_the_ID(), VCV_PREFIX . 'be-editor', true);
+            if ($savedEditor !== 'classic' && !$requestHelper->exists('classic-editor')
+                && !(method_exists($screen, 'is_block_editor')
+                    && $screen->is_block_editor())) {
+                // Not Block editor, apply only in classic-mode
+                add_filter(
+                    'user_can_richedit',
+                    function ($result) {
+                        if (did_action('media_buttons')) {
+                            // Prevent another tinymce disabling (ACF fields)
+                            return $result;
+                        }
+
+                        return false;
+                    },
+                    50
+                );
+            }
         }
     }
 }

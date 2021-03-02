@@ -12,7 +12,7 @@ use VisualComposer\Framework\Illuminate\Support\Helper;
 
 /**
  * Helper for working with media content
- * Class WpMedia.
+ * Class Url.
  * @codingStandardsIgnoreFile
  * @codeCoverageIgnore
  */

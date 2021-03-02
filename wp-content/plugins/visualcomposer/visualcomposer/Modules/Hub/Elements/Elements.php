@@ -37,8 +37,8 @@ class Elements extends Container implements Module
             'vcv:frontend:head:extraOutput vcv:update:extraOutput',
             'outputWebpackBc'
         );
-        $this->addFilter('vcv:frontend:footer:extraOutput', 'outputElementsBundle', 15); // more than addons
-        $this->addFilter('vcv:editor:variables vcv:wp:dashboard:variables', 'addVariables');
+        $this->addFilter('vcv:frontend:head:extraOutput', 'outputElements');
+        $this->addFilter('vcv:frontend:footer:extraOutput', 'outputElementsBundle', 3);
     }
 
     /**
@@ -84,26 +84,26 @@ SCRIPT
     }
 
     /**
-     * @param $variables
+     * @param $response
      * @param $payload
      * @param HubElements $hubHelper
      *
      * @return array
      */
-    protected function addVariables($variables, $payload, HubElements $hubHelper)
+    protected function outputElements($response, $payload, HubElements $hubHelper)
     {
-        if (isset($payload['slug']) && in_array($payload['slug'], ['vcv-update', 'vcv-update-fe'], true)) {
-            // In case if loaded for post-update actions
-            return $variables;
-        }
-
-        $variables[] = [
-            'key' => 'VCV_HUB_GET_ELEMENTS',
-            'value' => $hubHelper->getElements(false, false),
-            'type' => 'constant',
-        ];
-
-        return $variables;
+        return array_merge(
+            $response,
+            [
+                vcview(
+                    'partials/constant-script',
+                    [
+                        'key' => 'VCV_HUB_GET_ELEMENTS',
+                        'value' => $hubHelper->getElements(false, false),
+                    ]
+                ),
+            ]
+        );
     }
 
     /**

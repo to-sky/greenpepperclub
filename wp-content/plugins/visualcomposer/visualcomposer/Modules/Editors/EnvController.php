@@ -12,38 +12,21 @@ use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\Traits\EventsFilters;
 
-/**
- * Class EnvController
- * @package VisualComposer\Modules\Editors
- */
 class EnvController extends Container implements Module
 {
     use EventsFilters;
 
-    /**
-     * EnvController constructor.
-     */
     public function __construct()
     {
-        $this->addFilter('vcv:editor:variables vcv:wp:dashboard:variables', 'addEnvVariables');
+        $this->addFilter('vcv:editor:variables', 'outputEnv');
     }
 
-    /**
-     * @param $variables
-     *
-     * @return array
-     */
-    protected function addEnvVariables($variables)
+    protected function outputEnv($variables)
     {
         $variables[] = [
             'type' => 'constant',
             'key' => 'VCV_ENV',
             'value' => \VcvEnv::all(),
-        ];
-        $variables[] = [
-            'type' => 'constant',
-            'key' => 'VCV_PLUGIN_URL',
-            'value' => VCV_PLUGIN_URL,
         ];
         $variables[] = [
             'type' => 'constant',

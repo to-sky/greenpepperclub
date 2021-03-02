@@ -11,22 +11,14 @@ if (!defined('ABSPATH')) {
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\Hub\Update;
-use VisualComposer\Helpers\License;
 use VisualComposer\Helpers\Options;
 use VisualComposer\Helpers\Traits\EventsFilters;
 use VisualComposer\Helpers\Url;
 
-/**
- * Class UpdateFePage
- * @package VisualComposer\Modules\Hub\Pages
- */
 class UpdateFePage extends Container implements Module
 {
     use EventsFilters;
 
-    /**
-     * UpdateFePage constructor.
-     */
     public function __construct()
     {
         $this->addFilter('vcv:editors:frontend:render', 'setUpdatingViewFe', -1);
@@ -37,26 +29,23 @@ class UpdateFePage extends Container implements Module
      * @param $response
      * @param \VisualComposer\Helpers\Options $optionsHelper
      * @param \VisualComposer\Helpers\Hub\Update $updateHelper
-     * @param \VisualComposer\Helpers\License $licenseHelper
      *
      * @return mixed
      * @throws \ReflectionException
      */
-    protected function setUpdatingViewFe(
-        $response,
-        Options $optionsHelper,
-        Update $updateHelper,
-        License $licenseHelper
-    ) {
-        if (
-            ($licenseHelper->isPremiumActivated() || $optionsHelper->get('agreeHubTerms'))
-            && $optionsHelper->get('bundleUpdateRequired')
-        ) {
+    protected function setUpdatingViewFe($response, Options $optionsHelper, Update $updateHelper)
+    {
+        if ($optionsHelper->get('bundleUpdateRequired')) {
             $requiredActions = $updateHelper->getRequiredActions();
             if (!empty($requiredActions['actions']) || !empty($requiredActions['posts'])) {
-                $content = implode('', vcfilter('vcv:update:extraOutput', []));
+                $content = vcview(
+                    'license/layout',
+                    [
+                        'slug' => 'vcv-update-fe',
+                    ]
+                );
                 vcvdie(
-                    vcview('editor/frontend/fe-update-wrapper', ['content' => $content, 'sourceId' => get_the_ID()])
+                    vcview('license/fe-update-wrapper', ['content' => $content])
                 );
             } else {
                 $optionsHelper->set('bundleUpdateRequired', false);
@@ -66,13 +55,6 @@ class UpdateFePage extends Container implements Module
         return $response;
     }
 
-    /**
-     * @param $response
-     * @param $payload
-     * @param \VisualComposer\Helpers\Url $urlHelper
-     *
-     * @return array
-     */
     protected function addUpdateAssets($response, $payload, Url $urlHelper)
     {
         // Add Vendor JS
@@ -82,7 +64,7 @@ class UpdateFePage extends Container implements Module
                 sprintf(
                     '<link rel="stylesheet" href="%s"></link>',
                     $urlHelper->to(
-                        'public/dist/wpVcSettings.bundle.css?v=' . VCV_VERSION
+                        'public/dist/wpUpdate.bundle.css?v=' . VCV_VERSION
                     )
                 ),
                 sprintf(

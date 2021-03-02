@@ -15,185 +15,71 @@ class Groups implements Helper
     public function getGroups()
     {
         return [
+            'All' => [
+                'title' => 'All',
+                'metaOrder' => 1,
+                'categories' => true,
+            ],
             'Basic' => [
                 'title' => 'Basic',
                 'categories' => [
                     'Row',
+                    'Column',
+                    'Section',
                     'Text block',
-                    // 'Single image',
-                    'Empty Space',
-                    'Feature',
-                    'Feature section',
-                    'Hero section',
-                    // BC:
-                    'Basic Button',
-                    'Outline Button',
-                    'WordPress Basic',
-                    'Widgetized Sidebar',
-                    'Basic Call To Action',
-                    'FAQ Toggle',
-                    'Separator',
-                    'Social Profile Icons',
-                    'Misc Basic',
-                    'Simple Image Slider',
-                    'Message Box Basic',
-                    'Social Videos',
-                ],
-                'elements' => [
-                    'basicButton',
-                    'outlineButton',
-                    'singleImage',
-                    'shortcode',
-                    'wpWidgetsCustom',
-                    'wpWidgetsDefault',
-                    'widgetizedSidebar',
-                    'callToAction',
-                    'faqToggle',
-                    'separator',
-                    'socialProfileIcons',
-                    'rawHtml',
-                    'rawJs',
-                    'globalTemplate',
-                    'simpleContactForm',
-                    'basicMenu',
-                    'icon',
-                    'imageGallery',
-                    'imageMasonryGallery',
-                    'simpleImageSlider',
-                    'messageBox',
-                    'youtubePlayer',
-                    'vimeoPlayer',
+                    'Single image',
+                    'Button',
                 ],
             ],
             'Media' => [
                 'title' => 'Media',
                 'categories' => [
-                    'Single image',
                     'Image gallery',
-                    'Videos',
-                    // BC:
-                    'Banner Element',
-                    'Giphy',
-                    'Images',
-                    'Instagram Image',
-                    'Flip Box',
-                    'Icon Hover Box',
-                    'Tall Hover Box',
-                    'Image Masonry Gallery',
                     'Image sliders',
-                    'Multiple Image Collage',
-                    'Simple Image Slider',
-                    'Image Galleries',
-                    'Timeline Slideshow',
-                    'Social Videos',
+                    'Single image',
+                    'Videos',
                 ],
-                'elements' => [
-                    'bannerElement',
-                    'instagramImage',
-                    'flipBox',
-                    'iconHoverBox',
-                    'tallHoverBox',
-                    'simpleImageSlider',
-                    'timelineSlideshow',
-                ],
-            ],
-            'Buttons' => [
-                'title' => 'Buttons',
-                'categories' => [
-                    'Button',
-                    // BC:
-                    'Basic Button',
-                    'Buttons',
-                    'Button Group',
-                    'Outline Button',
-                ],
-                'elements' => [],
-            ],
-            'E-Commerce' => [
-                'title' => 'E-Commerce',
-                'categories' => [
-                    'WooCommerce',
-                    'Pricing table',
-                ],
-                'elements' => [],
             ],
             'Containers' => [
                 'title' => 'Containers',
                 'categories' => [
-                    'Row',
-                    'Column',
-                    'Section',
-                    'Accordions',
                     'Tabs',
+                    'Tours',
+                    'Accordions',
+                    'Row',
+                    'Section',
                 ],
-                'elements' => [],
             ],
             'Social' => [
                 'title' => 'Social',
+                'categories' => ['Social'],
+            ],
+            'Wordpress' => [
+                'title' => 'Wordpress',
+                'categories' => ['Wordpress'],
+            ],
+            'Content' => [
+                'title' => 'Content',
                 'categories' => [
+                    'Hero section',
+                    'Icon',
+                    'Single image',
+                    'Text Block',
+                    'Feature',
                     'Maps',
-                    'Social',
-                    // BC:
-                    'Add To Any Share Buttons',
-                    'Instagram Image',
-                    'Social Profile Icons',
-                ],
-                'elements' => [
-                    'addToAnyShareButtons',
-                ],
-            ],
-            'Integrations' => [
-                'title' => 'Integrations',
-                'categories' => [
-                    'Maps',
-                    // BC:
-                    'Soundcloud Player',
-                    'Giphy',
-                ],
-                'elements' => [
-                    'giphy',
-                    'soundcloudPlayer',
-                    'advancedCustomFields',
-                    'calderaForms',
-                    'captainForm',
-                    'contactForm7',
-                    'enviraGallery',
-                    'essentialGrid',
-                    'eventOnCalendar',
-                    'gravityForms',
-                    'gutenberg',
-                    'mailChimpForWordPress',
-                    'layerSlider',
-                    'nextGenGallery',
-                    'wpDataTables',
-                    'ninjaForms',
-                    'sliderRevolution',
-                    'translatePressLanguageSwitcher',
-                    'wpForms',
-                ],
-            ],
-            'Menus' => [
-                'title' => 'Menus',
-                'categories' => [
-                    // BC
-                    'Menus',
-                    'Link Dropdown',
-                ],
-                'elements' => [
-                    'basicMenu',
-                    'sandwichMenu',
-                    'sandwichSideMenu',
-                    'sidebarMenu',
-                    'verticalSandwichMenu',
-                    'linkDropdown',
-                ],
-            ],
-            'Post Grids' => [
-                'title' => 'Post Grids',
-                'categories' => [
+                    'Separators',
                     'Grids',
+                    'Feature section',
+                    'Feature Description'
                 ],
-                'elements' => [],
+            ],
+            'WooCommerce' => [
+                'title' => 'WooCommerce',
+                'categories' => ['WooCommerce'],
+            ],
+            'WP Widgets' => [
+                'title' => 'WP Widgets',
+                'categories' => ['WP Widgets'],
             ],
         ];
     }
@@ -209,7 +95,8 @@ class Groups implements Helper
     {
         $dataHelper = vchelper('Data');
         if (!empty($prev)) {
-            if (isset($new['categories']) && is_array($new['categories']) && isset($prev['categories'])) {
+            if (isset($new['categories']) && is_array($new['categories']) && isset($prev['categories'])
+            ) {
                 $merged['categories'] = array_values(
                     $dataHelper->arrayDeepUnique(array_merge($prev['categories'], $new['categories']))
                 );

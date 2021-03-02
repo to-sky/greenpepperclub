@@ -1,5 +1,4 @@
 <?php
-
 namespace VisualComposer\Helpers;
 
 if (!defined('ABSPATH')) {

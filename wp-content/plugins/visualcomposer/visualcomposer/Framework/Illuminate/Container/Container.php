@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 
 use Closure;
 use ReflectionClass;
-use VisualComposer\Framework\Illuminate\Support\Traits\Php8Container as Php8ContainerTrait;
+use VisualComposer\Framework\Illuminate\Support\Traits\Container as ContainerTrait;
 use VisualComposer\Framework\Illuminate\Contracts\Container\Container as ContainerContract;
 
 /**
@@ -18,43 +18,37 @@ use VisualComposer\Framework\Illuminate\Contracts\Container\Container as Contain
  */
 class Container implements ContainerContract
 {
-    use Php8ContainerTrait;
-
+    use ContainerTrait;
     /**
      * The current globally available container (if any).
      *
      * @var static
      */
     protected static $instance;
-
     /**
      * An array of the types that have been resolved.
      *
      * @var array
      */
     protected $resolved = [];
-
     /**
      * The container's bindings.
      *
      * @var array
      */
     protected $bindings = [];
-
     /**
      * The container's shared instances.
      *
      * @var array
      */
     protected $instances = [];
-
     /**
      * The registered type aliases.
      *
      * @var array
      */
     protected $aliases = [];
-
     /**
      * The stack of concretions being current built.
      *
@@ -65,7 +59,7 @@ class Container implements ContainerContract
     /**
      * Determine if the given abstract type has been bound.
      *
-     * @param string $abstract
+     * @param  string $abstract
      *
      * @return bool
      */
@@ -77,7 +71,7 @@ class Container implements ContainerContract
     /**
      * Determine if the given abstract type has been resolved.
      *
-     * @param string $abstract
+     * @param  string $abstract
      *
      * @return bool
      */
@@ -89,7 +83,7 @@ class Container implements ContainerContract
     /**
      * Determine if a given string is an alias.
      *
-     * @param string $name
+     * @param  string $name
      *
      * @return bool
      */
@@ -101,9 +95,9 @@ class Container implements ContainerContract
     /**
      * Register a binding with the container.
      *
-     * @param string|array $abstract
-     * @param \Closure|string|null $concrete
-     * @param bool $shared
+     * @param  string|array $abstract
+     * @param  \Closure|string|null $concrete
+     * @param  bool $shared
      *
      * @param array $parameters
      *
@@ -149,8 +143,8 @@ class Container implements ContainerContract
     /**
      * Get the Closure to be used when building a type.
      *
-     * @param string $abstract
-     * @param string $concrete
+     * @param  string $abstract
+     * @param  string $concrete
      *
      * @return \Closure
      */
@@ -166,8 +160,8 @@ class Container implements ContainerContract
     /**
      * Register a shared binding in the container.
      *
-     * @param string $abstract
-     * @param \Closure|string|null $concrete
+     * @param  string $abstract
+     * @param  \Closure|string|null $concrete
      *
      * @return $this
      */
@@ -181,8 +175,8 @@ class Container implements ContainerContract
     /**
      * Register an existing instance as shared in the container.
      *
-     * @param string $abstract
-     * @param mixed $instance
+     * @param  string $abstract
+     * @param  mixed $instance
      *
      * @param array $parameters
      *
@@ -216,8 +210,8 @@ class Container implements ContainerContract
     /**
      * Alias a type to a different name.
      *
-     * @param string $abstract
-     * @param string $alias
+     * @param  string $abstract
+     * @param  string $alias
      *
      * @return $this
      */
@@ -231,7 +225,7 @@ class Container implements ContainerContract
     /**
      * Extract the type and alias from a given definition.
      *
-     * @param array $definition
+     * @param  array $definition
      *
      * @return array
      */
@@ -243,28 +237,24 @@ class Container implements ContainerContract
     /**
      * Call the given Closure / class@method and inject its dependencies.
      *
-     * @param callable|string $callback
-     * @param array $parameters
+     * @param  callable|string $callback
+     * @param  array $parameters
      *
      * @return mixed
      * @throws \ReflectionException
      */
     public function call($callback, array $parameters = [])
     {
-        if (self::checkIsPhp8Enabled()) {
-            $dependencies = $this->php8getMethodDependencies($this->getCallReflector($callback), $parameters);
-        } else {
-            $dependencies = $this->getMethodDependencies($this->getCallReflector($callback), $parameters);
-        }
+        $dependencies = $this->getMethodDependencies($this->getCallReflector($callback), $parameters);
 
-        return $callback(...array_values($dependencies));
+        return call_user_func_array($callback, $dependencies);
     }
 
     /**
      * Resolve the given type from the container.
      *
-     * @param string $abstract
-     * @param array $parameters
+     * @param  string $abstract
+     * @param  array $parameters
      *
      * @return mixed
      * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
@@ -306,7 +296,7 @@ class Container implements ContainerContract
     /**
      * Get the concrete type for a given abstract.
      *
-     * @param string $abstract
+     * @param  string $abstract
      *
      * @return mixed   $concrete
      */
@@ -316,8 +306,7 @@ class Container implements ContainerContract
         // assume each type is a concrete name and will attempt to resolve it as is
         // since the container should be able to resolve concretes automatically.
         if (!isset($this->bindings[ $abstract ])) {
-            if (
-                $this->missingLeadingSlash($abstract)
+            if ($this->missingLeadingSlash($abstract)
                 && isset($this->bindings[ '\\' . $abstract ])
             ) {
                 $abstract = '\\' . $abstract;
@@ -332,7 +321,7 @@ class Container implements ContainerContract
     /**
      * Determine if the given abstract has a leading slash.
      *
-     * @param string $abstract
+     * @param  string $abstract
      *
      * @return bool
      */
@@ -344,8 +333,8 @@ class Container implements ContainerContract
     /**
      * Instantiate a concrete instance of the given type.
      *
-     * @param string $concrete
-     * @param array $parameters
+     * @param  string $concrete
+     * @param  array $parameters
      *
      * @return mixed
      *
@@ -382,14 +371,10 @@ class Container implements ContainerContract
         if (is_null($constructor)) {
             array_pop($this->buildStack);
 
-            return new $concrete();
+            return new $concrete;
         }
 
-        if (self::checkIsPhp8Enabled()) {
-            $parameters = $this->php8getMethodDependencies($constructor, $parameters);
-        } else {
-            $parameters = $this->getMethodDependencies($constructor, $parameters);
-        }
+        $parameters = $this->getMethodDependencies($constructor, $parameters);
 
         array_pop($this->buildStack);
 
@@ -399,7 +384,7 @@ class Container implements ContainerContract
     /**
      * Determine if a given type is shared.
      *
-     * @param string $abstract
+     * @param  string $abstract
      *
      * @return bool
      */
@@ -417,8 +402,8 @@ class Container implements ContainerContract
     /**
      * Determine if the given concrete is buildable.
      *
-     * @param mixed $concrete
-     * @param string $abstract
+     * @param  mixed $concrete
+     * @param  string $abstract
      *
      * @return bool
      */
@@ -430,7 +415,7 @@ class Container implements ContainerContract
     /**
      * Get the alias for an abstract if available.
      *
-     * @param string $abstract
+     * @param  string $abstract
      *
      * @return string
      */
@@ -442,7 +427,7 @@ class Container implements ContainerContract
     /**
      * Drop all of the stale instances and aliases.
      *
-     * @param string $abstract
+     * @param  string $abstract
      *
      * @return void
      */
@@ -454,7 +439,7 @@ class Container implements ContainerContract
     /**
      * Remove a resolved instance from the instance cache.
      *
-     * @param string $abstract
+     * @param  string $abstract
      *
      * @return void
      */
@@ -476,7 +461,7 @@ class Container implements ContainerContract
     /**
      * Set the shared instance of the container.
      *
-     * @param \VisualComposer\Framework\Illuminate\Contracts\Container\Container $container
+     * @param  \VisualComposer\Framework\Illuminate\Contracts\Container\Container $container
      *
      * @return void
      */

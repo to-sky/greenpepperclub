@@ -27,24 +27,11 @@ class Locale extends Container implements Module
     {
         /** @see \VisualComposer\Modules\Internationalization\Locale::outputLocalizations */
         $this->addFilter(
-            'vcv:frontend:head:extraOutput',
+            'vcv:frontend:head:extraOutput vcv:update:extraOutput',
             'outputLocalizations'
         );
-        /** @see \VisualComposer\Modules\Internationalization\Locale::addLocalizationsVariables */
-        $this->addFilter('vcv:editor:variables vcv:wp:dashboard:variables', 'addLocalizationsVariables');
 
         $this->wpAddAction('admin_print_scripts', 'printLocalizations');
-    }
-
-    protected function addLocalizationsVariables($variables, Localizations $localizationsHelper)
-    {
-        $variables[] = [
-            'key' => 'VCV_I18N',
-            'value' => $localizationsHelper->getLocalizations(),
-            'type' => 'constant',
-        ];
-
-        return $variables;
     }
 
     protected function outputLocalizations($response, $payload, Localizations $localizationsHelper)
@@ -77,10 +64,11 @@ class Locale extends Container implements Module
         if ($this->printed) {
             return;
         }
-        if (
-            ($editorPostTypeHelper->isEditorEnabled(get_post_type()) && !$frontendHelper->isFrontend())
-            || vcfilter('vcv:editors:internationalization:printLocalizations', false)
-        ) {
+        if ($editorPostTypeHelper->isEditorEnabled(get_post_type()) && !$frontendHelper->isFrontend()
+            || vcfilter(
+                'vcv:editors:internationalization:printLocalizations',
+                false
+            )) {
             $this->printed = true;
             evcview(
                 'partials/constant-script',

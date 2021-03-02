@@ -49,41 +49,26 @@ class ContentUrlReplaceController extends Container implements Module
     protected function registerSiteCurrentUrl()
     {
         $optionsHelper = vchelper('Options');
-        $currentSiteUrl = get_site_url();
-        $wrongUrls = ['https:', 'http:', 'http://', 'https://'];
-        if (!$currentSiteUrl || in_array($currentSiteUrl, $wrongUrls, true)) {
-            // We got wrong get_site_url() (support #18071)
-            return;
-        }
-        $currentSiteUrl = rtrim($currentSiteUrl, '/\\');
-        $siteUrls = $optionsHelper->get('siteUrls');
-        if (!$siteUrls || !is_array($siteUrls)) {
-            $siteUrls = ['prevUrls' => [], 'currentUrl' => $currentSiteUrl];
-            $optionsHelper->set('siteUrls', ['prevUrls' => [], 'currentUrl' => $currentSiteUrl]);
-        }
-
-        if ($siteUrls['currentUrl'] !== $currentSiteUrl) {
-            if (!empty($siteUrls['currentUrl'])) {
+        $siteUrls = $optionsHelper->get('siteUrls', ['prevUrls' => [], 'currentUrl' => '']);
+        $siteUrl = get_site_url();
+        if (!$siteUrls || $siteUrls['currentUrl'] !== $siteUrl) {
+            if (isset($siteUrls['currentUrl']) && $siteUrls['currentUrl'] !== $siteUrl) {
                 $siteUrls['prevUrls'][] = $siteUrls['currentUrl'];
+                $optionsHelper->set(
+                    'siteUrls',
+                    [
+                        'prevUrls' => $siteUrls['prevUrls'],
+                        'currentUrl' => $siteUrl,
+                    ]
+                );
+            } else {
+                $optionsHelper->set('siteUrls', ['prevUrls' => [], 'currentUrl' => $siteUrl]);
             }
-            $optionsHelper->set(
-                'siteUrls',
-                [
-                    'prevUrls' => $this->clearWrongUrls($siteUrls['prevUrls']),
-                    'currentUrl' => $currentSiteUrl,
-                ]
-            );
         }
-
-        // If currentSiteUrl exists in previous urls, remove them
-        $prevUrls = array_unique($siteUrls['prevUrls']);
-        $siteKey = array_search($currentSiteUrl, $prevUrls, true);
-        if ($siteKey !== false) {
-            unset($prevUrls[ $siteKey ]);
-            $optionsHelper->set(
-                'siteUrls',
-                ['prevUrls' => $this->clearWrongUrls($prevUrls), 'currentUrl' => $currentSiteUrl]
-            );
+        $siteKey = array_search($siteUrl, $siteUrls['prevUrls']);
+        if (false !== $siteKey) {
+            unset($siteUrls['prevUrls'][ $siteKey ]);
+            $optionsHelper->set('siteUrls', ['prevUrls' => $siteUrls['prevUrls'], 'currentUrl' => $siteUrl]);
         }
     }
 
@@ -104,9 +89,6 @@ class ContentUrlReplaceController extends Container implements Module
                 && $settingsResetInitiated >= strtotime($post->post_date);
             if ($isResetInitiated) {
                 $siteUrls = $optionsHelper->get('siteUrls');
-                if (!is_array($siteUrls)) {
-                    return $response;
-                }
                 $this->replaceMetaPageElementsCssData($sourceId, $siteUrls);
                 $response = $this->replaceMetaPageContent($response, $sourceId, $siteUrls);
                 update_post_meta($post->ID, '_' . VCV_PREFIX . 'postMetaResetInitiated', time());
@@ -136,14 +118,10 @@ class ContentUrlReplaceController extends Container implements Module
                 //@codingStandardsIgnoreLine
                 if ($pageContent && !empty($post->post_content)) {
                     $siteUrls = $optionsHelper->get('siteUrls');
-                    $siteUrls['currentUrl'] = rtrim($siteUrls['currentUrl'], '/\\');
-                    if (!is_array($siteUrls)) {
-                        return $content;
-                    }
                     $this->replaceCount = 0;
                     //@codingStandardsIgnoreLine
                     $post->post_content = str_replace(
-                        $this->clearWrongUrls($siteUrls['prevUrls']),
+                        $siteUrls['prevUrls'],
                         $siteUrls['currentUrl'],
                         //@codingStandardsIgnoreLine
                         $post->post_content,
@@ -180,19 +158,14 @@ class ContentUrlReplaceController extends Container implements Module
                 $decodedPageContent,
                 function (&$value, $key) use ($siteUrls) {
                     $replaceCount = 0;
-                    $value = str_replace(
-                        $this->clearWrongUrls($siteUrls['prevUrls']),
-                        $siteUrls['currentUrl'],
-                        $value,
-                        $replaceCount
-                    );
+                    $value = str_replace($siteUrls['prevUrls'], $siteUrls['currentUrl'], $value, $replaceCount);
                     if ($replaceCount > 0) {
                         $this->replaceCount++;
                     }
                 }
             );
             if ($this->replaceCount > 0) {
-                $encodedPageContent = wp_json_encode($decodedPageContent);
+                $encodedPageContent = json_encode($decodedPageContent);
                 $encodedPageContent = rawurlencode($encodedPageContent);
                 update_post_meta($sourceId, VCV_PREFIX . 'pageContent', $encodedPageContent);
                 $response['data'] = $encodedPageContent;
@@ -200,21 +173,6 @@ class ContentUrlReplaceController extends Container implements Module
         }
 
         return $response;
-    }
-
-    protected function clearWrongUrls($urls)
-    {
-        $callback = function ($url) {
-            return !(empty($url) || in_array($url, ['https:', 'http:', 'http://', 'https://'], true));
-        };
-
-
-        return array_map([$this,'removeTrailingSlash'], array_values(array_unique(array_filter($urls, $callback))));
-    }
-
-    protected function removeTrailingSlash($url)
-    {
-        return rtrim($url, '/\\');
     }
 
     /**
@@ -232,12 +190,7 @@ class ContentUrlReplaceController extends Container implements Module
                 $globalElementsCssData,
                 function (&$value, $key) use ($siteUrls) {
                     $replaceCount = 0;
-                    $value = str_replace(
-                        $this->clearWrongUrls($siteUrls['prevUrls']),
-                        $siteUrls['currentUrl'],
-                        $value,
-                        $replaceCount
-                    );
+                    $value = str_replace($siteUrls['prevUrls'], $siteUrls['currentUrl'], $value, $replaceCount);
                     if ($replaceCount > 0) {
                         $this->replaceCount++;
                     }

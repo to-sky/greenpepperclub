@@ -14,8 +14,10 @@ use VisualComposer\Helpers\Hub\Bundle;
 class ActionBundle extends Bundle implements Helper
 {
     /** @noinspection PhpMissingParentCallCommonInspection */
-    public function requestBundleDownload($url)
+    public function requestBundleDownload()
     {
+        list ($data) = func_get_args(); // To make declaration of method compatible of parent
+        $url = $data['url'];
         $fileHelper = vchelper('File');
         $downloadedArchive = $fileHelper->download($url);
 

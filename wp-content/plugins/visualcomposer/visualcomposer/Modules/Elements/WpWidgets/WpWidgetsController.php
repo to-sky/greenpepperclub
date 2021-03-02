@@ -68,9 +68,6 @@ class WpWidgetsController extends Container implements Module
             if (isset($instance['widget-form'])) {
                 $instance = $instance['widget-form'][1];
             }
-            if (isset($instance['widget-rss'])) {
-                $instance = $instance['widget-rss'][1];
-            }
             if (!$widgetKey) {
                 $widgetKey = $widgets->defaultKey($tag);
             }

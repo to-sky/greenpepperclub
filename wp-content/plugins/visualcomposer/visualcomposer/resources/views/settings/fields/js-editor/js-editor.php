@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 
 /** @var array $globalSetting */
 ?>
+
 <div class="vcv-ui-form-editor-container">
     <textarea id="vcv-<?php echo $globalSetting['slug']; ?>" class="vcv-js-code-editor" name="vcv-<?php echo $globalSetting['slug']; ?>"><?php echo $globalSetting['value']; ?></textarea>
 </div>

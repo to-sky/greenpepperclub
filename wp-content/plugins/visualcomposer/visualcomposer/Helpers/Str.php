@@ -1,5 +1,6 @@
 <?php
 
+
 namespace VisualComposer\Helpers;
 
 if (!defined('ABSPATH')) {
@@ -39,7 +40,7 @@ class Str implements Helper
     /**
      * Convert a value to camel case.
      *
-     * @param string $value
+     * @param  string $value
      *
      * @return string
      */
@@ -55,8 +56,8 @@ class Str implements Helper
     /**
      * Determine if a given string contains a given substring.
      *
-     * @param string $haystack - the string to search in
-     * @param string|array $needles
+     * @param  string $haystack - the string to search in
+     * @param  string|array $needles
      *
      * @return bool
      */
@@ -74,8 +75,8 @@ class Str implements Helper
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param string $haystack
-     * @param string|array $needles
+     * @param  string $haystack
+     * @param  string|array $needles
      *
      * @return bool
      */
@@ -93,8 +94,8 @@ class Str implements Helper
     /**
      * Cap a string with a single instance of a given value.
      *
-     * @param string $value
-     * @param string $cap
+     * @param  string $value
+     * @param  string $cap
      *
      * @return string
      */
@@ -108,8 +109,8 @@ class Str implements Helper
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param string $pattern
-     * @param string $value
+     * @param  string $pattern
+     * @param  string $value
      *
      * @return bool
      */
@@ -132,7 +133,7 @@ class Str implements Helper
     /**
      * Return the length of the given string.
      *
-     * @param string $value
+     * @param  string $value
      *
      * @return int
      */
@@ -144,9 +145,9 @@ class Str implements Helper
     /**
      * Limit the number of characters in a string.
      *
-     * @param string $value
-     * @param int $limit
-     * @param string $end
+     * @param  string $value
+     * @param  int $limit
+     * @param  string $end
      *
      * @return string
      */
@@ -162,7 +163,7 @@ class Str implements Helper
     /**
      * Convert the given string to lower-case.
      *
-     * @param string $value
+     * @param  string $value
      *
      * @return string
      */
@@ -176,7 +177,7 @@ class Str implements Helper
      *
      * Should not be considered sufficient for cryptography, etc.
      *
-     * @param int $length
+     * @param  int $length
      *
      * @return string
      */
@@ -194,7 +195,7 @@ class Str implements Helper
     /**
      * Convert the given string to upper-case.
      *
-     * @param string $value
+     * @param  string $value
      *
      * @return string
      */
@@ -206,8 +207,8 @@ class Str implements Helper
     /**
      * Convert a string to snake case.
      *
-     * @param string $value
-     * @param string $delimiter
+     * @param  string $value
+     * @param  string $delimiter
      *
      * @return string
      */
@@ -229,8 +230,8 @@ class Str implements Helper
     /**
      * Determine if a given string starts with a given substring.
      *
-     * @param string $haystack
-     * @param string|array $needles
+     * @param  string $haystack
+     * @param  string|array $needles
      *
      * @return bool
      */
@@ -248,7 +249,7 @@ class Str implements Helper
     /**
      * Convert a value to studly caps case.
      *
-     * @param string $value
+     * @param  string $value
      *
      * @return string
      */

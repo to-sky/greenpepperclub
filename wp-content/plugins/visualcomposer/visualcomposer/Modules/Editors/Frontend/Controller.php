@@ -34,7 +34,7 @@ class Controller extends Container implements Module
     public function __construct()
     {
         /** @see \VisualComposer\Modules\Editors\Frontend\Controller::renderEditorBase */
-        $this->addFilter('vcv:editors:frontend:render', 'renderEditorBase', 1);
+        $this->addFilter('vcv:editors:frontend:render', 'renderEditorBase');
         /** @see \VisualComposer\Modules\Editors\Frontend\Controller::enableEditorForProtectedPosts */
         $this->wpAddFilter('post_password_required', 'enableEditorForProtectedPosts');
 
@@ -76,10 +76,12 @@ class Controller extends Container implements Module
                 if ($pagenow === 'post-new.php') {
                     $postType = 'post';
                     $allowedHiddenPosts = ['vcv_headers', 'vcv_footers', 'vcv_sidebars'];
-                    if (
-                        in_array($requestHelper->input('post_type'), $allowedHiddenPosts)
-                        || in_array($requestHelper->input('post_type'), get_post_types(['show_ui' => true]), true)
-                    ) {
+                    if (in_array($requestHelper->input('post_type'), $allowedHiddenPosts)
+                        || in_array(
+                            $requestHelper->input('post_type'),
+                            get_post_types(['show_ui' => true]),
+                            true
+                        )) {
                         $postType = $requestHelper->input('post_type');
                     }
                     $post = \get_default_post_to_edit($postType, true);
@@ -96,8 +98,7 @@ class Controller extends Container implements Module
                 if (empty($content)) {
                     wp_die(
                         '<h1>' . __('Cheatin&#8217; uh?', 'visualcomposer') . '</h1>' .
-                        '<p>' . __('Sorry, you are not allowed to create posts.', 'visualcomposer')
-                        . '</p>',
+                        '<p>' . __('Sorry, you are not allowed to create posts as this user.', 'visualcomposer') . '</p>',
                         403
                     );
                 }
@@ -139,12 +140,14 @@ class Controller extends Container implements Module
 
         $sourceId = $post->ID;
         if (is_numeric($sourceId) && $userCapabilitiesHelper->canEdit($sourceId)) {
+            $feError = intval(get_option('page_for_posts')) === $sourceId ? 'page_for_posts' : false;
+
             return $templates->render(
                 'editor/frontend/frontend.php',
                 [
                     'editableLink' => $frontendHelper->getEditableUrl($sourceId),
                     'preRenderOutput' => vcfilter('vcv:frontend:preRenderOutput', []),
-                    'sourceId' => $sourceId,
+                    'feError' => $feError,
                 ]
             );
         }

@@ -12,6 +12,8 @@ use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\License;
 use VisualComposer\Helpers\Options;
+use VisualComposer\Helpers\Request;
+use VisualComposer\Helpers\Token;
 use VisualComposer\Helpers\Traits\EventsFilters;
 
 /**
@@ -27,54 +29,39 @@ class DeactivationController extends Container implements Module
      */
     public function __construct()
     {
-        /** @see \VisualComposer\Modules\License\DeactivationController::deactivate */
-        $this->addFilter('vcv:ajax:license:deactivate:adminNonce', 'deactivate');
+        /** @see \VisualComposer\Modules\License\DeactivationController::pingDeactivation */
+        $this->addFilter('vcv:ajax:license:deactivation:ping', 'pingDeactivation');
+
+        /** @see \VisualComposer\Modules\License\DeactivationController::unsetOptions */
+        $this->addEvent('vcv:system:factory:reset', 'unsetOptions');
     }
 
     /**
-     * @param $response
-     * @param $payload
+     * Force license deactivation
+     *
+     * @param \VisualComposer\Helpers\Request $requestHelper
      * @param \VisualComposer\Helpers\License $licenseHelper
      * @param \VisualComposer\Helpers\Options $optionsHelper
      *
-     * @throws \Exception
+     * @return array
      */
-    protected function deactivate($response, $payload, License $licenseHelper, Options $optionsHelper)
+    protected function pingDeactivation(Request $requestHelper, License $licenseHelper, Options $optionsHelper)
     {
-        if (vchelper('AccessCurrentUser')->wpAll('manage_options')->get()) {
-            // data to send in our API request
-            $params = [
-                'edd_action' => 'deactivate_license',
-                'license' => $licenseHelper->getKey(),
-                'item_name' => 'Visual Composer',
-                'url' => VCV_PLUGIN_URL,
-            ];
-
-            if (defined('VCV_AUTHOR_API_KEY') && $licenseHelper->isThemeActivated()) {
-                $params['author_api_key'] = VCV_AUTHOR_API_KEY;
+        $code = $requestHelper->input('code');
+        if ($code && $licenseHelper->isActivated()) {
+            if ($code === sha1($licenseHelper->getKey())) {
+                $optionsHelper->deleteTransient('lastBundleUpdate');
             }
-
-            // Send the remote request
-            wp_remote_post(
-                vcvenv('VCV_HUB_URL'),
-                [
-                    'body' => $params,
-                    'timeout' => 30,
-                ]
-            );
-
-            // Despite of the response we still need to deactivate locally
-            $licenseHelper->setKey('');
-            $licenseHelper->setType('');
-            $licenseHelper->setExpirationDate('');
-            $optionsHelper->delete('license-usage');
-            $optionsHelper->deleteTransient('lastBundleUpdate');
-
-            wp_redirect(admin_url('admin.php?page=vcv-getting-started'));
-            vcvdie();
         }
 
-        wp_redirect(admin_url('admin.php?page=vcv-settings'));
-        vcvdie();
+        return ['status' => true];
+    }
+
+    /**
+     * @param \VisualComposer\Helpers\Token $tokenHelper
+     */
+    protected function unsetOptions(Token $tokenHelper)
+    {
+        $tokenHelper->reset();
     }
 }

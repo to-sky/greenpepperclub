@@ -48,14 +48,16 @@ class CustomTemplatesUpdate24Migration extends MigrationsController implements M
             if (!$metaValue) {
                 $metaValue = '';
             }
-            $listOfMetaValues = [
-                '', // same as Custom BC
-                'custom',
-                'customHeader',
-                'customFooter',
-                'customSidebar',
-            ];
-            if (in_array($metaValue, $listOfMetaValues)) {
+            if (in_array(
+                $metaValue,
+                [
+                    '', // same as Custom BC
+                    'custom',
+                    'customHeader',
+                    'customFooter',
+                    'customSidebar',
+                ]
+            )) {
                 $needUpdatePost[] = $template->ID;
             }
         }

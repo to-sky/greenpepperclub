@@ -60,9 +60,9 @@ class JsDataController extends Container implements Module
     {
         $requestHelper = vchelper('Request');
         $jsInputHead = $requestHelper->input('vcv-settings-source-local-head-js', '');
-        update_post_meta($sourceId, VCV_PREFIX . 'settingsLocalJsHead', wp_slash($jsInputHead));
+        update_post_meta($sourceId, VCV_PREFIX . 'settingsLocalJsHead', $jsInputHead);
         $jsInputFooter = $requestHelper->input('vcv-settings-source-local-footer-js', '');
-        update_post_meta($sourceId, VCV_PREFIX . 'settingsLocalJsFooter', wp_slash($jsInputFooter));
+        update_post_meta($sourceId, VCV_PREFIX . 'settingsLocalJsFooter', $jsInputFooter);
     }
 
     protected function setGlobalJs()

@@ -40,166 +40,141 @@ class License extends Container implements Helper
     }
 
     /**
-     * Get hidden license key.
+     * Get license key token.
      *
      * @return string
      */
-    public function getHiddenKey()
+    public function getKeyToken()
     {
         $optionsHelper = vchelper('Options');
-        $licenseKey = $optionsHelper->get('license-key');
-        $licenseKey = substr($licenseKey, 0, strpos($licenseKey, '-'));
 
-        return $licenseKey . '-****-****-****-************';
+        return $optionsHelper->get('license-key-token');
     }
 
-    /**
-     * @param $type
-     */
-    public function setType($type)
+    public function deactivateInAccount()
     {
-        $optionsHelper = vchelper('Options');
-        $optionsHelper->set('license-type', $type);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getType()
-    {
-        $optionsHelper = vchelper('Options');
-
-        return $optionsHelper->get('license-type');
-    }
-
-    /**
-     * @param $expiration
-     */
-    public function setExpirationDate($expiration)
-    {
-        $optionsHelper = vchelper('Options');
-        $optionsHelper->set('license-expiration', $expiration);
-    }
-
-    public function updateUsageDate($refresh = false)
-    {
-        $optionsHelper = vchelper('Options');
-        $usage = $optionsHelper->get('license-usage');
-        if (empty($usage) || $refresh) {
-            $optionsHelper->set('license-usage', time());
+        $currentUserHelper = vchelper('AccessCurrentUser');
+        if (!$currentUserHelper->wpAll('manage_options')->get()) {
+            return;
         }
+        $urlHelper = vchelper('Url');
+        $nonceHelper = vchelper('Nonce');
+        wp_redirect(
+            vcvenv('VCV_LICENSE_DEACTIVATE_URL') .
+            '/?redirect=' . rawurlencode(
+                $urlHelper->adminAjax(
+                    ['vcv-action' => 'license:deactivate:adminNonce', 'vcv-nonce' => $nonceHelper->admin()]
+                )
+            ) .
+            '&token=' . rawurlencode($this->newKeyToken()) .
+            '&license_key=' . rawurlencode($this->getKey()) .
+            '&url=' . VCV_PLUGIN_URL .
+            '&domain=' . get_site_url()
+        );
+        exit;
     }
 
     /**
-     * @return mixed
-     */
-    public function getExpirationDate()
-    {
-        $optionsHelper = vchelper('Options');
-
-        return $optionsHelper->get('license-expiration');
-    }
-
-    /**
-     * @param string $redirectTo
-     */
-    public function refresh($redirectTo = 'vcv-update')
-    {
-        $token = vchelper('Token')->getToken();
-        $optionsHelper = vchelper('Options');
-
-        if ($token !== 'free-token') {
-            // License is upgraded: fire check for update
-            $optionsHelper->deleteTransient('lastBundleUpdate');
-            vcevent('vcv:hub:checkForUpdate', ['token' => $token]);
-            wp_redirect(admin_url('admin.php?page=' . $redirectTo));
-            exit;
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPremiumActivated()
-    {
-        return (bool)$this->getKey() && $this->getType() !== 'free';
-    }
-
-    /**
-     * @return bool
-     */
-    public function isThemeActivated()
-    {
-        return $this->getType() === 'theme';
-    }
-
-    /**
-     * @param $errorCode
+     * Set license key token.
      *
-     * @codingStandardsIgnoreStart
-     * @return string|void
+     * @param string $token
      */
+    public function setKeyToken($token)
+    {
+        $optionsHelper = vchelper('Options');
+        $optionsHelper->set('license-key-token', trim($token));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActivated()
+    {
+        return true;
+    }
+
+    /**
+     * Return new license key token.
+     *
+     * Token is used to change license key from remote location.
+     *
+     * Format is: timestamp|20-random-characters.
+     *
+     * @param Str $strHelper
+     *
+     * @param \VisualComposer\Helpers\Nonce $nonceHelper
+     *
+     * @return string
+     */
+    protected function generateKeyToken(Str $strHelper, Nonce $nonceHelper)
+    {
+        $token = $nonceHelper->admin() . '|' . time() . '|' . $strHelper->quickRandom(10);
+
+        return $token;
+    }
+
+    /**
+     * Generate and set new license key token.
+     *
+     * @return string
+     * @throws \ReflectionException
+     */
+    public function newKeyToken()
+    {
+        /** @see \VisualComposer\Helpers\License::generateKeyToken */
+        $token = $this->call('generateKeyToken');
+
+        /** @see \VisualComposer\Helpers\License::setKeyToken */
+        $this->setKeyToken($token);
+
+        return $token;
+    }
+
+    /**
+     * Check if specified license key token is valid.
+     *
+     * @param string $tokenToCheck SHA1 hashed token.
+     * @param int $ttlInSeconds Time to live in seconds. Default = 20min.
+     *
+     * @return bool
+     */
+    public function isValidToken($tokenToCheck, $ttlInSeconds = 1200)
+    {
+        $token = $this->getKeyToken();
+
+        if (!$tokenToCheck || $tokenToCheck !== sha1($token)) {
+            return false;
+        }
+
+        $chunks = explode('|', $token);
+        $nonceHelper = vchelper('Nonce');
+
+        $diff = time() - $ttlInSeconds;
+        if (!$nonceHelper->verifyAdmin($chunks[0])) {
+            return false;
+        }
+        if (intval($chunks[1]) < $diff) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function licenseErrorCodes($errorCode)
     {
         $message = '';
         switch ($errorCode) {
-            case 'expired':
             case 1:
                 $message = __('Visual Composer Website Builder license has expired.', 'visualcomposer');
                 break;
-            case 'missing':
-            case 'item_name_mismatch':
             case 2:
                 $message = __('Couldn\'t find a valid Visual Composer Website Builder license.', 'visualcomposer');
                 break;
-            case 'invalid':
-            case 'site_inactive':
-            case 'disabled':
-            case 'revoked':
             case 3:
                 $message = __('Visual Composer Website Builder license has been deactivated.', 'visualcomposer');
                 break;
-            case 4:
-                $message = __('The license key is missing, enter a valid license key.', 'visualcomposer');
-                break;
-            case 5:
-                $message = __('URL is missing, try again.', 'visualcomposer');
-                break;
-            case 6:
-                $message = __('Visual Composer Website Builder license is already activated.', 'visualcomposer');
-                break;
-            case 7:
-                $message = __('Activation failed, try again.', 'visualcomposer');
-                break;
-            case 'no_activations_left':
-                $message = __('The license key has reached the activation limit.', 'visualcomposer');
-                break;
-            case 'purchase_key_already_exist':
-                $message = __(
-                    'The purchase code is already used, deactivate the previous site, and try again.',
-                    'visualcomposer'
-                ); // theme activation
-                break;
-            default:
-                $message = __('An error occurred, try again.', 'visualcomposer');
-                break;
         }
 
-        // @codingStandardsIgnoreEnd
         return $message;
-    }
-
-    /**
-     * Hub terms agreement for free users
-     *
-     * @return string|void
-     */
-    public function agreeHubTerms()
-    {
-        $optionHelper = vchelper('Options');
-
-        $agreeHubTerms = $optionHelper->get('agreeHubTerms', false);
-
-        return $agreeHubTerms || $this->getType() === 'free';
     }
 }
