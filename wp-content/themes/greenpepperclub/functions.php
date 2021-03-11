@@ -350,7 +350,8 @@ function logout_without_confirm($action, $result)
     }
 }
 
+// Custom image sizes
+add_image_size( 'food_item', 512, 512, true );
+
 include_once(get_template_directory().'/shortcodes/main_shortcodes.php');
 include_once(get_template_directory().'/shortcodes/woocommerce_shortcodes.php');
-
-

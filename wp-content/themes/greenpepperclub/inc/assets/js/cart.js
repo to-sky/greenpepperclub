@@ -170,9 +170,9 @@ jQuery( document ).ready(function($) {
 
         return `<div class="d-flex p-3 justify-content-between bg-white border-top" id="cartItem-${id}">
                                 <div class="d-flex flex-column-reverse justify-content-around align-items-center">
-                                    <button class="btn btn-primary gp-minus-btn gp-sm-btn" data-action="minus" data-id="${id}">&minus;</button>
+                                    <button class="btn btn-primary gp-minus-btn food-font14" data-action="minus" data-id="${id}">&minus;</button>
                                      <span id="cartItemQty-${id}" class="d-inline-block">${getQtyFromCartById(id)}</span>
-                                    <button class="btn btn-primary gp-plus-btn gp-sm-btn" data-action="plus" data-id="${id}">&plus;</button>
+                                    <button class="btn btn-primary gp-plus-btn food-font14" data-action="plus" data-id="${id}">&plus;</button>
                                 </div>
 
                                 <div class="w-25 px-3">${itemThumbnail}</div>
