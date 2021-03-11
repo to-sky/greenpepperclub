@@ -1,15 +1,15 @@
 jQuery(function ($) {
-    var modal = $('.gp-modal-grid');
-    var gridItem = $('.gp-about-grid-item');
+    let modal = $('.gp-modal-grid');
+    let gridItem = $('.gp-about-grid-item');
 
     // Change modal image size
     function changeImageSize() {
-        var modalImage = $('.gp-modal-grid-image');
+        let modalImage = $('.gp-modal-grid-image');
 
         modalImage.removeAttr('style');
 
-        var modalHeight = modal.height();
-        var modalContent = $('.gp-modal-grid-content').height();
+        let modalHeight = modal.height();
+        let modalContent = $('.gp-modal-grid-content').height();
 
         if (modalContent > modalHeight) {
             modalImage.css({
@@ -25,7 +25,7 @@ jQuery(function ($) {
     }
 
     // Merge all data (image, header, description) to array
-    var gridItems = [];
+    let gridItems = [];
     gridItem.each(function (i, el) {
         gridItems.push({
             bgUrl: $(el).find('.vce-hoverbox-background').css('background-image').split(/"/)[1],
@@ -35,18 +35,18 @@ jQuery(function ($) {
         });
     });
 
-    var modalImage = $('.gp-modal-grid-image');
-    var modalHeader = $('.gp-modal-grid-header');
-    var modalDescription = $('.gp-modal-grid-description');
-    var modalPreviousIcon = $('#gpModalIconPrev');
-    var modalNextIcon = $('#gpModalIconNext');
-    var blockedIconClass = 'gp-icon-blocked';
+    let modalImage = $('.gp-modal-grid-image');
+    let modalHeader = $('.gp-modal-grid-header');
+    let modalDescription = $('.gp-modal-grid-description');
+    let modalPreviousIcon = $('#gpModalIconPrev');
+    let modalNextIcon = $('#gpModalIconNext');
+    let blockedIconClass = 'gp-icon-blocked';
 
     // Open modal and add data to modal
     gridItem.click(function () {
         modal.fadeIn();
 
-        var header = $(this).find('.gp-about-grid-header').text()
+        let header = $(this).find('.gp-about-grid-header').text()
         $.grep(gridItems, function (el) {
             if (el.header == header) {
 
@@ -63,7 +63,7 @@ jQuery(function ($) {
                 $([modalPreviousIcon[0], modalNextIcon[0]]).removeClass(blockedIconClass);
 
                 // Set position to prev and next icons
-                var elPosition = el.position;
+                let elPosition = el.position;
                 if (elPosition === 1) {
                     modalPreviousIcon.addClass(blockedIconClass);
                     modalNextIcon.data('slide-position', ++elPosition);
@@ -78,7 +78,7 @@ jQuery(function ($) {
         });
     });
 
-    var currentSlidePosition;
+    let currentSlidePosition;
 
     // Click on previous slide
     modalPreviousIcon.click(function () {
