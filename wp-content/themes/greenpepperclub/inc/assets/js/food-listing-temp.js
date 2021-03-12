@@ -100,7 +100,7 @@ jQuery(document).ready(function ($) {
             $('button[data-action="plus"]').prop('disabled', false);
         }
 
-        console.log(foodItems, qtyItemsIntoCart)
+        // console.log(foodItems, qtyItemsIntoCart)
     });
 
 
@@ -207,8 +207,13 @@ jQuery(document).ready(function ($) {
     }
 
 
-    // Old code
 
+
+
+
+
+
+    // Old code
     var food_items = [];
     var food_items_ids = [];
     var qty = [];

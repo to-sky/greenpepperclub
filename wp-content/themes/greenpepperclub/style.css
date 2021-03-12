@@ -3183,11 +3183,11 @@ a:hover {
 
 /* Product */
 .food-item-qty {
-  width: 50px;
+  width: 40px;
   border: 1px solid #e1e1e1;
   text-align: center;
   color: #e1e1e1;
-  font-size: 18px;
+  font-size: 16px;
   user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -3248,6 +3248,11 @@ a:hover {
 }
 
 @media only screen and (min-width: 1024px) {
+  .food-item-qty {
+    width: 50px;
+    font-size: 18px;
+  }
+
   .gp-minus-btn,
   .gp-plus-btn {
     width: 36px;
