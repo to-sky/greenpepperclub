@@ -1,10 +1,12 @@
 <?php
 /**
- * Template for listing food items
+ * Food listing template
  */
+
+$cartButtons = (int) $args['cart_buttons'];
 ?>
 
-<div class="col-6 col-md-3 mb-3">
+<div class="col-6 col-md-4 col-xl-3 mb-3">
     <div id="foodItem-<?php the_ID(); ?>" class="food-item" data-mh="food-item">
         <a href="javascript:void(0)"
            data-toggle="modal"
@@ -20,19 +22,21 @@
            data-allergens="<?php the_field( 'allergens' ); ?>"
            data-excerpt="<?php the_excerpt(); ?>"
         >
-            <p id="itemThumb-<?php the_ID(); ?>">
+            <p id="itemThumb-<?php the_ID(); ?>" <?php echo $cartButtons ? '' : 'class="mb-0"'; ?>>
                 <?php the_post_thumbnail( 'food_item' ); ?>
             </p>
         </a>
 
-        <div class="d-flex justify-content-around align-items-center">
+        <?php if( $cartButtons ) : ?>
+
+        <div class="align-items-center d-flex justify-content-center justify-content-lg-around">
             <button id="minusBtn<?php the_ID(); ?>"
                     class="btn btn-primary gp-minus-btn"
                     data-action="minus" disabled
                     data-id="<?php the_ID(); ?>"
             >&minus;</button>
 
-            <input class="fQty food-item-qty" type="text" id="qty-<?php the_ID(); ?>" value="0" readonly/>
+            <input class="fQty food-item-qty mx-4 mx-lg-0" type="text" id="qty-<?php the_ID(); ?>" value="0" readonly/>
 
             <button id="plusBtn<?php the_ID(); ?>"
                     class="btn btn-primary gp-plus-btn"
@@ -40,6 +44,8 @@
                     data-id="<?php the_ID(); ?>"
             >&plus;</button>
         </div>
+
+        <?php endif; ?>
 
         <h3 class="food-item-title" id="itemName-<?php the_ID(); ?>">
             <?php the_title(); ?>

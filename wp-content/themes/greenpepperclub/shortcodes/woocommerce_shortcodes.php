@@ -55,7 +55,7 @@ function action_woocommerce_before_add_to_cart_button() { ?>
 		foreach ( $datesInput as $key => $dates ) {
 			$fdatedisplay = strtoupper( explode( ' ', $dates )[0] ) . ' <span>' . explode( ' ', $dates )[1] . ' ' . ordinal( explode( ' ', $dates )[2] ) . '</span>';
 			?>
-            <div class="col-md-12 col-12" style="">
+            <div class="col-12 col-md-3" style="">
                 <div class="radiobox-full">
                     <input id="date<?php echo $key; ?>" type="radio" name="date" value="<?php echo $dates; ?>"
                            required onchange="enabledBtn()"/>
@@ -68,7 +68,7 @@ function action_woocommerce_before_add_to_cart_button() { ?>
 		$split_dates = rtrim( $split_dates, ' - ' );
 		?>
 
-        <div class="col-md-12 col-12">
+        <div class="col-12 col-md-3">
 
             <div class="radiobox-full">
                 <input id="date5" type="radio" name="date" value="SPLIT :<?php echo $split_dates; ?>" required
@@ -79,28 +79,31 @@ function action_woocommerce_before_add_to_cart_button() { ?>
                         <span class="font-montserrat-regular food-font24"> + $5.99</span></p></label>
             </div>
         </div>
-        <div class="col-md-12 col-12">
+
+        <div class="col-12">
             <h2 class="food-txt-uppercase text-center font-montserrat-semibold">Delivery time</h2>
         </div>
-        <div class="col-md-12 col-12" style="">
+        <div class="col-12 col-md-6" style="">
             <div class="radiobox-full">
                 <input id="date6" type="radio" name="time" value="<?php echo $delivery_time_morning; ?>" required
                        onchange="enabledBtn()"/>
                 <label for="date6" class="frmLbl"><p><?php echo $delivery_time_morning; ?></p></label>
             </div>
         </div>
-        <div class="col-md-12 col-12">
+        <div class="col-12 col-md-6">
             <div class="radiobox-full">
                 <input id="date7" type="radio" name="time" value="<?php echo $delivery_time_evening; ?>" required
                        onchange="enabledBtn()"/>
                 <label for="date7" class="frmLbl"><p><?php echo $delivery_time_evening; ?></p></label>
             </div>
         </div>
+
         <div class="hidden">
-            <input type="hidden" name="food_items_ids" id="food_item_ids" value="" onchange="enabledBtn()"/>
-            <input type="hidden" name="food_items" id="food_items" value="" onchange="enabledBtn()"/>
-            <input type="hidden" name="food_items_qty" id="food_items_qty" value="" onchange="enabledBtn()"/>
+            <input type="hidden" name="food_items_ids" id="food_item_ids" required />
+            <input type="hidden" name="food_items" id="food_items" required />
+            <input type="hidden" name="food_items_qty" id="food_items_qty" required />
         </div>
+
         <div class="col-md-12 col-12 food-mt20">
             <button class="btn btn-primary btn-block" type="button" onclick="ValidateForm(this)" disabled id="nextBtn">
                 BUILD YOUR MENU
@@ -153,8 +156,8 @@ function action_woocommerce_before_add_to_cart_button() { ?>
 
                 if (dateCheck && timeCheck) {
 
-                    jQuery('form.cart').addClass('hidden');
-                    jQuery('.food-items').removeClass('hidden');
+                    jQuery('form.cart').addClass('d-none');
+                    jQuery('#foodItems').removeClass('d-none');
                     if (product_id > 0) {
                         jQuery('#plusBtn' + product_id).click();
                         localStorage.removeItem('product_id');
@@ -174,10 +177,14 @@ function action_woocommerce_before_add_to_cart_button() { ?>
     </div>
 <?php }
 
-
 // Show food listing
 add_shortcode( 'food_item_listing', 'food_item_listing' );
-function food_item_listing() {
+function food_item_listing( $atts ) {
+	$atts = shortcode_atts( array(
+		'cart_buttons' => 0,
+        'modal_order_button' => 1
+	), $atts );
+
 	$query = new WP_Query( [
 		'post_type'      => 'food_items',
 		'post_status'    => 'publish',
@@ -189,10 +196,13 @@ function food_item_listing() {
     $data = '<div class="row">';
 
     ob_start();
+
     while ( $query->have_posts() ) : $query->the_post();
-        get_template_part( 'template-parts/food', 'listing' );
+        get_template_part( 'template-parts/food', 'listing', $atts );
     endwhile;
 	wp_reset_postdata();
+
+	get_template_part( 'template-parts/modal', 'food-item', $atts );
 
     $data .= ob_get_clean() . '</div>';
 

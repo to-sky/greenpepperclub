@@ -17,6 +17,7 @@
 		</div><!-- .container -->
 	<?php endif; ?>
 
+    <?php if ( ! is_product() ) : ?>
 	</div><!-- #content -->
     <?php get_template_part( 'footer-widget' ); ?>
 	<footer id="colophon" class="site-footer <?php echo wp_bootstrap_starter_bg_class(); ?>" role="contentinfo">
@@ -26,6 +27,8 @@
             </div><!-- close .site-info -->
 		</div>
 	</footer><!-- #colophon -->
+	<?php endif; ?>
+
 <?php endif; ?>
 </div><!-- #page -->
 

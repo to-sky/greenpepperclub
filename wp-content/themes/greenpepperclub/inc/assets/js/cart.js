@@ -2,10 +2,11 @@ jQuery( document ).ready(function($) {
     let maxItems = parseInt($('#maxItems').text());
     let qtyItemsIntoCart = 0;
     let foodItems = [];
+    let addToCartBtn = $('#foodItems button[data-action="add-to-cart"]');
 
-    // Get all item id's into cart
-    function getAllIdsIntoCart() {
-        return foodItems.map(el => el.id);
+    // Get all item types from cart
+    function getAllTypesFromCart(type) {
+        return foodItems.map(el => el[type]);
     }
 
     // Get item index into foodItems array
@@ -13,7 +14,7 @@ jQuery( document ).ready(function($) {
         return foodItems.findIndex(el => el.id === id);
     }
 
-    // Get qty items into cart by id
+    // Get qty items from cart by id
     function getQtyFromCartById(id, returnInteger = false) {
         let itemIndex = getItemIndexIntoCart(id);
 
@@ -24,74 +25,64 @@ jQuery( document ).ready(function($) {
         return foodItems[itemIndex].qty;
     }
 
-    // Update total quantity into "Your meals" block (cart label)
-    function updateTotalQty() {
-        $('#totalQty').text(qtyItemsIntoCart);
-    }
-
     // Check if cart is full
     function checkCartIsFull() {
         return qtyItemsIntoCart === maxItems;
     }
 
-    // Buttons handler
     $('body').on('click', '[data-action="plus"], [data-action="minus"], [data-action="delete"]', function (e) {
-        let action = $(this).data('action');
-        let id = $(this).data('id');
-        let foodItem = $(`#foodItem-${id}`);
-        let foodInput = $(`#qty-${id}`);
+        buttonsHandler($(this).data('id'), $(this).data('action'));
+    });
 
-        // Run action add to cart or remove from cart
-        if (action === 'plus') {
-            addToCart(id);
+    // buttonsHandler(1677, 'plus');
 
-            // Set active food item card and unblock minus button
-            foodItem.addClass('active');
-            foodItem.find('button[data-action="minus"]').prop('disabled', false);
-        } else if (action === 'minus') {
-            removeFromCart(id);
-        } else if (action === 'delete') {
-            dropFromCart(id);
+    // Buttons handler
+    function buttonsHandler(id, action) {
+        switch(action) {
+            case 'plus':
+                addToCart(id);
+                break;
+            case 'minus':
+                removeFromCart(id);
+                break;
+            case 'delete':
+                deleteFromCart(id);
         }
 
         // Add qty value to current input
-        foodInput.val(getQtyFromCartById(id, true))
+        $(`#qty-${id}`).val(getQtyFromCartById(id, true))
 
         // Set label with current qty into cart
-        updateTotalQty();
-
-        let cartBtn = $(".cartBtn button");
+        $('#totalQty').text(qtyItemsIntoCart);
 
         // When cart is full
         if (checkCartIsFull()) {
-            // Block all '+' buttons
             $('button[data-action="plus"]').prop('disabled', true);
 
-            // Fill all hidden inputs
-            fillHiddenInputs();
-
-            // Enable 'Add to cart button'
-            cartBtn.prop('disabled', false);
+            $.when(
+                fillHiddenInputs()
+            ).then(function () {
+                addToCartBtn.prop('disabled', false);
+            });
         } else {
-            // Disable 'Add to cart button'
-            cartBtn.prop('disabled', true);
+            addToCartBtn.prop('disabled', true);
             $('button[data-action="plus"]').prop('disabled', false);
         }
-
-        console.log(foodItems, qtyItemsIntoCart)
-    });
-
-
-    function fillHiddenInputs() {
-        //     food_items_str = food_items.toString().replace(/,\s*$/, "");
-        //     food_items_ids_str = food_items_ids.toString().replace(/,\s*$/, "");
-        //     qty_str = qty.toString().replace(/,\s*$/, "");
-
-        // $('#food_item_ids').val(food_items_ids_str);
-        // $('#food_items').val(food_items_str);
-        // $('#food_items_qty').val(qty_str);
     }
 
+    // Click on "Add to cart" button
+    addToCartBtn.click(function () {
+        $(this).text('Please wait!');
+
+        $('form button[name="add-to-cart"]').click();
+    })
+
+    // Fill hidden inputs
+    function fillHiddenInputs() {
+        $('#food_item_ids').val(getAllTypesFromCart('id'));
+        $('#food_items').val(getAllTypesFromCart('name'));
+        $('#food_items_qty').val(getAllTypesFromCart('qty'));
+    }
 
     // Add food item to cart
     function addToCart(id) {
@@ -100,23 +91,28 @@ jQuery( document ).ready(function($) {
         }
 
         if (!getQtyFromCartById(id)) {
-            foodItems.push({id: id, qty: 1});
+            let itemName = $(`#itemName-${id}`).text();
+            foodItems.push({
+                id: id,
+                qty: 1,
+                name: itemName.trim()
+            });
 
             // Add HTML block to cart items
             $('#cartItems').append(createCartItem(id));
         } else {
-
             foodItems[getItemIndexIntoCart(id)].qty++;
 
             $(`#cartItemQty-${id}`).text(foodItems[getItemIndexIntoCart(id)].qty);
         }
+
+        setStatusForButtons(id, 'plus');
 
         // Update qty items into cart
         qtyItemsIntoCart++;
 
         return true;
     }
-
 
     // Remove food item from cart
     function removeFromCart(id) {
@@ -128,12 +124,10 @@ jQuery( document ).ready(function($) {
 
         if (getQtyFromCartById(id) === 1) {
             foodItems.splice(itemIndexIntoCart, 1);
-            $(`#cartItem-${id}`).remove();
 
-            let foodItem = $(`#foodItem-${id}`);
-            foodItem.removeClass('active');
-            foodItem.find('button[data-action="minus"]').prop('disabled', true);
-            foodItem.find('button[data-action="plus"]').prop('disabled', false);
+            removeHtmlItemFromCart(id);
+
+            setStatusForButtons(id, 'remove');
         } else {
             foodItems[itemIndexIntoCart].qty--;
 
@@ -147,20 +141,48 @@ jQuery( document ).ready(function($) {
     }
 
     // Remove from cart food item with all quantity
-    function dropFromCart(id) {
+    function deleteFromCart(id) {
         let itemIndexIntoCart = getItemIndexIntoCart(id);
 
         qtyItemsIntoCart -= foodItems[itemIndexIntoCart].qty;
 
         foodItems.splice(itemIndexIntoCart, 1);
 
-        $(`#cartItem-${id}`).remove();
+        removeHtmlItemFromCart(id);
 
-        let foodItem = $(`#foodItem-${id}`);
-        foodItem.removeClass('active');
-        foodItem.find('button[data-action="minus"]').prop('disabled', true);
+        setStatusForButtons(id, 'delete');
 
         return true;
+    }
+
+    // Remove HTML element from cart, add animation
+    function removeHtmlItemFromCart(id) {
+        $(`#cartItem-${id}`).slideUp(function() {
+            $(this).remove();
+
+            let cartItems = $('#cartItems');
+
+            if ($(cartItems).children().length === 0) {
+                $(cartItems).hide();
+            }
+        });
+    }
+
+    // Set disabled status depending on exists item into cart
+    function setStatusForButtons(id, action) {
+        let foodItem = $(`#foodItem-${id}`);
+
+        switch(action) {
+            case 'plus':
+                foodItem.addClass('active').find('button[data-action="minus"]').prop('disabled', false);
+                break;
+            case 'remove':
+                foodItem.removeClass('active').find('button[data-action="minus"]').prop('disabled', true);
+                break;
+            case 'delete':
+                foodItem.removeClass('active').find('button[data-action="minus"]').prop('disabled', true);
+                foodItem.find('button[data-action="plus"]').prop('disabled', false);
+        }
     }
 
     // Create HTML food item for cart block
@@ -168,19 +190,48 @@ jQuery( document ).ready(function($) {
         let itemThumbnail = $('#itemThumb-' + id).html();
         let itemName = $('#itemName-' + id).html();
 
-        return `<div class="d-flex p-3 justify-content-between bg-white border-top" id="cartItem-${id}">
-                                <div class="d-flex flex-column-reverse justify-content-around align-items-center">
-                                    <button class="btn btn-primary gp-minus-btn food-font14" data-action="minus" data-id="${id}">&minus;</button>
-                                     <span id="cartItemQty-${id}" class="d-inline-block">${getQtyFromCartById(id)}</span>
-                                    <button class="btn btn-primary gp-plus-btn food-font14" data-action="plus" data-id="${id}">&plus;</button>
-                                </div>
+        return `<div class="bg-white" id="cartItem-${id}">
+                    <div class="d-flex justify-content-between  p-3">
+                        <div class="col-1 d-flex align-items-center flex-column justify-content-around">
+                            <button class="gp-plus-btn" data-action="plus" data-id="${id}">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <span id="cartItemQty-${id}" class="food-font18 food-font-w400">${getQtyFromCartById(id)}</span>
+                            <button class="gp-minus-btn" data-action="minus" data-id="${id}">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
 
-                                <div class="w-25 px-3">${itemThumbnail}</div>
+                        <div class="col-3 cart-food-item-thumbnail">${itemThumbnail}</div>
 
-                                <div class="d-flex align-items-center flex-fill justify-content-between">
-                                    <span class="pr-3 d-inline-block food-font14">${itemName}</span>
-                                    <i class="fas fa-times gp-delete-btn" data-action="delete" data-id="${id}"></i>
-                                </div>
-                            </div>`;
+                        <div class="col-8 d-flex p-0 align-items-center justify-content-between">
+                            <span class="pr-3 d-inline-block food-font13">${itemName}</span>
+                            <i class="fas fa-times gp-delete-btn" data-action="delete" data-id="${id}"></i>
+                        </div>
+                    </div>
+                </div>`;
     }
+
+    // Show food items into cart for mobile
+    $('#cartQtyCounter').click(function (e) {
+        let cartItems = $('#cartItems');
+
+        if (window.screen.width >= 1024) {
+            return false;
+        }
+
+        if ($(cartItems).children().length === 0) {
+            return false;
+        }
+
+        $(cartItems).slideToggle('400', function () {
+            let catItemsContainer = $('.cart-items-container');
+
+            if ($('.cart-items').is(':visible')) {
+                catItemsContainer.addClass('opened')
+            } else {
+                catItemsContainer.removeClass('opened');
+            }
+        });
+    })
 });

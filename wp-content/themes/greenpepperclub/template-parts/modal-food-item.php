@@ -44,6 +44,12 @@
                 <div class="food-modal-ingredients"></div>
                 <div class="food-modal-allergens"></div>
                 <div class="food-modal-excerpt"></div>
+
+	            <?php if( (int) $args['modal_order_button'] ) : ?>
+                <div class="food-modal-order-link my-2 border-top pt-4">
+                    <a href="<?php the_permalink(69); ?>" class="btn btn-primary d-block">Order now</a>
+                </div>
+	            <?php endif; ?>
             </div>
         </div>
     </div>
