@@ -17,6 +17,7 @@
 		</div><!-- .container -->
 	<?php endif; ?>
 
+    <!-- TODO: for single product need to remove footer from food listing -->
     <?php if ( ! is_product() ) : ?>
 	</div><!-- #content -->
     <?php get_template_part( 'footer-widget' ); ?>

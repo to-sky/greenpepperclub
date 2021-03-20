@@ -14,7 +14,7 @@
 
 get_header();
 ?>
-        <section id="primary" class="content-area col-sm-12 col-md-12 col-lg-12 d-none">
+        <section id="primary" class="content-area col-sm-12 col-md-12 col-lg-12 ">
             <main id="main" class="site-main" role="main">
                 <div class="container">
                     <div class="row no-gutters">
@@ -28,7 +28,7 @@ get_header();
     </div>
 </div>
                   
-<?php if(is_singular('product')) : ?>
+<?php if(! is_singular('product')) : ?>
     <section id="primaryProduct" class="content-area h-100">
         <main id="mainProduct" class="site-main h-100" role="main">
             <div class="container-fluid h-100">
@@ -83,5 +83,4 @@ get_header();
 <?php endif; ?>
 
 <?php
-//get_template_part( 'template-parts/modal', 'food-item' );
 get_footer();

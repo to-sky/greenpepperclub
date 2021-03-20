@@ -99,4 +99,39 @@ jQuery( function ( $ ) {
             }
         ]
     });
-});
+
+    // Slide effect for header dropdown
+    $('.gp-menu-account-dropdown').on('show.bs.dropdown', function(e){
+        $(this).find('.dropdown-menu').first().stop(true, true).slideDown(300);
+    }).on('hide.bs.dropdown', function(e){
+        $(this).find('.dropdown-menu').first().stop(true, true).slideUp(300);
+    });
+
+}); // close main function
+
+
+/* Global functions */
+
+/**
+ * Countdown timer
+ * @param el
+ * @param deadlineTime
+ */
+function runCountdownTimer(el, deadlineTime) {
+    let clonedCountdownTimer = el.clone();
+
+    el.flipTimer({
+        direction: 'down',
+        date: deadlineTime,
+        callback: function () {
+            jQuery.post(gp_ajax.url, {action: 'get_next_delivery_deadline'}, function (response) {
+                jQuery('#countdownTimerContainer').html(clonedCountdownTimer);
+
+                clonedCountdownTimer.flipTimer({
+                    direction: 'down',
+                    date: response,
+                });
+            });
+        }
+    });
+}

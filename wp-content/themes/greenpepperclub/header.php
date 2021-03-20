@@ -59,8 +59,6 @@
                         data-target="#main-nav" aria-controls="" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-<!--                <a class="text-white food-font18 cart-menu" href="--><?php //echo wc_get_cart_url(); ?><!--"><i-->
-<!--                            class="fa fa-shopping-cart"></i></a>-->
 
 				<?php
 				wp_nav_menu( array(
@@ -91,7 +89,7 @@
     >
 
         <?php if( $overlayColor ) : ?>
-        <div class="gp-page-bg-overlay" style="background-color: <?php echo $overlayColor; ?>"></div>
+        <div class="gp-overlay" style="background-color: <?php echo $overlayColor; ?>"></div>
         <?php endif; ?>
 
         <?php if ( ! is_page_template( 'fullwidth.php' ) && ! is_front_page()) : ?>

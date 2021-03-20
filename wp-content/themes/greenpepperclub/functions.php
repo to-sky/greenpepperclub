@@ -233,6 +233,7 @@ function wp_bootstrap_starter_scripts() {
     wp_enqueue_script('fullscreen-grid-modal', get_template_directory_uri() . '/inc/assets/js/fullscreen-grid-modal.js', array() );
     wp_enqueue_script('cart', get_template_directory_uri() . '/inc/assets/js/cart.js', array(), false, true );
     wp_enqueue_script('modal-food-item', get_template_directory_uri() . '/inc/assets/js/modal-food-item.js', array(), false, true );
+    wp_enqueue_script('flip-timer', get_template_directory_uri() . '/inc/assets/js/jquery.flipTimer.js', array(), false, true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -241,13 +242,18 @@ function wp_bootstrap_starter_scripts() {
 
     // Plugins
     wp_enqueue_style( 'slick', 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css' );
+	wp_enqueue_style( 'flip', get_template_directory_uri() . '/inc/assets/css/flipTimer.css' );
 
     wp_enqueue_script('slick-js', 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js', array(), '', true );
     wp_enqueue_script('matchHeight', 'https://cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.2/jquery.matchHeight-min.js', array(), '', true );
 }
 add_action( 'wp_enqueue_scripts', 'wp_bootstrap_starter_scripts' );
 
+// Custom image sizes
+add_image_size( 'food_item', 512, 512, true );
 
+include_once(get_template_directory().'/shortcodes/main_shortcodes.php');
+include_once(get_template_directory().'/shortcodes/woocommerce_shortcodes.php');
 
 /**
  * Add Preload for CDN scripts and stylesheet
@@ -264,12 +270,21 @@ function wp_bootstrap_starter_preload( $hints, $relation_type ){
         ];
     }
     return $hints;
-} 
+}
+
+/**
+ * Register ajax url
+ */
+add_action( 'wp_enqueue_scripts', 'gp_ajax_data', 99 );
+function gp_ajax_data(){
+	wp_localize_script('wp-bootstrap-starter-themejs', 'gp_ajax',
+		array(
+			'url' => admin_url('admin-ajax.php')
+		)
+	);
+}
 
 add_filter( 'wp_resource_hints', 'wp_bootstrap_starter_preload', 10, 2 );
-
-
-
 function wp_bootstrap_starter_password_form() {
     global $post;
     $label = 'pwbox-'.( empty( $post->ID ) ? rand() : $post->ID );
@@ -315,44 +330,203 @@ if ( ! class_exists( 'wp_bootstrap_navwalker' )) {
     require_once(get_template_directory() . '/inc/wp_bootstrap_navwalker.php');
 }
 
-//add_filter( 'style_loader_src',  'taxation_remove_ver_css_js', 9999, 2 );
-//add_filter( 'script_loader_src', 'taxation_remove_ver_css_js', 9999, 2 );
-function taxation_remove_ver_css_js( $src, $handle ) 
+/**
+ * Remove version from CSS and JS
+ */
+add_filter( 'style_loader_src',  'taxation_remove_ver_css_js', 9999, 2 );
+add_filter( 'script_loader_src', 'taxation_remove_ver_css_js', 9999, 2 );
+function taxation_remove_ver_css_js( $src, $handle )
 {
-    $handles_with_version = [ 'style', 'script' ]; // <-- Adjust to your needs!
+    $handles_with_version = [ 'style', 'script' ];
 
-    if ( strpos( $src, 'ver=' ) && ! in_array( $handle, $handles_with_version, true ) )
-        $src = remove_query_arg( 'ver', $src );
+    if ( strpos( $src, 'ver=' ) && ! in_array( $handle, $handles_with_version, true ) ) {
+	    $src = remove_query_arg( 'ver', $src );
+    }
 
     return $src;
 }
-function app_output_buffer() {
-    ob_start();
-} // soi_output_buffer
-add_action('init', 'app_output_buffer');
 
-//disable admin bar on frontend for users
+/**
+ * Init
+ */
+add_action('init', function(){
+	// Opened buffer will need for wp_redirect function
+	ob_start();
+
+	remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
+	add_action('woocommerce_shop_loop_item_title', 'gp_woocommerce_shop_loop_item_title', 7);
+
+	function gp_woocommerce_shop_loop_item_title() {
+		echo '<div class="gp-overlay"></div></a>';
+	}
+});
+
+/**
+ * Disable admin bar on frontend(for users)
+ */
 show_admin_bar(false);
 
-//Run shortcode inside sidebar widget
+/**
+ * Enabling shortcodes in widgets
+ */
 add_filter( 'widget_text', 'do_shortcode' );
 
 /**
 * Allow logout without confirmation
 */
-add_action('check_admin_referer', 'logout_without_confirm', 10, 2);
-function logout_without_confirm($action, $result)
-{
-    if ($action == "log-out" && !isset($_GET['_wpnonce'])) {
-        $redirect_to = isset($_REQUEST['redirect_to']) ? $_REQUEST['redirect_to'] : site_url();
-        $location = str_replace('&amp;', '&', wp_logout_url($redirect_to));
-        header("Location: $location");
-        die;
-    }
+add_action( 'template_redirect', 'logout_confirmation' );
+function logout_confirmation() {
+	global $wp;
+
+	if ( isset( $wp->query_vars['customer-logout'] ) ) {
+		wp_redirect( str_replace( '&amp;', '&', wp_logout_url( wc_get_page_permalink( 'myaccount' ) ) ) );
+
+		exit;
+	}
 }
 
-// Custom image sizes
-add_image_size( 'food_item', 512, 512, true );
+/**
+ * Get deadline time for day before delivery
+ *
+ * @param string $foodDeliveryDay
+ * @param int $requiredNoOfDays
+ * @param bool $dateFormatForHuman
+ * @param string $dateFormat
+ *
+ * @return false|float|int timestamp or formatted date
+ */
+function getDeadlineBeforeDayDelivery(string $foodDeliveryDay, int $requiredNoOfDays = 1, $dateFormatForHuman = false, $dateFormat = 'l, d F Y, H:i') {
+	$deadlineTimeDirty = date_parse('19:30'); // Hardcode
+	$deadlineTimeInSeconds = $deadlineTimeDirty['hour'] * 60 * 60 + $deadlineTimeDirty['minute'] * 60;
 
-include_once(get_template_directory().'/shortcodes/main_shortcodes.php');
-include_once(get_template_directory().'/shortcodes/woocommerce_shortcodes.php');
+	$requiredNoOfDaysInSeconds = strtotime("$requiredNoOfDays day", 0);
+	$foodDeliveryDate = strtotime("next $foodDeliveryDay");
+
+	$offsetToRequiredNoOfDays = strtotime("1 day", 0) - $deadlineTimeInSeconds;
+	$timeToDeliveryInSeconds = $requiredNoOfDaysInSeconds + $offsetToRequiredNoOfDays;
+	$deadlineBeforeDayDelivery = $foodDeliveryDate - $timeToDeliveryInSeconds;
+
+	if ($dateFormatForHuman) {
+		return date($dateFormat, $deadlineBeforeDayDelivery);
+	}
+
+	return $deadlineBeforeDayDelivery;
+}
+
+/**
+ * Sort product delivery days and return days with deadline timestamp
+ *
+ * @param int $productId
+ *
+ * @return array|false
+ */
+function sortProductDeliveryDaysWithDeadline(int $productId) {
+	$productDeliveryDays = get_field( 'food_delivery_days', $productId );
+
+	if (! $productDeliveryDays) {
+		return false;
+	}
+
+	$sortingDeliveryDays = [];
+	foreach ($productDeliveryDays as $key => $deliveryDays) {
+		$sortingDeliveryDays[$deliveryDays['delivery_day']] = getDeadlineBeforeDayDelivery($deliveryDays['delivery_day'], $deliveryDays['required_no_of_days']);
+	}
+
+	asort($sortingDeliveryDays);
+
+	return $sortingDeliveryDays;
+}
+
+/**
+ * Get sorted delivery data for product with deadline for each days
+ *
+ * @param int $productId
+ * @param string $formatDeliveryDate
+ * @param string $formatDeliveryDeadline
+ *
+ * @return array|false
+ */
+function getSortedDeliveryDataForProduct(int $productId, $formatDeliveryDate = 'Y-m-d H:i', $formatDeliveryDeadline = 'Y-m-d H:i') {
+	$deliveryDaysWIthDeadline = sortProductDeliveryDaysWithDeadline( $productId );
+
+	if (! $deliveryDaysWIthDeadline) {
+		return false;
+	}
+
+	$sortedDeliveryData = [];
+	$index = 0;
+	foreach (  $deliveryDaysWIthDeadline as $deliveryDayName => $deliveryDeadlineTimestamp ) {
+		$sortedDeliveryData[$index]['day_name'] = $deliveryDayName;
+		$sortedDeliveryData[$index]['day_timestamp'] = strtotime($deliveryDayName, $deliveryDeadlineTimestamp);
+		$sortedDeliveryData[$index]['day_formatted'] = date($formatDeliveryDate, strtotime($deliveryDayName, $deliveryDeadlineTimestamp));
+
+		$sortedDeliveryData[$index]['deadline_timestamp'] = $deliveryDeadlineTimestamp;
+		$sortedDeliveryData[$index]['deadline_timestamp_formatted'] = date($formatDeliveryDeadline, $deliveryDeadlineTimestamp);
+
+		$index++;
+	}
+
+	return $sortedDeliveryData;
+}
+
+/**
+ * Get delivery deadline timestamp for product
+ *
+ * @param int $productId
+ *
+ * @return mixed
+ */
+function getDeliveryDeadlineTimestamp(int $productId) {
+	$sortProductDeliveryDay = sortProductDeliveryDaysWithDeadline( $productId );
+
+	return $sortProductDeliveryDay
+		? reset( $sortProductDeliveryDay )
+		: false;
+}
+
+/**
+ * Get the closest deadline value
+ *
+ * @param int $timestamp
+ * @param string $format
+ *
+ * @return mixed
+ */
+function getNextDeliveryDeadline($timestamp = 0, $format = 'M j, Y H:i:s') {
+	$loop = new WP_Query([
+		'post_type' =>'product',
+		'post_status' => 'publish',
+		'posts_per_page' => -1
+	]);
+
+	$allDeadlines = [];
+	if ( $loop->have_posts() ):
+		while ( $loop->have_posts() ): $loop->the_post();
+			$deliveryDeadlineTimestamp = getDeliveryDeadlineTimestamp(get_the_id());
+
+			if ($deliveryDeadlineTimestamp && $deliveryDeadlineTimestamp > time()) {
+				$allDeadlines[] = $deliveryDeadlineTimestamp;
+			}
+		endwhile;
+	endif;
+	wp_reset_postdata();
+
+	$nextDeliveryDeadlineTimestamp = min(array_unique($allDeadlines));
+
+	if ($timestamp) {
+		return $nextDeliveryDeadlineTimestamp;
+	}
+
+	return date($format, $nextDeliveryDeadlineTimestamp);
+}
+
+/**
+ * Get next delivery deadline from ajax
+ */
+add_action('wp_ajax_get_next_delivery_deadline', 'get_next_delivery_deadline_callback');
+add_action('wp_ajax_nopriv_get_next_delivery_deadline', 'get_next_delivery_deadline_callback');
+function get_next_delivery_deadline_callback() {
+	echo getNextDeliveryDeadline();
+
+	wp_die();
+}

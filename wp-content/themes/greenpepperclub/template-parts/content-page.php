@@ -6,17 +6,16 @@
  *
  * @package WP_Bootstrap_Starter
  */
-
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-    <?php if(! is_front_page()) : ?>
+    <?php if(! is_front_page() && ! is_account_page()) : ?>
     <header class="entry-header">
 		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 	</header><!-- .entry-header -->
     <?php endif; ?>
 
-	<div class="entry-content">
+	<div class="entry-content <?php echo is_account_page() ? 'mt-4 mb-5' : ''; ?>">
 		<?php
 			the_content();
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Testimonials slider on homepage
+ * Testimonials slider
  */
 add_shortcode( 'gp_testimonials_slider', 'gp_testimonials_slider' );
 function gp_testimonials_slider() {
@@ -56,5 +56,29 @@ function gp_testimonials_slider() {
 	return $data;
 }
 
-;
+
+/**
+ * Countdown timer
+ */
+add_shortcode( 'gp_countdown_timer', 'gp_countdown_timer' );
+function gp_countdown_timer() {
+	$data = ' <div id="countdownTimerContainer">
+                    <div class="text-center" id="countdownTimer">
+                        <div class="days"></div>
+                        <div class="hours"></div>
+                        <div class="minutes"></div>
+                        <div class="seconds"></div>
+                    </div>
+                </div>';
+
+	$data .= "<script>
+				jQuery(document).ready(function($) {
+                	let deadline = '" . getNextDeliveryDeadline() . "';
+                	
+					runCountdownTimer($('#countdownTimer'), deadline);
+			    });
+            </script>";
+
+	return $data;
+}
 

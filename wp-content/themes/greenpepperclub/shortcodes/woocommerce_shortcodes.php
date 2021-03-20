@@ -19,7 +19,7 @@ function action_woocommerce_before_add_to_cart_button() { ?>
 	?>
 
     <div class="row">
-        <div class="col-md-12 col-12">
+        <div class="col-12">
             <h2 class="food-txt-uppercase text-center font-montserrat-semibold">Select a delivery date</h2>
         </div>
 
@@ -55,7 +55,7 @@ function action_woocommerce_before_add_to_cart_button() { ?>
 		foreach ( $datesInput as $key => $dates ) {
 			$fdatedisplay = strtoupper( explode( ' ', $dates )[0] ) . ' <span>' . explode( ' ', $dates )[1] . ' ' . ordinal( explode( ' ', $dates )[2] ) . '</span>';
 			?>
-            <div class="col-12 col-md-3" style="">
+            <div class="col-12" style="">
                 <div class="radiobox-full">
                     <input id="date<?php echo $key; ?>" type="radio" name="date" value="<?php echo $dates; ?>"
                            required onchange="enabledBtn()"/>
@@ -68,7 +68,7 @@ function action_woocommerce_before_add_to_cart_button() { ?>
 		$split_dates = rtrim( $split_dates, ' - ' );
 		?>
 
-        <div class="col-12 col-md-3">
+        <div class="col-12">
 
             <div class="radiobox-full">
                 <input id="date5" type="radio" name="date" value="SPLIT :<?php echo $split_dates; ?>" required
@@ -83,14 +83,14 @@ function action_woocommerce_before_add_to_cart_button() { ?>
         <div class="col-12">
             <h2 class="food-txt-uppercase text-center font-montserrat-semibold">Delivery time</h2>
         </div>
-        <div class="col-12 col-md-6" style="">
+        <div class="col-12" style="">
             <div class="radiobox-full">
                 <input id="date6" type="radio" name="time" value="<?php echo $delivery_time_morning; ?>" required
                        onchange="enabledBtn()"/>
                 <label for="date6" class="frmLbl"><p><?php echo $delivery_time_morning; ?></p></label>
             </div>
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-12">
             <div class="radiobox-full">
                 <input id="date7" type="radio" name="time" value="<?php echo $delivery_time_evening; ?>" required
                        onchange="enabledBtn()"/>
@@ -104,12 +104,14 @@ function action_woocommerce_before_add_to_cart_button() { ?>
             <input type="hidden" name="food_items_qty" id="food_items_qty" required />
         </div>
 
-        <div class="col-md-12 col-12 food-mt20">
+        <div class="col-12 food-mt20">
             <button class="btn btn-primary btn-block" type="button" onclick="ValidateForm(this)" disabled id="nextBtn">
                 BUILD YOUR MENU
             </button>
         </div>
         <script>
+            let product_id = localStorage.getItem('product_id');
+
             function enabledBtn() {
                 var dateCheck = false;
                 var timeCheck = false;
@@ -156,8 +158,8 @@ function action_woocommerce_before_add_to_cart_button() { ?>
 
                 if (dateCheck && timeCheck) {
 
-                    jQuery('form.cart').addClass('d-none');
-                    jQuery('#foodItems').removeClass('d-none');
+                    jQuery('#primary').addClass('hidden');
+                    jQuery('#test').removeClass('hidden');
                     if (product_id > 0) {
                         jQuery('#plusBtn' + product_id).click();
                         localStorage.removeItem('product_id');
@@ -225,16 +227,24 @@ function filter_woocommerce_add_cart_item_data( $cart_item_data, $product_id, $v
 
 add_filter( 'woocommerce_cart_item_name', 'spwc_show_cart_ordered_service_info', 10, 3 );
 function spwc_show_cart_ordered_service_info( $name, $cart_item, $cart_item_key ) {
-	if ( isset( $cart_item['food_items'] ) ) {
-		$aItems = explode( ',', $cart_item['food_items'] );
-		$aIds   = explode( ',', $cart_item['food_items_ids'] );
-		$aQtys  = explode( ',', $cart_item['food_items_qty'] );
+    $name = '';
 
-		$name   .= '<table><tr><th>Meal</th><th>Name</th><th>Quantity</th></tr>';
-		foreach ( $aItems as $key => $item ) {
-			$itemSrc = get_the_post_thumbnail_url( $aIds[ $key ], 'thumbnail' );
-			$name    .= '<tr><td><img src="' . $itemSrc . '" style="width:50px" /></td><td>' . $item . '</td><td>' . $aQtys[ $key ] . '</td></tr>';
-		}
+	if ( isset( $cart_item['food_items'] ) ) {
+		$foodIds   = is_array($cart_item['food_items_ids']) ? explode( ',', $cart_item['food_items_ids'] ) : $cart_item['food_items_ids'];
+		$foodQty   = is_array($cart_item['food_items_qty']) ? explode( ',', $cart_item['food_items_qty'] ) : $cart_item['food_items_qty'];
+		$foodNames = is_array($cart_item['food_items']) ? explode( ',', $cart_item['food_items'] ) : $cart_item['food_items'];
+
+		$name .= '<table><tr><th>Meal</th><th>Name</th><th>Quantity</th></tr>';
+		if (!  is_array($foodIds) ) {
+			$foodImageUrl = get_the_post_thumbnail_url( $foodIds, 'thumbnail' );
+			$name .= '<tr><td><img src="' . $foodImageUrl . '" style="width:50px" /></td><td>' . $foodNames . '</td><td>' . $foodQty . '</td></tr>';
+        } else {
+			foreach ( $foodNames as $key => $item ) {
+				$foodImageUrl = get_the_post_thumbnail_url( $foodIds[ $key ], 'thumbnail' );
+				$name .= '<tr><td><img src="' . $foodImageUrl . '" style="width:50px" /></td><td>' . $item . '</td><td>' . $foodQty[ $key ] . '</td></tr>';
+			}
+        }
+
 		$name .= '</table>';
 	}
 
@@ -271,7 +281,6 @@ function wc_remove_all_quantity_fields( $return, $product ) {
 
 add_action( 'woocommerce_before_calculate_totals', 'wc_before_calculate_totals' );
 function wc_before_calculate_totals( $cart_object ) {
-	// action...
 	global $woocommerce;
 
 	$cart_items          = $cart_object->get_cart();
@@ -300,7 +309,6 @@ function wc_redirect_checkout_add_cart() {
 // Topbar notification slider
 add_shortcode( 'notification_slider', 'notification_slider' );
 function notification_slider() {
-
 	$args = array(
 		'post_type'      => 'notofication',
 		'post_status'    => 'publish',
@@ -381,4 +389,3 @@ function notification_slider() {
     </script>
 	<?php
 }
-
