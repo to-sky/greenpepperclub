@@ -353,6 +353,10 @@ add_action('init', function(){
 	// Opened buffer will need for wp_redirect function
 	ob_start();
 
+	// TODO: change to Canada
+//		date_default_timezone_set('America/Toronto');
+	date_default_timezone_set('Europe/Moscow');
+
 	remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
 	add_action('woocommerce_shop_loop_item_title', 'gp_woocommerce_shop_loop_item_title', 7);
 
@@ -399,11 +403,17 @@ function getDeadlineBeforeDayDelivery(string $foodDeliveryDay, int $requiredNoOf
 	$deadlineTimeDirty = date_parse('19:30'); // Hardcode
 	$deadlineTimeInSeconds = $deadlineTimeDirty['hour'] * 60 * 60 + $deadlineTimeDirty['minute'] * 60;
 
-	$requiredNoOfDaysInSeconds = strtotime("$requiredNoOfDays day", 0);
-	$foodDeliveryDate = strtotime("next $foodDeliveryDay");
+	$requiredNoOfDaysInSeconds = strtotime("$requiredNoOfDays day", 0); // ex. 1d
+	$offsetToRequiredNoOfDays = strtotime("1 day", 0) - $deadlineTimeInSeconds;  // 24h - 19:30 = 4:30
+	$timeToDeliveryInSeconds = $requiredNoOfDaysInSeconds + $offsetToRequiredNoOfDays; // ex. 1d + 4:30
 
-	$offsetToRequiredNoOfDays = strtotime("1 day", 0) - $deadlineTimeInSeconds;
-	$timeToDeliveryInSeconds = $requiredNoOfDaysInSeconds + $offsetToRequiredNoOfDays;
+	// Check next delivery date, if current time < than next day minus delivery offset,
+	// that means  - next delivery day in next week
+	// Ex. for monday: for sunday next monday will be +1 week monday
+	$foodDeliveryDate = time() < strtotime("next $foodDeliveryDay") - $timeToDeliveryInSeconds
+	                    ? strtotime("next $foodDeliveryDay")
+						: strtotime("next $foodDeliveryDay + 1 week");
+
 	$deadlineBeforeDayDelivery = $foodDeliveryDate - $timeToDeliveryInSeconds;
 
 	if ($dateFormatForHuman) {
@@ -530,3 +540,5 @@ function get_next_delivery_deadline_callback() {
 
 	wp_die();
 }
+
+//dd(getNextDeliveryDeadline());

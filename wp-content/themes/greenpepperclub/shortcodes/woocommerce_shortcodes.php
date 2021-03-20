@@ -52,6 +52,12 @@ function action_woocommerce_before_add_to_cart_button() { ?>
 			return strtotime( $item1 ) <=> strtotime( $item2 );
 		} );
 
+//		dd(getNextDeliveryDeadline());
+
+//		dd($datesInput);
+
+//		dd(getSortedDeliveryDataForProduct($product_id));
+
 		foreach ( $datesInput as $key => $dates ) {
 			$fdatedisplay = strtoupper( explode( ' ', $dates )[0] ) . ' <span>' . explode( ' ', $dates )[1] . ' ' . ordinal( explode( ' ', $dates )[2] ) . '</span>';
 			?>
@@ -59,7 +65,9 @@ function action_woocommerce_before_add_to_cart_button() { ?>
                 <div class="radiobox-full">
                     <input id="date<?php echo $key; ?>" type="radio" name="date" value="<?php echo $dates; ?>"
                            required onchange="enabledBtn()"/>
-                    <label for="date<?php echo $key; ?>" class="frmLbl"><p><?php echo $fdatedisplay; ?></p></label>
+                    <label for="date<?php echo $key; ?>" class="frmLbl">
+                        <p><?php echo $fdatedisplay; ?></p>
+                    </label>
                 </div>
             </div>
 			<?php
@@ -303,89 +311,4 @@ function wc_before_calculate_totals( $cart_object ) {
 add_filter( 'woocommerce_add_to_cart_redirect', 'wc_redirect_checkout_add_cart' );
 function wc_redirect_checkout_add_cart() {
 	return wc_get_checkout_url();
-}
-
-
-// Topbar notification slider
-add_shortcode( 'notification_slider', 'notification_slider' );
-function notification_slider() {
-	$args = array(
-		'post_type'      => 'notofication',
-		'post_status'    => 'publish',
-		'posts_per_page' => - 1,
-		'orderby'        => 'ID',
-		'order'          => 'ASC',
-	);
-
-	$loop = new WP_Query( $args ); ?>
-    <div id="notific1" class="notification1">
-        <div class="grid-container">
-            <div class="notification-carousel text-center" style="">
-				<?php while ( $loop->have_posts() ) : $loop->the_post(); ?>
-                    <div class="text-center" style="width: 100%!important;">
-                        <div class="news-slide" style="width: 100%; display: inline-block;">
-                            <p class="food-font16 food-mt0 font-montserrat-semibold text-white"
-                               style="width: 100%!important;"><?php echo get_the_content(); ?></p>
-                        </div>
-                    </div>
-
-				<?php endwhile; ?>
-				<?php wp_reset_postdata(); ?>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        jQuery(document).ready(function ($) {
-            $('.notification-carousel').slick({
-                initialSlide: 0,
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                autoplay: true,
-                margin: 0,
-                dots: false,
-                arrows: true,
-                centerMode: true,
-                adaptiveHeight: true,
-                infinite: true,
-                variableWidth: true,
-                lazyLoad: 'ondemand',
-                responsive: [
-                    {
-                        breakpoint: 1024,
-                        settings: {
-                            slidesToShow: 1,
-                            slidesToScroll: 1,
-                            centerMode: true,
-                            variableWidth: true,
-                            infinite: true
-
-                        }
-                    },
-                    {
-                        breakpoint: 600,
-                        settings: {
-                            slidesToShow: 1,
-                            slidesToScroll: 1,
-                            centerMode: true,
-                            variableWidth: true,
-                            infinite: true
-
-                        }
-                    },
-                    {
-                        breakpoint: 480,
-                        settings: {
-                            slidesToShow: 1,
-                            slidesToScroll: 1,
-                            centerMode: true,
-                            variableWidth: true,
-                            infinite: true
-                        }
-                    }
-                ]
-            });
-        });
-    </script>
-	<?php
 }
