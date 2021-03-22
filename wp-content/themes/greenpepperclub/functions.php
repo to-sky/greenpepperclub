@@ -552,3 +552,18 @@ function get_next_delivery_deadline_callback() {
 function isProductFoodListingPage() {
 	return isset( $_GET['product-food-listing'] ) && intval( $_GET['product-food-listing'] ) == 1;
 }
+
+/**
+ * Get meal plans url
+ */
+function get_meal_plans_url() {
+	return get_permalink(69);
+}
+
+/**
+ * Show meal plans url
+ */
+function the_meal_plans_url() {
+	echo get_meal_plans_url();
+}
+//ghgfh

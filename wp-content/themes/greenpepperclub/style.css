@@ -2940,7 +2940,7 @@ a:hover {
 }
 
 .gp-delivery-control label {
-  padding: 15px 0 15px 40px;
+  padding: 15px 0 15px 35px;
   width: 100%;
   border: 1px solid #dee2e6;
 }
@@ -2948,9 +2948,10 @@ a:hover {
 .gp-delivery-control label:hover {
   cursor: pointer;
 }
+
 .gp-delivery-control label:before,
 .gp-delivery-control label:after {
-  top: 19px;
+  top: 18px;
   left: 14px;
 }
 
@@ -2966,3 +2967,37 @@ a:hover {
 .gp-delivery-control input[type="radio"]:checked ~ label {
   border-color: #8dc63f;
 }
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .gp-delivery-control {
+    font-size: 10px;
+  }
+
+  .gp-delivery-control label {
+    padding-left: 25px;
+  }
+
+  .gp-delivery-control label:before,
+  .gp-delivery-control label:after {
+    top: 17px;
+    left: 6px;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1200px) {
+  .gp-delivery-control {
+    font-size: 12px;
+  }
+
+  .gp-delivery-control label:before,
+  .gp-delivery-control label:after {
+    top: 17px;
+  }
+}
+
+/*@media screen and (min-width: 1200px) {*/
+/*  .gp-delivery-control label:before,*/
+/*  .gp-delivery-control label:after {*/
+/*    left: 14px;*/
+/*  }*/
+/*}*/

@@ -47,7 +47,7 @@
 
 	            <?php if( (int) $args['modal_order_button'] ) : ?>
                 <div class="food-modal-order-link my-2 border-top pt-4">
-                    <a id="foodOrderButton" href="<?php the_permalink(69); ?>" class="btn btn-primary d-block">Order now</a>
+                    <a id="foodOrderButton" href="<?php the_meal_plans_url(); ?>" class="btn btn-primary d-block">Order now</a>
                 </div>
 	            <?php endif; ?>
             </div>

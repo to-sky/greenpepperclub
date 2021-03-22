@@ -1,5 +1,5 @@
 <?php if ( is_active_sidebar( 'footer-1' ) || is_active_sidebar( 'footer-2' ) || is_active_sidebar( 'footer-3' ) || is_active_sidebar( 'footer-4' ) ) : ?>
-    <div id="footer-widget" class="row m-0 p-5">
+    <div id="footer-widget" class="row m-0 pt-5 px-3 p-md-5">
         <div class="container">
             <div class="row">
                 <?php if ( is_active_sidebar( 'footer-1' )) : ?>
