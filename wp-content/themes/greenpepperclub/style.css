@@ -436,10 +436,6 @@ table {
   color: #929292;
 }
 
-/*.single-product #content.site-content {*/
-/*    padding-top: 12rem;*/
-/*}*/
-
 .navbar-brand > a {
   color: rgba(0, 0, 0, 0.9);
   font-size: 1.1rem;
@@ -481,13 +477,6 @@ body:not(.theme-preset-active) #page-sub-header h1 {
 body:not(.theme-preset-active) #page-sub-header p {
   color: #212529;
 }
-
-/*a.page-scroller {*/
-/*  color: #333;*/
-/*  font-size: 2.6rem;*/
-/*  display: inline-block;*/
-/*  margin-top: 2rem;*/
-/*}*/
 
 @media screen and (min-width: 768px) {
   body:not(.theme-preset-active) #page-sub-header h1 {
@@ -688,47 +677,6 @@ a img.aligncenter {
   margin: 0.313rem 0 1.25rem 1.25rem;
 }
 
-
-/*.foodItemsDiv .col.col-md-9.col-12 {*/
-/*  height: auto;*/
-/*  overflow-y: hidden;*/
-/*  border-right: 1px solid rgba(0, 0, 0, .1) !important;*/
-/*}*/
-
-/*.foodItemsDiv .col.col-md-3.col-12.cartItems {*/
-/*  height: auto;*/
-/*  overflow-y: auto !important;*/
-/*  border-right: 1px solid rgba(0, 0, 0, .1) !important;*/
-/*}*/
-
-/*.foodItemsDiv .col.col-md-9.col-12.food-mt20,*/
-/*.foodItemsDiv .col.col-md-9.col-12.food-mb20 {*/
-/*  border-right: 1px solid transparent !important;*/
-/*}*/
-
-/*.foodItemsDiv .col.col-2 button {*/
-/*  border-radius: 50px;*/
-/*}*/
-
-/*.foodItemsDiv .col.col-2 button.minus-btn,*/
-/*.foodItemsDiv .col.col-4 button.minus-btn {*/
-/*  width: 36px;*/
-/*  height: 38px;*/
-/*  border-radius: 50px;*/
-/*}*/
-
-/*.foodItemsDiv .col.col-2 button.plus-btn,*/
-/*.foodItemsDiv .col.col-4 button.plus-btn {*/
-/*  width: 36px;*/
-/*  height: 38px;*/
-/*  border-radius: 50px;*/
-/*}*/
-
-/*.foodItemsDiv .food-w-100.fQty {*/
-/*  width: 90% !important;*/
-/*  margin-left: 7px;*/
-/*}*/
-
 /*--------------------------------------------------------------
 # Clearings
 --------------------------------------------------------------*/
@@ -809,142 +757,12 @@ a img.aligncenter {
 /*--------------------------------------------------------------
 # Content
 --------------------------------------------------------------*/
-
-/*.food-carousel .slick-slide h3{*/
-/*   font-family: 'Ubuntu-Bold';*/
-/*   font-size: 20px!important;*/
-/*}*/
-.vc_row.wpb_row.vc_row-fluid.vc_custom_1604457209103 {
-  background-image: url(https://www.greenpepperclub.ca/wp-content/uploads/2020/11/testimonial-bg.png?id=342) !important;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.vc_custom_1604477402778 {
-  background-position: center center !important;
-}
-
-/*.testimonial-carousel .slick-slide img{*/
-/*   width: 180px;*/
-/*   height: 180px;*/
-/*   text-align: center;*/
-/*   margin:0 auto;*/
-/*    border: 1px solid transparent;*/
-/*    border-radius: 50%;*/
-/*}*/
-/*.testimonial-carousel .slick-slide h3{*/
-/*  font-size: 28px;*/
-/*  color:#fff;*/
-/*  margin-bottom: 50px;*/
-/*}*/
-/*.testimonial-carousel .slick-slide p{*/
-/*  font-size: 20px;*/
-/*  color: #fff;*/
-/*  padding: 0px 375px;*/
-/*}*/
-/*.food-carousel .slick-prev:before {*/
-/*    font-size: 44px!important;*/
-/*    background-image: url(images/left-chevron.svg);*/
-/*    width:38px;*/
-/*    height:38px;*/
-/*    background-size: 38px;*/
-/*    color: transparent!important;*/
-/*    background-repeat: no-repeat;*/
-/*}*/
-/*.food-carousel .slick-next:before {*/
-/*    font-size: 44px!important;*/
-/*    background-image: url(images/right-chevron.svg);*/
-/*    width:38px;*/
-/*    height:38px;*/
-/*    background-size: 38px;*/
-/*    color: transparent!important;*/
-/*    background-repeat: no-repeat;*/
-/*  }*/
-/*.food-carousel .slick-prev:before, .slick-next:before {*/
-/*    font-family: "Font Awesome 5 Free"!important;*/
-/*    font-size: 44px!important;*/
-/*    line-height: 1;*/
-/*    color: white;*/
-/*    opacity: 0.75;*/
-/*    -webkit-font-smoothing: antialiased;*/
-/*    -moz-osx-font-smoothing: grayscale;*/
-/*}*/
-/*.food-carousel .slick-prev {*/
-/*    left: -33px;*/
-/*}*/
-/*#notific{*/
-/*  display: block;*/
-/*}*/
-/*.notification {*/
-/*    position: fixed!important;*/
-/*    z-index: 999;*/
-/*    margin: -20px 0 0!important;*/
-/*    width: 100%!important;*/
-/*    top: 0;*/
-/*    left: 0!important;*/
-/*    right: 0!important;*/
-/*    height: 75px;*/
-/*    background-color: #8dc63f !important;*/
-
-/*}*/
-/*.notification-carousel .slick-prev:before, .slick-next:before {*/
-/*     font-family: "Font Awesome 5 Free"!important;*/
-/*    font-size: 30px!important;*/
-/*    line-height: 1;*/
-/*    color: white;*/
-/*    opacity: 0.75;*/
-/*    -webkit-font-smoothing: antialiased;*/
-/*    -moz-osx-font-smoothing: grayscale;*/
-/*}*/
-/*.notification-carousel .slick-prev {*/
-/*    left: 100px;*/
-/*    top: 15%!important;*/
-/*}*/
-/*.notification-carousel .slick-prev:before {*/
-/*    color: white!important;}*/
-/*.notification-carousel .slick-next {*/
-/*    right:100px;*/
-/*    top: 15%!important;*/
-/*}*/
-/*.notification-carousel .slick-next:before {*/
-/*    color: white!important;}*/
-
-/*.notification-carousel.slick-slider {*/
-/*    margin-bottom: 30px;*/
-/*    overflow: hidden;*/
-/*    max-height: 25px;*/
-/*    margin: 0 auto;*/
-/*}*/
-
-/*
-li#menu-item-192{
-position: relative;
-margin-left: 20px;
-}
-li#menu-item-192::before{
-font-family: "Font Awesome 5 Free"!important;
-font-size: 22px!important;
-content: "\f007";
-position: absolute;
-top: 5px;
-left: -108px;
-right: 0;
-bottom: 0;
-color: #fff;
-font-weight: 600;
-}*
 /*--------------------------------------------------------------
 ## Posts and pages
 --------------------------------------------------------------*/
 .admin-bar #content.site-content {
   padding-top: 32px !important;
 }
-
-/*#content.site-content {*/
-/*  padding-bottom: 3.75rem;*/
-/*  padding-top: 4.125rem;*/
-/*}*/
 
 .sticky .entry-title::before {
   content: '\f08d';
@@ -964,12 +782,6 @@ font-weight: 600;
 .group-blog .byline {
   display: inline;
 }
-
-/*.page-content,*/
-/*.entry-content,*/
-/*.entry-summary {*/
-/*  margin: 1.5em 0 0;*/
-/*}*/
 
 .page-links {
   clear: both;
@@ -1305,10 +1117,10 @@ object {
   display: none;
 }
 
-/*.elementor-page.page-template-fullwidth #content.site-content {*/
-/*  padding-bottom: 0;*/
-/*  padding-top: 0;*/
-/*}*/
+.elementor-page.page-template-fullwidth #content.site-content {
+  padding-bottom: 0;
+  padding-top: 0;
+}
 
 .elementor-page .entry-content {
   margin-top: 0;
@@ -1321,10 +1133,10 @@ object {
   display: none;
 }
 
-/*.vc_desktop #content.site-content {*/
-/*  padding-bottom: 0;*/
-/*  padding-top: 0;*/
-/*}*/
+.vc_desktop #content.site-content {
+  padding-bottom: 0;
+  padding-top: 0;
+}
 
 .vc_desktop .entry-content {
   margin-top: 0;
@@ -1857,10 +1669,6 @@ body:not(.theme-preset-active) footer#colophon {
   display: inline-block;
 }
 
-/*.food-w-100 {*/
-/*  width: 100% !important;*/
-/*}*/
-
 .hidden {
   display: none !important;
 }
@@ -1889,13 +1697,6 @@ body:not(.theme-preset-active) footer#colophon {
   margin: 30px 0;
 }
 
-/*.food-home-title {*/
-/*  font-size: 30px;*/
-/*  color: #ea8c18;*/
-/*  line-height: 4;*/
-/*  text-align: center;*/
-/*}*/
-
 .food_item_listing h3 {
   min-height: 55px;
 }
@@ -1916,105 +1717,17 @@ body:not(.theme-preset-active) footer#colophon {
   color: #8dc63f !important;
 }
 
-
-
-
-/*.cart .radiobox-full {*/
-/*  display: flex;*/
-/*  position: relative;*/
-/*  max-width: 550px;*/
-/*  width: 100%;*/
-/*  margin: 0 auto;*/
-/*}*/
-
-/*.cart .radiobox-full .frmLbl {*/
-/*  padding: 0px;*/
-/*  border-radius: 50px;*/
-/*  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);*/
-/*  margin-bottom: 1.5rem;*/
-/*}*/
-
-/*.cart .frmLbl p {*/
-/*  margin-bottom: 0;*/
-/*  padding: 20px 30px;*/
-/*  font-size: 18px;*/
-/*  font-family: 'Montserrat-SemiBold';*/
-/*  margin: 0 auto;*/
-/*}*/
-
-/*.cart .frmLbl p span {*/
-/*  font-size: 16px;*/
-/*  font-family: 'Montserrat-Regular';*/
-/*}*/
-
-/*.cart input[type="radio"] + .frmLbl {*/
-/*  display: flex;*/
-/*  padding: 0;*/
-/*  pointer-events: auto;*/
-/*}*/
-
-/*.cart input[type="radio"] {*/
-/*  opacity: 0.011;*/
-/*  position: absolute;*/
-/*}*/
-
-/*.cart input[type="radio"]::checked + .frmLbl p {*/
-/*  background: #8dc63f !important;*/
-/*  color: #fff !important;*/
-/*}*/
-
-/*.cart input[type="radio"]:checked + .frmLbl {*/
-/*  background-color: #8dc63f;*/
-/*  color: #fff;*/
-/*  border-color: #8dc63f;*/
-/*}*/
-
-
-
-
 #order_review {
   margin-top: 25px;
 }
-
-
-/*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active {*/
-/*  -webkit-border: 2px solid #8dc63f !important;*/
-/*  -webkit-box-shadow: 0 2px 18px rgba(141, 198, 63, .42);*/
-/*  -webkit-border-radius: 0.75rem !important;*/
-/*  -webkit-padding: 0 !important;*/
-/*  border: 2px solid #8dc63f !important;*/
-/*  box-shadow: 0 2px 18px rgba(141, 198, 63, .42);*/
-/*  border-radius: 0.75rem !important;*/
-/*  padding: 0 !important;*/
-/*}*/
-
-/*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active img {*/
-/*  -webkit-border-top-left-radius: 0.70rem;*/
-/*  -webkit-border-top-right-radius: 0.70rem;*/
-/*  -webkit-border-bottom: 2px solid #8dc63f !important;*/
-/*  border-top-left-radius: 0.70rem;*/
-/*  border-top-right-radius: 0.70rem;*/
-/*  border-bottom: 2px solid #8dc63f !important;*/
-/*}*/
-
-
-/*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active .no-gutters {*/
-/*  -webkit-padding: 0px 8px 10px 6px;*/
-/*  padding: 0px 8px 10px 6px;*/
-/*}*/
-
-
-/*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active h3 {*/
-/*  -webkit-padding: 0px 10px 10px;*/
-/*  padding: 0px 10px 10px;*/
-/*  min-height: 60px;*/
-/*}*/
 
 .navbar-brand img {
   height: 100px;
 }
 
-/*#content.site-content{padding-top:0;}*/
+#content.site-content{
+  padding-top: 0;
+}
 
 .navbar-nav {
   width: 100%;
@@ -2148,42 +1861,9 @@ body:not(.theme-preset-active) footer#colophon {
   }
 }
 
-/*.navbar-brand > a,body:not(.theme-preset-active) #masthead .navbar-nav > li > a {*/
-/*  color:#fff;*/
-/*  font-size:16px;*/
-/*  font-family: 'Montserrat-SemiBold';*/
-/*}*/
-
-/*body:not(.theme-preset-active) #masthead .navbar-nav > li > a:hover,*/
-/*body:not(.theme-preset-active) #masthead .navbar-nav > li.current_page_item > a {*/
-/*  font-size: 16px;*/
-/*  font-family: 'Montserrat-SemiBold';*/
-/*  color: #555;*/
-/*}*/
-/*body:not(.theme-preset-active).home.page-id-113 #masthead .navbar-nav > li > a:hover,*/
-/*body:not(.theme-preset-active).home.page-id-113 #masthead .navbar-nav > li.current_page_item > a {*/
-/*    color: #fff;*/
-/*}*/
-
 .woocommerce ul.products li.product .woocommerce-loop-product__title, .woocommerce ul.products li.product .price {
   font-size: 22px;
 }
-
-/*.frmLbl {*/
-/*  border: 1px solid #000;*/
-/*  padding: 20px;*/
-/*  width: 100%;*/
-/*  cursor: pointer;*/
-/*  font-weight: bold*/
-/*}*/
-
-/*.cart .frmLbl {*/
-/*  border: 1px solid #000;*/
-/*  padding: 20px;*/
-/*  width: 100%;*/
-/*  cursor: pointer;*/
-/*  font-weight: normal;*/
-/*}*/
 
 body.single-product h1.product_title.entry-title {
   font-size: 24px;
@@ -2221,7 +1901,10 @@ body.single-product .cartItems span a {
   margin-bottom: 0 !important;
 }
 
-.woocommerce #content div.product div.summary, .woocommerce div.product div.summary, .woocommerce-page #content div.product div.summary, .woocommerce-page div.product div.summary {
+.woocommerce #content div.product div.summary,
+.woocommerce div.product div.summary,
+.woocommerce-page #content div.product div.summary,
+.woocommerce-page div.product div.summary {
   width: 100%;
 }
 
@@ -2238,7 +1921,8 @@ button[disabled] {
   width: 100%;
 }
 
-.woocommerce .col2-set, .woocommerce-page .col2-set, .woocommerce .woocommerce-checkout-review-order {
+.woocommerce .col2-set, .woocommerce-page .col2-set,
+.woocommerce .woocommerce-checkout-review-order {
   width: 50% !important;
   float: left !important;
 }
@@ -2278,17 +1962,6 @@ button[disabled] {
   border-color: #b5da82;
 }
 
-/*.cart .single_add_to_cart_button:not(:disabled):not(.disabled).active {*/
-/*  border-radius: 50px;*/
-/*  background-color: #8dc63f;*/
-/*  border-color: #8dc63f;*/
-/*  max-width: 530px;*/
-/*  width: 100%;*/
-/*  text-align: center;*/
-/*  margin: 0 auto;*/
-/*  font-size: 20px;*/
-/*}*/
-
 .btn-primary:not(:disabled):hover,
 .cart .single_add_to_cart_button:not(:disabled):hover {
   background-color: #7db332;
@@ -2322,10 +1995,6 @@ button[disabled] {
   box-shadow: none;
 }
 
-/*.fQty {*/
-/*  height: 100%;*/
-/*}*/
-
 .crtQtyDiv {
   position: absolute;
   bottom: 0;
@@ -2337,28 +2006,9 @@ body.single-product .cartItems .crtQtyDiv span {
   text-align: center;
 }
 
-/*.slick-prev::before, .slick-next::before {color:#000000!important;}*/
-/*.slick-prev, .slick-next{top:40% !important;}*/
-
 a:hover {
   text-decoration: none;
 }
-
-
-/*#menu-item-206 {*/
-/*  background-image: url(/wp-content/uploads/2020/10/greenpepper-logo.png\));*/
-/*  background-position: center;*/
-/*  background-size: cover;*/
-/*  background-repeat: no-repeat;*/
-/*  !* height: 100px; *!*/
-/*  padding: 18px 0;*/
-/*  width: 85px;*/
-/*  display: none;*/
-/*}*/
-
-/*#menu-item-206 a {*/
-/*  width: 100%;*/
-/*}*/
 
 .woocommerce span.onsale {
   top: -1.5em;
@@ -2379,41 +2029,12 @@ a:hover {
 }
 
 @media screen and (max-width: 1199px) {
-  /*.navbar-dark .dropdown-item {*/
-  /*  color: #fff;*/
-  /*}*/
-  /*.navbar-nav .dropdown-menu {*/
-  /*  background: transparent;*/
-  /*  box-shadow: none;*/
-  /*  border: none;*/
-  /*}*/
-  /*.navbar-brand {*/
-  /*  display: block;*/
-  /*  !*margin-right: 14.5rem;*!*/
-  /*}*/
-  /*#menu-item-206 {*/
-  /*  display: none;*/
-  /*}*/
   .woocommerce span.onsale {
     top: -2.5em;
   }
 }
 
 @media only screen and (max-width: 72em) and (min-width: 61em) {
-  /*.navbar-light .navbar-toggler {*/
-  /*  border: medium none;*/
-  /*  outline: none;*/
-  /*  position: absolute;*/
-  /*  right: 35px;*/
-  /*  top: 26px;*/
-  /*}*/
-  /*header#masthead {*/
-  /*  background-color: #8dc63f !important;*/
-  /*}*/
-  /*.navbar-nav .menu-item {*/
-  /*  margin: 0 0px 0 0;*/
-  /*  padding: 1px 0px 00px 0px;*/
-  /*}*/
   .navbar-brand img {
     height: 70px;
   }
@@ -2422,9 +2043,6 @@ a:hover {
     display: block;
   }
 
-  /*#menu-item-192 {*/
-  /*  display: flex;*/
-  /*}*/
   .account {
     display: none;
   }
@@ -2432,14 +2050,6 @@ a:hover {
   .search-list {
     display: none;
   }
-
-  /*body:not(.theme-preset-active) #masthead .navbar-nav > li > a {*/
-  /*  padding: 0.7rem 0.2rem;*/
-  /*}*/
-  /*.testimonial-carousel .slick-slide p {*/
-  /*  font-size: 20px;*/
-  /*  padding: 0 168px;*/
-  /*}*/
 }
 
 /*--------------------------------------------------------------
@@ -2468,32 +2078,10 @@ a:hover {
     font-size: 80%;
   }
 
-  /*.navbar-nav .menu-item {*/
-  /*  display: flex;*/
-  /*  flex-direction: row;*/
-  /*  align-items: center;*/
-  /*  margin: 0;*/
-  /*  padding: 10px 0px 00px 0px;*/
-  /*}*/
-  /*#menu-item-434 {*/
-  /*  padding-left: 0px;*/
-  /*}*/
   .navbar-brand img {
     height: 70px;
   }
 
-  /*.home.page-id-113 header#masthead {*/
-  /*  margin-bottom: 0rem;*/
-  /*  box-shadow: none;*/
-  /*  padding: .74rem 1rem;*/
-  /*  background-color: #8dc63f !important;*/
-  /*  position: relative;*/
-  /*  top: 0;*/
-  /*  left: 0;*/
-  /*  right: 0;*/
-  /*  bottom: auto;*/
-  /*  z-index: 999;*/
-  /*}*/
   .woocommerce .col2-set, .woocommerce-page .col2-set, .woocommerce .woocommerce-checkout-review-order {
     width: 100% !important;
     margin-top: 25px;
@@ -2556,15 +2144,6 @@ a:hover {
     font-size: 10px;
   }
 
-  /*#text-4 {*/
-  /*  margin-top: 25px;*/
-  /*}*/
-  /*#text-5 {*/
-  /*  margin-top: 25px;*/
-  /*}*/
-  /*#text-6 {*/
-  /*  margin-top: 25px;*/
-  /*}*/
   .notification {
     height: 72px;
   }
@@ -2573,20 +2152,6 @@ a:hover {
     max-height: 18px;
   }
 
-  /*.foodItemsDiv .col.col-md-9.col-12, .foodItemsDiv .col.col-md-3.col-12.cartItems {*/
-  /*  border-right: 1px solid transparent !important;*/
-  /*}*/
-  /*.foodItemsDiv .col.col-md-9.col-12 {*/
-  /*  margin-bottom: 80;*/
-  /*}*/
-  /*.page-id-113 .vc_custom_1605624470572 {*/
-  /*  height: 600px !important;*/
-  /*}*/
-  /*.foodItemsDiv .food-w-100.fQty {*/
-  /*  width: 95% !important;*/
-  /*  margin-right: 0px;*/
-  /*  margin-left: 0px;*/
-  /*}*/
   #wpzoom_instagram_widget-2 {
     margin-top: 25px;
   }
@@ -2595,10 +2160,6 @@ a:hover {
     min-height: 0;
   }
 
-  /*#footer-widget {*/
-  /*  padding: 50px 0 50px 15px;*/
-  /*  margin-top: -17px !important;*/
-  /*}*/
   footer#colophon {
     padding-left: 15px;
   }
@@ -2650,15 +2211,6 @@ a:hover {
     display: block;
   }
 
-  /*.cart .frmLbl p {*/
-  /*  font-size: 14px;*/
-  /*  padding: 15px 10px;*/
-  /*}*/
-
-  /*.cart .frmLbl p span {*/
-  /*  font-size: 13px;*/
-  /*}*/
-
   .cart .single_add_to_cart_button,
   .cart .single_add_to_cart_button:hover,
   .cart .single_add_to_cart_button.disabled,
@@ -2671,38 +2223,6 @@ a:hover {
     width: 100%;
   }
 
-  /*.single-product header#masthead,*/
-  /*.page-id-69 header#masthead,*/
-  /*.page-id-144 header#masthead,*/
-  /*.page-id-15 header#masthead,*/
-  /*.page-id-13 header#masthead,*/
-  /*.page-id-14 header#masthead,*/
-  /*.page-id-166 header#masthead,*/
-  /*.page-id-163 header#masthead,*/
-  /*.page-id-462 header#masthead,*/
-  /*.page-id-282 header#masthead,*/
-  /*.page-id-431 header#masthead {*/
-  /*position: fixed;*/
-  /*top: 0px;*/
-  /*left: 0;*/
-  /*right: 0;*/
-  /*bottom: auto;*/
-  /*z-index: 99;*/
-  /*}*/
-  /*.single-product #content.site-content,*/
-  /*.page-id-69 #content.site-content,*/
-  /*.page-id-144 #content.site-content,*/
-  /*.page-id-15 #content.site-content,*/
-  /*.page-id-13 #content.site-content,*/
-  /*.page-id-14 #content.site-content,*/
-  /*.page-id-166 #content.site-content,*/
-  /*.page-id-163 #content.site-content,*/
-  /*.page-id-462 #content.site-content,*/
-  /*.page-id-282 #content.site-content,*/
-  /*.page-id-431 #content.site-content*/
-  /* {*/
-  /*    padding-top: 12rem;*/
-  /*} */
   .woocommerce .woocommerce-form-login .woocommerce-form-login__submit {
     padding: 10px 40px;
   }
@@ -2711,111 +2231,20 @@ a:hover {
     padding: 8px 40px;
   }
 
-  /*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active .no-gutters {*/
-  /*  padding: 3px 10px 10px 18px;*/
-  /*}*/
-  /*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active h3 {*/
-  /*  -webkit-padding: 0px 10px 10px;*/
-  /*  padding: 0px 10px 10px;*/
-  /*  min-height: auto;*/
-  /*}*/
-  /*.food-items .no-gutters {*/
-  /*  padding: 3px 10px 10px 18px;*/
-  /*}*/
-  /*.foodItemsDiv .food-w-100.fQty {*/
-  /*  width: 90% !important;*/
-  /*  margin-left: 7px;*/
-  /*  margin-top: 1px;*/
-  /*}*/
   .food-bg-white span {
     font-size: 14px;
   }
-
-  /*.foodItemsDiv .col-md-3 .food-items .food-font14 {*/
-  /*  font-size: 14px;*/
-  /*  line-height: 20px;*/
-  /*}*/
 }
 
 @media only screen and (min-width: 48em) and (max-width: 61em) {
-  /*.navbar-brand {*/
-  /*  display: block;*/
-  /*  margin-right: 40rem;*/
-  /*}*/
-  /*#text-4 {*/
-  /*  margin-top: 135px;*/
-  /*}*/
-  /*#text-5 {*/
-  /*  margin-top: 135px;*/
-  /*}*/
-  /*#text-6 {*/
-  /*  margin-top: 135px;*/
-  /*}*/
   #wpzoom_instagram_widget-2 {
     margin-top: 135px;
   }
 
-  /*#footer-widget .food-font24 {*/
-  /*  font-size: 22px;*/
-  /*}*/
   #footer-widget .social-links a {
     padding: 10px 0;
   }
 
-  /*.food-carousel .slick-next:before {
-      font-size: 44px!important;
-      background-image: url(images/right-chevron.svg);
-      width: 30px;
-      height: 30px;
-      background-size: 30px;
-      color: transparent!important;
-      background-repeat: no-repeat;
-  }
-  .food-carousel .slick-next {
-      right: -25px;
-  }
-  .food-carousel .slick-prev:before {
-      font-size: 44px!important;
-      background-image: url(images/left-chevron.svg);
-      width: 30px;
-      height: 30px;
-      background-size: 30px;
-      color: transparent!important;
-      background-repeat: no-repeat;
-  }
-  .food-carousel .slick-prev {
-      left: -30px;
-  }*/
-  /*.foodItemsDiv .col.col-2 button.minus-btn,*/
-  /*.foodItemsDiv .col.col-4 button.minus-btn {*/
-  /*  width: 21px;*/
-  /*  height: 22px;*/
-  /*  padding: 0px 5px 5px;*/
-  /*}*/
-  /*.foodItemsDiv .col.col-2 button.plus-btn,*/
-  /*.foodItemsDiv .col.col-4 button.plus-btn {*/
-  /*  width: 21px;*/
-  /*  height: 22px;*/
-  /*  padding: 0px 5px 5px;*/
-  /*}*/
-  /*.foodItemsDiv .food-item h3 {*/
-  /*  line-height: 20px !important;*/
-  /*  font-size: 14px !important;*/
-  /*}*/
-  /*.foodItemsDiv .food-w-100.fQty {*/
-  /*  width: 85% !important;*/
-  /*  margin-left: 7px;*/
-  /*  margin-top: 1px;*/
-  /*}*/
-  /*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active .no-gutters {*/
-  /*  padding: 0px 7px 0px 2px;*/
-  /*}*/
-  /*.foodItemsDiv .col.col-md-9.col-12, .foodItemsDiv .col.col-md-3.col-12.cartItems {*/
-  /*  border-right: 1px solid rgba(0, 0, 0, .1) !important;*/
-  /*}*/
-  /*.foodItemsDiv .col.col-md-9.col-12 {*/
-  /*  margin-bottom: 0;*/
-  /*}*/
   .how-it-works h2 {
     font-size: 18px;
   }
@@ -2828,34 +2257,9 @@ a:hover {
     min-height: 70px;
   }
 
-  /*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active img {*/
-  /*  -webkit-border-top-left-radius: 0.70rem;*/
-  /*  -webkit-border-top-right-radius: 0.70rem;*/
-  /*  -webkit-border-bottom: 2px solid #8dc63f !important;*/
-  /*  border-top-left-radius: 0.70rem;*/
-  /*  border-top-right-radius: 0.70rem;*/
-  /*  border-bottom: 2px solid #8dc63f !important;*/
-  /*  object-fit: cover;*/
-  /*}*/
-  /*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active .no-gutters {*/
-  /*  padding: 0px 8px 0px 6px;*/
-  /*}*/
-  /*.foodItemsDiv .col-md-3.col-12.col.food-mb20 .food-items.active h3 {*/
-  /*  padding: 0px 10px 0px;*/
-  /*  font-size: 10px !important;*/
-  /*  line-height: 16px !important;*/
-  /*}*/
-  /*.food-items .no-gutters {*/
-  /*  padding: 0 8px 0 0;*/
-  /*}*/
   .food-bg-white span {
     font-size: 9px;
   }
-
-  /*.foodItemsDiv .col-md-3 .food-items .food-font14 {*/
-  /*  font-size: 10px;*/
-  /*  line-height: 16px;*/
-  /*}*/
 }
 
 /*--------------------------------------------------------------
@@ -2875,67 +2279,12 @@ a:hover {
     font-size: 22px;
     margin-bottom: 10px;
   }
-
-  /*#text-4 {*/
-  /*  margin-top: 25px;*/
-  /*}*/
-  /*#text-5 {*/
-  /*  margin-top: 25px;*/
-  /*}*/
-  /*#text-6 {*/
-  /*  margin-top: 25px;*/
-  /*}*/
 }
 
-/*@media only screen and (min-width: 320px) {*/
-/*.navbar-brand {*/
-/*  display: block;*/
-/*}*/
-/*}*/
 
-/* From custom styles */
-/*.wpcf7-checkbox{*/
-/*  border:none !important;*/
-/*  background-color:#f7f7f7 !important;*/
-/*  padding-bottom:20px !important;*/
-/*}*/
-/*span.wpcf7-list-item { display: block; }*/
-/*textarea.form-control {*/
-/*  height: 150px;*/
-/*}*/
-/*input[type="submit"] {*/
-/*  margin-left:25%;*/
-/*}*/
-
-/*@media only screen and (max-width: 767px){*/
-
-/*  .radio-button{*/
-/*    margin-top:25px;*/
-/*  }*/
-/*  .col-sm-4{*/
-/*    margin-bottom: 20px !important;*/
-/*  }*/
-/*  textarea.form-control {*/
-/*    height: 150px;*/
-/*    margin-top: -28px;*/
-/*  }*/
-/*  input[type="submit"] {*/
-/*    margin-top: 20px !important;*/
-/*  }*/
-/*  .desserts{*/
-/*    margin-top:60px !important;*/
-/*    margin-bottom:-40px !important;*/
-/*  }*/
-/*  .comhead{*/
-/*    margin-bottom:30px !important;*/
-/*  }*/
-/*}*/
-
-
-/*
-  GreenPepperClub.ru
-*/
-
+/*--------------------------------------------------------------
+## GreenPepperClub.ru
+--------------------------------------------------------------*/
 /*
   Visual Composer
 */
