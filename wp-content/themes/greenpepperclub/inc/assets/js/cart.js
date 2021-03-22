@@ -30,11 +30,19 @@ jQuery( document ).ready(function($) {
         return qtyItemsIntoCart === maxItems;
     }
 
+    // Main actions
     $('body').on('click', '[data-action="plus"], [data-action="minus"], [data-action="delete"]', function (e) {
         buttonsHandler($(this).data('id'), $(this).data('action'));
     });
 
-    // buttonsHandler(1677, 'plus');
+    // Get product from local storage if exists
+    let productId = localStorage.getItem('product_id');
+
+    if (productId !== null) {
+        buttonsHandler(productId, 'plus');
+
+        localStorage.removeItem('product_id');
+    }
 
     // Buttons handler
     function buttonsHandler(id, action) {
@@ -79,9 +87,9 @@ jQuery( document ).ready(function($) {
 
     // Fill hidden inputs
     function fillHiddenInputs() {
-        $('#food_item_ids').val(getAllTypesFromCart('id'));
-        $('#food_items').val(getAllTypesFromCart('name'));
-        $('#food_items_qty').val(getAllTypesFromCart('qty'));
+        $('#food_item_ids').val( JSON.stringify( getAllTypesFromCart('id') ));
+        $('#food_item_names').val( JSON.stringify( getAllTypesFromCart('name') ) );
+        $('#food_item_qty').val( JSON.stringify( getAllTypesFromCart('qty') ) );
     }
 
     // Add food item to cart
@@ -193,11 +201,11 @@ jQuery( document ).ready(function($) {
         return `<div class="bg-white" id="cartItem-${id}">
                     <div class="d-flex justify-content-between  p-3">
                         <div class="col-1 d-flex align-items-center flex-column justify-content-around">
-                            <button class="gp-plus-btn" data-action="plus" data-id="${id}">
+                            <button class="gp-plus-btn" type="button" data-action="plus" data-id="${id}">
                                 <i class="fas fa-plus"></i>
                             </button>
                             <span id="cartItemQty-${id}" class="food-font18 food-font-w400">${getQtyFromCartById(id)}</span>
-                            <button class="gp-minus-btn" data-action="minus" data-id="${id}">
+                            <button class="gp-minus-btn" type="button" data-action="minus" data-id="${id}">
                                 <i class="fas fa-minus"></i>
                             </button>
                         </div>

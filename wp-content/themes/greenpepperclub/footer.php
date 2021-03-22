@@ -12,13 +12,12 @@
 ?>
 <?php if(!is_page_template( 'blank-page.php' ) && !is_page_template( 'blank-page-with-container.php' )): ?>
 
-    <?php if ( ! is_page_template( 'fullwidth.php' ) && ! is_front_page()) : ?>
+    <?php if ( ! is_page_template( 'fullwidth.php' ) && ! is_front_page() ) : ?>
 			</div><!-- .row -->
 		</div><!-- .container -->
 	<?php endif; ?>
 
-    <!-- TODO: for single product need to remove footer from food listing -->
-    <?php if ( ! is_product() ) : ?>
+    <?php if ( ! isProductFoodListingPage() ) : ?>
 	</div><!-- #content -->
     <?php get_template_part( 'footer-widget' ); ?>
 	<footer id="colophon" class="site-footer <?php echo wp_bootstrap_starter_bg_class(); ?>" role="contentinfo">

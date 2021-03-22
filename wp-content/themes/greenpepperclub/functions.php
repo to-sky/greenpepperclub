@@ -231,7 +231,11 @@ function wp_bootstrap_starter_scripts() {
     wp_enqueue_script('wp-bootstrap-starter-themejs', get_template_directory_uri() . '/inc/assets/js/theme-script.js', array(), false, true );
 	wp_enqueue_script( 'wp-bootstrap-starter-skip-link-focus-fix', get_template_directory_uri() . '/inc/assets/js/skip-link-focus-fix.min.js', array(), '20151215', true );
     wp_enqueue_script('fullscreen-grid-modal', get_template_directory_uri() . '/inc/assets/js/fullscreen-grid-modal.js', array() );
-    wp_enqueue_script('cart', get_template_directory_uri() . '/inc/assets/js/cart.js', array(), false, true );
+
+    if (isProductFoodListingPage() ) {
+	    wp_enqueue_script('cart', get_template_directory_uri() . '/inc/assets/js/cart.js', array(), false, true );
+    }
+
     wp_enqueue_script('modal-food-item', get_template_directory_uri() . '/inc/assets/js/modal-food-item.js', array(), false, true );
     wp_enqueue_script('flip-timer', get_template_directory_uri() . '/inc/assets/js/jquery.flipTimer.js', array(), false, true );
 
@@ -335,8 +339,7 @@ if ( ! class_exists( 'wp_bootstrap_navwalker' )) {
  */
 add_filter( 'style_loader_src',  'taxation_remove_ver_css_js', 9999, 2 );
 add_filter( 'script_loader_src', 'taxation_remove_ver_css_js', 9999, 2 );
-function taxation_remove_ver_css_js( $src, $handle )
-{
+function taxation_remove_ver_css_js( $src, $handle )  {
     $handles_with_version = [ 'style', 'script' ];
 
     if ( strpos( $src, 'ver=' ) && ! in_array( $handle, $handles_with_version, true ) ) {
@@ -407,8 +410,8 @@ function getDeadlineBeforeDayDelivery(string $foodDeliveryDay, int $requiredNoOf
 	$offsetToRequiredNoOfDays = strtotime("1 day", 0) - $deadlineTimeInSeconds;  // 24h - 19:30 = 4:30
 	$timeToDeliveryInSeconds = $requiredNoOfDaysInSeconds + $offsetToRequiredNoOfDays; // ex. 1d + 4:30
 
-	// Check next delivery date, if current time < than next day minus delivery offset,
-	// that means  - next delivery day in next week
+	// Check next delivery date, if current time < next day - delivery offset,
+	// that means next delivery day in next week
 	// Ex. for monday: for sunday next monday will be +1 week monday
 	$foodDeliveryDate = time() < strtotime("next $foodDeliveryDay") - $timeToDeliveryInSeconds
 	                    ? strtotime("next $foodDeliveryDay")
@@ -466,7 +469,7 @@ function getSortedDeliveryDataForProduct(int $productId, $formatDeliveryDate = '
 	$sortedDeliveryData = [];
 	$index = 0;
 	foreach (  $deliveryDaysWIthDeadline as $deliveryDayName => $deliveryDeadlineTimestamp ) {
-		$sortedDeliveryData[$index]['day_name'] = $deliveryDayName;
+		$sortedDeliveryData[$index]['day'] = $deliveryDayName;
 		$sortedDeliveryData[$index]['day_timestamp'] = strtotime($deliveryDayName, $deliveryDeadlineTimestamp);
 		$sortedDeliveryData[$index]['day_formatted'] = date($formatDeliveryDate, strtotime($deliveryDayName, $deliveryDeadlineTimestamp));
 
@@ -541,4 +544,11 @@ function get_next_delivery_deadline_callback() {
 	wp_die();
 }
 
-//dd(getNextDeliveryDeadline());
+/**
+ * Check if page is single product food items
+ *
+ * @return bool
+ */
+function isProductFoodListingPage() {
+	return isset( $_GET['product-food-listing'] ) && intval( $_GET['product-food-listing'] ) == 1;
+}

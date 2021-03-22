@@ -35,7 +35,7 @@
 </head>
 
 <body <?php body_class(); ?>>
-<div id="page" class="site d-flex flex-column min-vh-100 <?php echo is_product() ? 'h-100' : '' ?>">
+<div id="page" class="site d-flex flex-column min-vh-100 <?php echo isProductFoodListingPage() ? 'h-100' : '' ?>">
     <a class="skip-link screen-reader-text"
        href="#content"><?php esc_html_e( 'Skip to content', 'wp-bootstrap-starter' ); ?></a>
 	<?php if ( ! is_page_template( 'blank-page.php' ) && ! is_page_template( 'blank-page-with-container.php' ) ): ?>
@@ -92,7 +92,7 @@
         <div class="gp-overlay" style="background-color: <?php echo $overlayColor; ?>"></div>
         <?php endif; ?>
 
-        <?php if ( ! is_page_template( 'fullwidth.php' ) && ! is_front_page()) : ?>
+        <?php if ( ! is_page_template( 'fullwidth.php' ) && ! is_front_page() && ! isProductFoodListingPage() ) : ?>
         <div class="container">
             <div class="row">
         <?php endif; ?>

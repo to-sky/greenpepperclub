@@ -12,7 +12,12 @@ jQuery(document).ready(function($) {
         modal.find('.food-modal-calories').html(button.data('calories'));
         modal.find('.food-modal-carbs').html(button.data('carbs'));
         modal.find('.food-modal-fats').html(button.data('fats'));
+        modal.find('#foodOrderButton').data('id', id);
 
+        // Add food item to local storage and than add to cart
+        $('#foodOrderButton').click(function () {
+            localStorage.setItem('product_id', id)
+        });
 
         // Add nutrients
         let nutrients = button.data('nutrients');

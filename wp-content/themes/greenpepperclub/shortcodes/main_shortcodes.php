@@ -1,6 +1,41 @@
 <?php
 
 /**
+ * Show food listing
+ */
+add_shortcode( 'food_item_listing', 'food_item_listing' );
+function food_item_listing( $atts ) {
+	$atts = shortcode_atts( array(
+		'cart_buttons' => 0,
+		'modal_order_button' => 1
+	), $atts );
+
+	$query = new WP_Query( [
+		'post_type'      => 'food_items',
+		'post_status'    => 'publish',
+		'posts_per_page' => - 1,
+		'orderby'        => 'ID',
+		'order'          => 'ASC',
+	] );
+
+	$data = '<div class="row">';
+
+	ob_start();
+
+	while ( $query->have_posts() ) : $query->the_post();
+		get_template_part( 'template-parts/food', 'listing', $atts );
+	endwhile;
+	wp_reset_postdata();
+
+	get_template_part( 'template-parts/modal', 'food-item', $atts );
+
+	$data .= ob_get_clean() . '</div>';
+
+	return $data;
+}
+
+
+/**
  * Testimonials slider
  */
 add_shortcode( 'gp_testimonials_slider', 'gp_testimonials_slider' );

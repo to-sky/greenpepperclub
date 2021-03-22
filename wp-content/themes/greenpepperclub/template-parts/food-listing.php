@@ -1,6 +1,6 @@
 <?php
 /**
- * Food listing template
+ * Show all foods with description in modal
  */
 
 $cartButtons = (int) $args['cart_buttons'];
@@ -31,6 +31,7 @@ $cartButtons = (int) $args['cart_buttons'];
 
         <div class="align-items-center d-flex justify-content-center justify-content-lg-around">
             <button id="minusBtn<?php the_ID(); ?>"
+                    type="button"
                     class="btn btn-primary gp-minus-btn"
                     data-action="minus" disabled
                     data-id="<?php the_ID(); ?>"
@@ -39,6 +40,7 @@ $cartButtons = (int) $args['cart_buttons'];
             <input class="fQty food-item-qty mx-4 mx-lg-0" type="text" id="qty-<?php the_ID(); ?>" value="0" readonly/>
 
             <button id="plusBtn<?php the_ID(); ?>"
+                    type="button"
                     class="btn btn-primary gp-plus-btn"
                     data-action="plus"
                     data-id="<?php the_ID(); ?>"
