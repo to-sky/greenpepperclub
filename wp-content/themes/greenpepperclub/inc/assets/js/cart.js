@@ -39,9 +39,13 @@ jQuery( document ).ready(function($) {
     let productId = localStorage.getItem('product_id');
 
     if (productId !== null) {
-        buttonsHandler(productId, 'plus');
+        productId = parseInt(productId);
 
-        localStorage.removeItem('product_id');
+        $.when(
+            buttonsHandler(productId, 'plus')
+        ).then(function () {
+            localStorage.removeItem('product_id');
+        });
     }
 
     // Buttons handler
@@ -76,6 +80,8 @@ jQuery( document ).ready(function($) {
             addToCartBtn.prop('disabled', true);
             $('button[data-action="plus"]').prop('disabled', false);
         }
+
+        console.log(foodItems);
     }
 
     // Click on "Add to cart" button

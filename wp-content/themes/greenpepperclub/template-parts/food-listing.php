@@ -37,7 +37,7 @@ $cartButtons = (int) $args['cart_buttons'];
                     data-id="<?php the_ID(); ?>"
             >&minus;</button>
 
-            <input class="fQty food-item-qty mx-4 mx-lg-0" type="text" id="qty-<?php the_ID(); ?>" value="0" readonly/>
+            <input class="food-item-qty mx-4 mx-lg-0" type="text" id="qty-<?php the_ID(); ?>" value="0" readonly/>
 
             <button id="plusBtn<?php the_ID(); ?>"
                     type="button"
