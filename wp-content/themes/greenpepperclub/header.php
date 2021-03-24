@@ -31,8 +31,6 @@
 
         gtag('config', 'G-NQFJ63JYG5');
     </script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUBB2Q2ZMLuK_ZJPrVtVFLrkvIwW2Orr0&callback=initMap&libraries=&v=weekly" async></script>
 </head>
 
 <body <?php body_class(); ?>>

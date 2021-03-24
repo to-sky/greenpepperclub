@@ -230,15 +230,17 @@ function wp_bootstrap_starter_scripts() {
 
     wp_enqueue_script('wp-bootstrap-starter-themejs', get_template_directory_uri() . '/inc/assets/js/theme-script.js', array(), false, true );
 	wp_enqueue_script( 'wp-bootstrap-starter-skip-link-focus-fix', get_template_directory_uri() . '/inc/assets/js/skip-link-focus-fix.min.js', array(), '20151215', true );
-    wp_enqueue_script('fullscreen-grid-modal', get_template_directory_uri() . '/inc/assets/js/fullscreen-grid-modal.js', array() );
+    wp_enqueue_script( 'fullscreen-grid-modal', get_template_directory_uri() . '/inc/assets/js/fullscreen-grid-modal.js', array() );
 
     if (isProductFoodListingPage() ) {
-	    wp_enqueue_script('cart', get_template_directory_uri() . '/inc/assets/js/cart.js', array(), false, true );
+	    wp_enqueue_script( 'cart', get_template_directory_uri() . '/inc/assets/js/cart.js', array(), false, true );
     }
 
-    wp_enqueue_script('modal-food-item', get_template_directory_uri() . '/inc/assets/js/modal-food-item.js', array(), false, true );
-    wp_enqueue_script('flip-timer', get_template_directory_uri() . '/inc/assets/js/jquery.flipTimer.js', array(), false, true );
-    wp_enqueue_script('delivery-map', get_template_directory_uri() . '/inc/assets/js/delivery-map.js', array(), false, true );
+    wp_enqueue_script( 'modal-food-item', get_template_directory_uri() . '/inc/assets/js/modal-food-item.js', array(), false, true );
+    wp_enqueue_script( 'flip-timer', get_template_directory_uri() . '/inc/assets/js/jquery.flipTimer.js', array(), false, true );
+	wp_enqueue_script( 'delivery-map', get_template_directory_uri() . '/inc/assets/js/delivery-map.js', array(), false, true );
+	wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCUBB2Q2ZMLuK_ZJPrVtVFLrkvIwW2Orr0&callback=initMap&libraries=&v=weekly', [ 'delivery-map' ], false, true );
+
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
