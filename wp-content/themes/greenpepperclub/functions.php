@@ -238,6 +238,7 @@ function wp_bootstrap_starter_scripts() {
 
     wp_enqueue_script('modal-food-item', get_template_directory_uri() . '/inc/assets/js/modal-food-item.js', array(), false, true );
     wp_enqueue_script('flip-timer', get_template_directory_uri() . '/inc/assets/js/jquery.flipTimer.js', array(), false, true );
+    wp_enqueue_script('delivery-map', get_template_directory_uri() . '/inc/assets/js/delivery-map.js', [], false, true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -566,4 +567,3 @@ function get_meal_plans_url() {
 function the_meal_plans_url() {
 	echo get_meal_plans_url();
 }
-//ghgfh

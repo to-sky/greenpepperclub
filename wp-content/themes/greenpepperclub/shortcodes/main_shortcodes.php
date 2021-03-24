@@ -117,3 +117,11 @@ function gp_countdown_timer() {
 	return $data;
 }
 
+
+/**
+ * Google map delivery zone
+ */
+add_shortcode( 'gp_delivery_map', 'gp_delivery_map' );
+function gp_delivery_map() {
+	return '<div id="deliveryMap"></div>';
+}
