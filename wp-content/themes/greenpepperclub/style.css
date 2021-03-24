@@ -2539,12 +2539,14 @@ a:hover {
 }
 
 .have-questions-form textarea {
+  height: auto !important;
+  margin: auto !important;
   padding: 10px 10px 0;
   resize: none;
 }
 
 .have-questions-form .wpcf7-submit {
-  margin: 0;
+  margin: 0 !important;
   width: 100%;
   background: #2f2e2e;
   transition: .6s all ease;

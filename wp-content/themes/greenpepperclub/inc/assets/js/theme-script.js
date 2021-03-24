@@ -123,13 +123,15 @@ jQuery( function ( $ ) {
         });
     }, false);
 
+    let body = $('body');
+
     // Delivery form validation
     let date = false;
     let time = false;
 
     disableButtonBuildMenu();
 
-    $('body').on('change', '#deliveryForm input[name="date"], #deliveryForm input[name="time"]', function (e) {
+    body.on('change', '#deliveryForm input[name="date"], #deliveryForm input[name="time"]', function (e) {
         disableButtonBuildMenu();
     });
 
@@ -151,6 +153,11 @@ jQuery( function ( $ ) {
             $('#deliveryForm button[type="submit"]').prop('disabled', false);
         }
     }
+
+    // For Instagram feed plugin
+    body.on('click', '#sbi_load .sbi_load_btn', function(e){
+        $('.sbi_load_btn').delay(1000).fadeOut();
+    });
 
 }); // close main function
 
