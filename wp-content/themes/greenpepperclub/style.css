@@ -2419,18 +2419,39 @@ a:hover {
 }
 
 /* Homepage */
-.fullheight-video-background {
+video#bgvid {
   position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  z-index: -10;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -100;
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  background-size: cover;
 }
 
-.fullheight-video-background > div {
-  width: 100% !important;
-  height: 100%;
+/* For instagram feed plugin */
+#sbi_images {
+  min-height: 310px;
+}
+
+#sb_instagram #sbi_images .sbi_item.slick-slide {
+  padding: 0 5px !important;
+}
+
+#sbi_load.slick-slide {
+  float: none !important;
+  display: inline-block !important;
+  margin-top: 120px !important;
+}
+
+#sbi_load {
+  display: none !important;
 }
 
 .gp-site-title h1 {
@@ -2996,6 +3017,13 @@ a:hover {
   .gp-delivery-control label:before,
   .gp-delivery-control label:after {
     top: 17px;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .gp-delivery-control label:before,
+  .gp-delivery-control label:after {
+    top: 19px;
   }
 }
 

@@ -239,13 +239,11 @@ function wp_bootstrap_starter_scripts() {
     wp_enqueue_script( 'modal-food-item', get_template_directory_uri() . '/inc/assets/js/modal-food-item.js', array(), false, true );
     wp_enqueue_script( 'flip-timer', get_template_directory_uri() . '/inc/assets/js/jquery.flipTimer.js', array(), false, true );
 	wp_enqueue_script( 'delivery-map', get_template_directory_uri() . '/inc/assets/js/delivery-map.js', array(), false, true );
-	wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCUBB2Q2ZMLuK_ZJPrVtVFLrkvIwW2Orr0&callback=initMap&libraries=&v=weekly', [ 'delivery-map' ], false, true );
-
+	wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCYsElLRMB12YSy0QF0KwTSIwavSYGqsyg&callback=initMap&libraries=&v=weekly', [ 'delivery-map' ], false, true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
-
 
     // Plugins
     wp_enqueue_style( 'slick', 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css' );
@@ -255,6 +253,14 @@ function wp_bootstrap_starter_scripts() {
     wp_enqueue_script('matchHeight', 'https://cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.2/jquery.matchHeight-min.js', array(), '', true );
 }
 add_action( 'wp_enqueue_scripts', 'wp_bootstrap_starter_scripts' );
+
+// Add async attr to google maps link
+function add_async_attribute($tag, $handle) {
+	if ( 'google-maps' !== $handle )
+		return $tag;
+	return str_replace( ' src', ' async src', $tag );
+}
+add_filter('script_loader_tag', 'add_async_attribute', 10, 2);
 
 // Custom image sizes
 add_image_size( 'food_item', 512, 512, true );

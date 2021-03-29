@@ -34,7 +34,13 @@
 </head>
 
 <body <?php body_class(); ?>>
-<div id="page" class="site d-flex flex-column min-vh-100 <?php echo isProductFoodListingPage() ? 'h-100' : '' ?>">
+<?php if( is_front_page() && get_field('video_background') ) : ?>
+    <video playsinline autoplay muted loop id="bgvid">
+        <source id="mp4" src="<?php the_field('video_background'); ?>" type="video/mp4">
+    </video>
+<?php endif; ?>
+
+<div id="page" class="site d-flex flex-column min-vh-100 welcome <?php echo isProductFoodListingPage() ? 'h-100' : '' ?>">
     <a class="skip-link screen-reader-text"
        href="#content"><?php esc_html_e( 'Skip to content', 'wp-bootstrap-starter' ); ?></a>
 	<?php if ( ! is_page_template( 'blank-page.php' ) && ! is_page_template( 'blank-page-with-container.php' ) ): ?>

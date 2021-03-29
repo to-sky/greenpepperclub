@@ -43,6 +43,10 @@ $deliveryData        = getSortedDeliveryDataForProduct( $productId, 'l F j' );
                         <label for="splitDates" class="custom-control-label">
                             <span class="text-uppercase font-montserrat-semibold">Chef’s Choice - Split Order</span>
                             <span class="font-montserrat-regular"> + $<?php the_field( 'chef_choice_cost' ); ?></span>
+                            <button type="button" class="bg-transparent border-0 pl-2 text-info" data-toggle="tooltip" data-placement="top"
+                                    title="only available for 6/8/12 meals.  - split your meals between two delivery days.">
+                                <i class="fas fa-info"></i>
+                            </button>
                         </label>
                     </div>
                 </div>
@@ -54,7 +58,7 @@ $deliveryData        = getSortedDeliveryDataForProduct( $productId, 'l F j' );
         <h2 class="food-txt-uppercase text-center font-montserrat-semibold">Delivery time</h2>
 
         <div class="row">
-            <div class="col-6">
+            <div class="col-md-6 mb-2">
                 <div class="custom-control custom-radio gp-delivery-control">
                     <input id="deliveryTimeMorning" class="custom-control-input" type="radio" name="time"
                            value="<?php echo $deliveryTimeMorning; ?>" required>
@@ -64,7 +68,7 @@ $deliveryData        = getSortedDeliveryDataForProduct( $productId, 'l F j' );
                 </div>
             </div>
 
-            <div class="col-6">
+            <div class="col-md-6">
                 <div class="custom-control custom-radio gp-delivery-control">
                     <input id="deliveryTimeEvening" class="custom-control-input" type="radio" name="time"
                            value="<?php echo $deliveryTimeEvening; ?>" required>

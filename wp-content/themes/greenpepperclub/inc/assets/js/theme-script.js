@@ -75,8 +75,10 @@ jQuery( function ( $ ) {
         }, 1000, 'swing');
     });
 
-    // Testimonials slider
-    $('#gpTestimonialsSlider').slick({
+
+    let body = $('body');
+
+    let slickParams = {
         infinite: true,
         slidesToShow: 3,
         slidesToScroll: 1,
@@ -98,6 +100,21 @@ jQuery( function ( $ ) {
                 }
             }
         ]
+    };
+
+    // Testimonials slider
+    $('#gpTestimonialsSlider').slick(slickParams);
+
+    // For Instagram feed plugin
+    $('#sbi_images').hide('1', function() {
+        let linkToInstagram = $('#sbi_load');
+        let clonedLinkToInstagram = linkToInstagram.clone();
+
+        linkToInstagram.remove();
+
+        $(this).append(clonedLinkToInstagram).slick(
+            Object.assign(slickParams, {autoplay: false, infinite: false})
+        ).fadeIn();
     });
 
     // Slide effect for header dropdown
@@ -123,7 +140,8 @@ jQuery( function ( $ ) {
         });
     }, false);
 
-    let body = $('body');
+    // Bootstrap tooltip
+    $("[data-toggle=tooltip]").tooltip();
 
     // Delivery form validation
     let date = false;
@@ -153,12 +171,6 @@ jQuery( function ( $ ) {
             $('#deliveryForm button[type="submit"]').prop('disabled', false);
         }
     }
-
-    // For Instagram feed plugin
-    body.on('click', '#sbi_load .sbi_load_btn', function(e){
-        $('.sbi_load_btn').delay(1000).fadeOut();
-    });
-
 }); // close main function
 
 
