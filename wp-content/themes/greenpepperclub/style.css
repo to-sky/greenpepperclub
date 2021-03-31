@@ -3053,3 +3053,57 @@ video#bgvid {
   height: 650px;
   width: 100%;
 }
+
+/* Tips plugin */
+#wooot_order_tip_form {
+  margin-bottom: 10px;
+}
+
+#wooot_order_tip_form .order_tip_title {
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.woo_order_tip,
+.woo_order_tip_apply,
+.woo_order_tip_remove {
+  border: 1px solid #ced4da;
+  color: #333;
+  transition: 0.3s all ease;
+}
+
+.woo_order_tip_remove {
+  margin-top: 5px;
+}
+
+.woo_order_tip:hover,
+.woo_order_tip_apply:hover,
+.woo_order_tip_remove:hover {
+  background: #9cce59;
+  border-color: #9cce59;
+  color: #666;
+}
+
+button.woo_order_tip.active {
+  background: #8dc63f;
+  border: 1px solid #8dc63f;
+}
+
+#wooot_order_tip_form .woo_order_tip_custom_text_field {
+  padding: 0;
+}
+
+#wooot_order_tip_form .woo_order_tip_custom_text {
+  margin-top: 12px;
+  height: calc(1.5em + .75rem + 2px);
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da !important;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}

@@ -23,7 +23,7 @@
 	<footer id="colophon" class="site-footer <?php echo wp_bootstrap_starter_bg_class(); ?>" role="contentinfo">
 		<div class="container pt-3 pb-3">
             <div class="site-info">
-                &copy; <?php echo date('Y'); ?> <?php echo '<a href="'.home_url().'">'.get_bloginfo('name').'</a>'; ?>
+                &copy; <?php echo date('Y'); ?> <?php echo '<a href="'.home_url().'">'.get_bloginfo().'</a>'; ?>
             </div><!-- close .site-info -->
 		</div>
 	</footer><!-- #colophon -->
