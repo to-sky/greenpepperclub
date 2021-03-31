@@ -3067,8 +3067,9 @@ video#bgvid {
 .woo_order_tip,
 .woo_order_tip_apply,
 .woo_order_tip_remove {
-  border: 1px solid #ced4da;
-  color: #333;
+  background: #8dc63f;
+  border: 1px solid #8dc63f;
+  color: #fff;
   transition: 0.3s all ease;
 }
 
@@ -3079,14 +3080,14 @@ video#bgvid {
 .woo_order_tip:hover,
 .woo_order_tip_apply:hover,
 .woo_order_tip_remove:hover {
-  background: #9cce59;
-  border-color: #9cce59;
-  color: #666;
+  background: #6b9e23;
+  border-color: #6b9e23;
+  color: #fff;
 }
 
 button.woo_order_tip.active {
-  background: #8dc63f;
-  border: 1px solid #8dc63f;
+  background: #6b9e23;
+  border: 1px solid #6b9e23;
 }
 
 #wooot_order_tip_form .woo_order_tip_custom_text_field {

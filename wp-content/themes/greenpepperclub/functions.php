@@ -370,6 +370,11 @@ add_action('init', function(){
 	// Opened buffer will need for wp_redirect function
 	ob_start();
 
+	// Check if site in production
+	if( wp_get_environment_type() !== 'local' ) {
+		date_default_timezone_set('America/Toronto');
+	};
+
 	remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
 	add_action('woocommerce_shop_loop_item_title', 'gp_woocommerce_shop_loop_item_title', 7);
 
@@ -510,12 +515,12 @@ function getDeliveryDeadlineTimestamp(int $productId) {
 /**
  * Get the closest deadline value
  *
- * @param int $timestamp
+ * @param bool $getTimestamp
  * @param string $format
  *
  * @return mixed
  */
-function getNextDeliveryDeadline($timestamp = 0, $format = 'M j, Y H:i:s') {
+function getNextDeliveryDeadline($getTimestamp = false, $format = 'M j, Y H:i:s') {
 	$loop = new WP_Query([
 		'post_type' =>'product',
 		'post_status' => 'publish',
@@ -536,7 +541,7 @@ function getNextDeliveryDeadline($timestamp = 0, $format = 'M j, Y H:i:s') {
 
 	$nextDeliveryDeadlineTimestamp = min(array_unique($allDeadlines));
 
-	if ($timestamp) {
+	if ($getTimestamp) {
 		return $nextDeliveryDeadlineTimestamp;
 	}
 
