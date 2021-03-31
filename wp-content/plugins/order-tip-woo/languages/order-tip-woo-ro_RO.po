@@ -1,0 +1,442 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Woo Order Tip\n"
+"POT-Creation-Date: 2021-02-07 18:33+0100\n"
+"PO-Revision-Date: 2021-02-07 18:33+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==0 || (n!=1 && n%100>=1 && n"
+"%100<=19) ? 1 : 2);\n"
+"X-Poedit-KeywordsList: _;__;_e;esc_html;esc_html__;esc_html_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: admin/controllers/notices.class.php:37
+#, php-format
+msgid ""
+"To ensure full compatibility of the %sOrder Tip for WooCommerce%s plugin, "
+"please navigate to the plugin's %s, review the settings and save before "
+"proceeding."
+msgstr ""
+"Pentru a asigura compatibilitatea completă a pluginului %sOrder Tip for "
+"WooCommerce%s, te rugăm să navighezi la %s a pluginului, să revizuiești "
+"setările și să le salvezi înainte de a continua."
+
+#: admin/controllers/notices.class.php:40
+msgid "settings page"
+msgstr "pagina de setări"
+
+#: admin/controllers/reports.class.php:58
+#: admin/controllers/reports.class.php:61
+#, fuzzy
+#| msgid "Order Tip"
+msgid "Order Tips"
+msgstr "Bacșiș comandă"
+
+#: admin/controllers/reports.class.php:133
+msgid "From"
+msgstr "De la"
+
+#: admin/controllers/reports.class.php:139
+msgid "To"
+msgstr "Până la"
+
+#: admin/controllers/reports.class.php:147
+msgid "Export to CSV"
+msgstr "Export CSV"
+
+#: admin/controllers/reports.class.php:154
+#, php-format
+msgid "Displaying orders between %s and %s"
+msgstr "Afișează comenzile între %s și %s"
+
+#: admin/controllers/reports.class.php:163
+#: admin/controllers/reports.class.php:386
+msgid "Order ID"
+msgstr "ID comandă"
+
+#: admin/controllers/reports.class.php:164
+msgid "Customer"
+msgstr "Client"
+
+#: admin/controllers/reports.class.php:165
+msgid "Type"
+msgstr "Tip"
+
+#: admin/controllers/reports.class.php:166
+msgid "Value"
+msgstr "Valoare"
+
+#: admin/controllers/reports.class.php:167
+msgid "Date/Time"
+msgstr "Dată/Oră"
+
+#: admin/controllers/reports.class.php:202
+#: admin/controllers/reports.class.php:458
+msgid "Total"
+msgstr "Total"
+
+#: admin/controllers/reports.class.php:212
+msgid "There are no orders with tips in the database just yet"
+msgstr "Încă nu există comenzi cu bacșișuri în baza de date"
+
+#: admin/controllers/reports.class.php:267
+#: admin/controllers/reports.class.php:341
+msgid "There are no orders with tips based on your date range."
+msgstr "Nu există comenzi cu bacșișuri pentru datele selectate."
+
+#: admin/controllers/reports.class.php:387
+#, fuzzy
+#| msgid "Tip fee name"
+msgid "Tip name"
+msgstr "Nume bacșiș"
+
+#: admin/controllers/reports.class.php:388
+msgid "Tip value"
+msgstr "Valoare bacșiș"
+
+#: admin/controllers/reports.class.php:389
+msgid "Order date"
+msgstr "Dată comandă"
+
+#: admin/controllers/reports.class.php:459
+msgid "Currency"
+msgstr "Monedă"
+
+#: admin/controllers/settings.class.php:62
+msgid "Settings"
+msgstr "Setări"
+
+#: admin/controllers/settings.class.php:75
+msgid "Order Tip"
+msgstr "Bacșiș comandă"
+
+#: admin/controllers/settings.class.php:100
+msgid "Order Tip Settings"
+msgstr "Setări bacșiș comenzi"
+
+#: admin/controllers/settings.class.php:106
+msgid "Shortcode"
+msgstr "Shortcode"
+
+#: admin/controllers/settings.class.php:108
+#, php-format
+msgid ""
+"You can use the %1$s[order_tip_form]%2$s shortcode in any page, post or "
+"widget. It will automatically take the settings below. However, we %1$sdo not"
+"%2$s recommend to use the shortcode on the cart or checkout pages if you "
+"enable the tip form using the checkboxes below."
+msgstr ""
+"Poți folosi shortcodeul %1$s[order_tip_form]%2$s în orice pagină, post sau "
+"widget. Va prelua automat setările de mai jos. Totuși, noi %1$snu%2$s "
+"recomandăm folosirea shortcodeului pe pagina de coș sau de plată dacă "
+"formularul a fost deja activat folosind setările de mai jos."
+
+#: admin/controllers/settings.class.php:112
+msgid "Enabled on Cart page"
+msgstr "Activează pe pagina coșului de cumpărături"
+
+#: admin/controllers/settings.class.php:114
+msgid ""
+"If checked, the tip form will appear under the Apply Coupon form on the Cart "
+"page"
+msgstr ""
+"Dacă este activat, formularul de bacșiș va apărea sub formularul de Aplicare "
+"Cupon pe pagina coșului de cumpărături"
+
+#: admin/controllers/settings.class.php:117
+#: admin/controllers/settings.class.php:140
+#: admin/controllers/settings.class.php:163
+#: admin/controllers/settings.class.php:172
+#: admin/controllers/settings.class.php:180
+msgid "Enable"
+msgstr "Activează"
+
+#: admin/controllers/settings.class.php:121
+msgid "Select position on the cart page"
+msgstr "Alege poziția pe pagina de coș"
+
+#: admin/controllers/settings.class.php:123
+msgid ""
+"Select the position on the cart page. Please make sure to enable the tip "
+"form using the checkbox above."
+msgstr ""
+"Alege poziția pe pagina de coș. Te rugăm să te asiguri că ai activat "
+"formularul de bacșiș folosind căsuța de mai sus."
+
+#: admin/controllers/settings.class.php:126
+msgid "Before the cart"
+msgstr "Înaintea coșului"
+
+#: admin/controllers/settings.class.php:127
+msgid "After the coupon and before the Update cart button"
+msgstr "După cupon și înainte de butonul Actualizare coș"
+
+#: admin/controllers/settings.class.php:128
+msgid "After the cart table"
+msgstr "După tabelul de coș"
+
+#: admin/controllers/settings.class.php:129
+msgid "Before cart totals"
+msgstr "Înainte de totalurile din coș"
+
+#: admin/controllers/settings.class.php:130
+msgid "After the cart"
+msgstr "După coș"
+
+#: admin/controllers/settings.class.php:135
+msgid "Enabled on Checkout page"
+msgstr "Activează pe pagina de plată"
+
+#: admin/controllers/settings.class.php:137
+msgid ""
+"If checked, the tip form will appear under the Checkout form on the Checkout "
+"page"
+msgstr ""
+"Dacă este activat, formularul de bacșiș va apărea sub lista de produse pe "
+"pagina de plată"
+
+#: admin/controllers/settings.class.php:144
+msgid "Select position on the checkout page"
+msgstr "Alege poziția pe pagina de plată"
+
+#: admin/controllers/settings.class.php:146
+msgid ""
+"Select the position on the checkout page. Please make sure to enable the tip "
+"form using the checkbox above."
+msgstr ""
+"Alege poziția pe pagina de plată. Te rugăm să te asiguri că  ai activat "
+"formularul de bacșiș folosind căsuța de mai sus."
+
+#: admin/controllers/settings.class.php:149
+msgid "Before the checkout form"
+msgstr "Înainte de formularul de plată"
+
+#: admin/controllers/settings.class.php:150
+msgid "Before the order notes field"
+msgstr "Înainte de câmpul de note ale comenzii"
+
+#: admin/controllers/settings.class.php:151
+msgid "After customer details"
+msgstr "După detaliile clientului"
+
+#: admin/controllers/settings.class.php:152
+msgid "Before the order review"
+msgstr "Înainte de revizuirea comenzii"
+
+#: admin/controllers/settings.class.php:153
+msgid "After the checkout form"
+msgstr "După formularul de plată"
+
+#: admin/controllers/settings.class.php:158
+msgid "Is taxable"
+msgstr "Este taxabil"
+
+#: admin/controllers/settings.class.php:160
+msgid ""
+"If checked, the tip amount will be taxed as per your WooCommerce Tax "
+"settings."
+msgstr ""
+"Dacă este activat, bacșișul va fi taxat conform setărilor de taxare ale "
+"WooCommerce."
+
+#: admin/controllers/settings.class.php:167
+msgid "Tip fee name"
+msgstr "Nume bacșiș"
+
+#: admin/controllers/settings.class.php:169
+msgid ""
+"The tip fee name will appear before the order total. It will always be "
+"followed by the tip amount. Default format is \"Tip (AMOUNT)\""
+msgstr ""
+"Numele bacșișului va apărea înainte de totalul comenzii. Va fi întotdeauna "
+"urmat de cantitatea de bacșiș. Modelul predefinit este \"Tip (CANTITATE)\""
+
+#: admin/controllers/settings.class.php:176
+msgid "Tip form title"
+msgstr "Titlu formular de bacșiș"
+
+#: admin/controllers/settings.class.php:178
+msgid "The tip form title will appear before the tip form"
+msgstr "Titlul va apărea înaintea formularului"
+
+#: admin/controllers/settings.class.php:184
+msgid "Tip Type"
+msgstr "Tip de bacșiș"
+
+#: admin/controllers/settings.class.php:187
+msgid "Percent of the order total"
+msgstr "Procent din totalul comenzii"
+
+#: admin/controllers/settings.class.php:188
+msgid "Fixed amount"
+msgstr "Valoare fixă"
+
+#: admin/controllers/settings.class.php:191
+msgid "Select the type of tip you would like to use."
+msgstr "Alege tipul de bacșiș pe care ai vrea să îl folosești."
+
+#: admin/controllers/settings.class.php:195
+msgid "Tip Rates"
+msgstr "Rate de bacșiș"
+
+#: admin/controllers/settings.class.php:207
+msgid "Enable various tip rates. Keep CTRL or CMD key pressed while selecting."
+msgstr ""
+"Activează diverse rate. Ține apăsata tasta CTRL sau CMD în timpul selecției."
+
+#: admin/controllers/settings.class.php:211
+msgid "Enable custom tip field"
+msgstr "Activează bacșișul personalizat"
+
+#: admin/controllers/settings.class.php:214
+#: admin/controllers/settings.class.php:257
+#: admin/controllers/settings.class.php:276
+msgid "Yes"
+msgstr "Da"
+
+#: admin/controllers/settings.class.php:215
+#: admin/controllers/settings.class.php:258
+#: admin/controllers/settings.class.php:277
+msgid "No"
+msgstr "Nu"
+
+#: admin/controllers/settings.class.php:218
+msgid ""
+"If enabled, the customer will be able to add their own fixed amount tip."
+msgstr ""
+"Dacă este activat, clientul va putea să adauge valoarea de bacșiș pe care "
+"dorește să o adauge."
+
+#: admin/controllers/settings.class.php:222
+msgid "Custom tip field label"
+msgstr "Etichetă bacșiș personalizat"
+
+#: admin/controllers/settings.class.php:225
+msgid ""
+"Set a label of your choice for the custom tip button. The default label is "
+"\"Custom Tip\""
+msgstr ""
+"Adaugă o etichetă personalizată pentru butonul de bacșiș personalizat. "
+"Eticheta predefinită este \"Custom Tip\""
+
+#: admin/controllers/settings.class.php:227
+msgid "Custom Tip"
+msgstr "Bacșiș personalizat"
+
+#: admin/controllers/settings.class.php:230
+msgid "Custom tip apply tip button label"
+msgstr "Etichetă buton aplicare bacșiș"
+
+#: admin/controllers/settings.class.php:233
+msgid ""
+"Set a label of your choice for the custom tip apply button. The default "
+"label is \"Add tip to order\""
+msgstr ""
+"Adaugă o etichetă personalizată pentru butonul de adăugare bacșiș. Eticheta "
+"predefinită este \"Add tip to order\""
+
+#: admin/controllers/settings.class.php:235
+msgid "Add tip to order"
+msgstr "Adaugă bacșiș la comandă"
+
+#: admin/controllers/settings.class.php:238
+msgid "Custom tip enter tip input placeholder label"
+msgstr "Eticheta personalizată câmp adăugare bacșiș personalizat"
+
+#: admin/controllers/settings.class.php:241
+msgid ""
+"Set a placeholder of your choice for the custom enter tip input field. The "
+"default label is \"Enter tip amount\""
+msgstr ""
+"Adaugă o etichetă personalizată pentru câmpul de adăugare bacșiș "
+"personalizat. Eticheta predefinită este \"Enter tip amount\""
+
+#: admin/controllers/settings.class.php:243
+msgid "Enter tip amount"
+msgstr "Adaugă bacșiș"
+
+#: admin/controllers/settings.class.php:246
+msgid "Custom tip remove tip button label"
+msgstr "Bacșiș personalizat buton ștergere bacșiș"
+
+#: admin/controllers/settings.class.php:249
+msgid ""
+"Set a label of your choice for the custom tip remove button. The default "
+"label is \"Remove tip\""
+msgstr ""
+"Adaugă o etichetă personalizată pentru butonul de ștergere bacșiș "
+"personalizat. Eticheta predefinită este \"Remove Tip\""
+
+#: admin/controllers/settings.class.php:251
+#, fuzzy
+#| msgid "Remove Tip"
+msgid "Remove tip"
+msgstr "Șterge bacșișul"
+
+#: admin/controllers/settings.class.php:254
+msgid "Enable cash tip"
+msgstr "Activează bacșișul în numerar"
+
+#: admin/controllers/settings.class.php:261
+msgid ""
+"If enabled, customers will be able to choose to tip by cash (on delivery or "
+"local pickup)."
+msgstr ""
+"Dacă este activat, clienții vor putea sa aleagă să lase bacșiș în numerar "
+"(la livrare sau la ridicarea din magazin)."
+
+#: admin/controllers/settings.class.php:265
+msgid "Cash tip field label"
+msgstr "Eticheta câmp bacșiș în numerar"
+
+#: admin/controllers/settings.class.php:268
+msgid ""
+"Set a label of your choice for the cash tip button. The default label is "
+"\"Cash\""
+msgstr ""
+"Adaugă o etichetă personalizată pentru câmpul de bacșiș în numerar. Eticheta "
+"predefinită este \"Cash\""
+
+#: admin/controllers/settings.class.php:270
+msgid "Cash"
+msgstr "Numerar"
+
+#: admin/controllers/settings.class.php:273
+msgid "Clear tip after the order has been placed"
+msgstr "Șterge bacșișul după ce comanda a fost plasată"
+
+#: admin/controllers/settings.class.php:280
+msgid ""
+"If enabled, the tip that may be added to the cart, will be removed. "
+"Otherwise, it will be preserved on future orders in the current session."
+msgstr ""
+"Daca este activat, bacșișul ce ar putea fi adăugat în coș, va fi șters. În "
+"mod contrar, va fi păstrat și aplicat comenzilor ulterioare din cadrul "
+"sesiunii curente."
+
+#: admin/controllers/settings.class.php:284
+msgid "Remove tip confirmation message"
+msgstr "Mesaj confirmare ștergere bacșiș"
+
+#: admin/controllers/settings.class.php:287
+msgid "Set a message of your choice for the tip removal confirmation message."
+msgstr ""
+"Adaugă un mesaj personalizată pentru mesajul de confirmare a ștergerii "
+"bacșișului."
+
+#: admin/controllers/settings.class.php:289
+msgid "Are you sure you wish to remove the tip?"
+msgstr "Ești sigur că vrei să ștergi bacșișul?"
+
+#: admin/controllers/settings.class.php:292
+msgid "Updated to 1.1"
+msgstr ""
+
+#~ msgid "Name"
+#~ msgstr "Nume"

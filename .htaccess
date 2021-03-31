@@ -1,5 +1,5 @@
 # Use PHP7 as default
-AddHandler application/x-httpd-php70 .php
+#AddHandler application/x-httpd-php70 .php
 #php_value date.timezone 'Canada/Ontario'
 # BEGIN WordPress
 # The directives (lines) between "BEGIN WordPress" and "END WordPress" are

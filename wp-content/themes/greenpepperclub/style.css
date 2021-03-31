@@ -2307,8 +2307,17 @@ a:hover {
 }
 
 .gp-about-grid-item .vce-hoverbox-caption {
+  opacity: 1;
   transition: .6s all ease;
-  padding: 0 30px 40px 30px !important;
+  padding: 0;
+}
+
+.gp-about-grid-item.vce-hoverbox--fade-overlay .vce-hoverbox-caption::before {
+  opacity: 0.4;
+}
+
+.gp-about-grid-item .vce-hoverbox-description {
+  display: none;
 }
 
 @media only screen and (min-width: 768px) and (max-width: 1200px) {
@@ -2331,6 +2340,10 @@ a:hover {
 .gp-visible {
   visibility: visible;
   height: auto;
+}
+
+.gp-hide-figcaption figcaption {
+  display: none;
 }
 
 /* Sizes */
@@ -2454,6 +2467,8 @@ video#bgvid {
   display: none !important;
 }
 
+/* Main */
+
 .gp-site-title h1 {
   font-size: 44px;
   text-align: center;
@@ -2502,6 +2517,11 @@ video#bgvid {
   font-family: 'DIN-Next-Light';
 }
 
+.gp-grid-modal-opened {
+  overflow-y: hidden;
+  padding-right: 15px;
+}
+
 .gp-modal-grid {
   display: none;
   position: fixed;
@@ -2511,6 +2531,7 @@ video#bgvid {
   left: 0;
   z-index: 9999;
   background: #fff;
+  overflow-y: auto;
 }
 
 .gp-modal-grid-image {

@@ -8,19 +8,21 @@ jQuery(function ($) {
 
         modalImage.removeAttr('style');
 
-        let modalHeight = modal.height();
-        let modalContent = $('.gp-modal-grid-content').height();
+        let modalHeight = modal.outerHeight();
+        let modalContent = $('.gp-modal-grid-content').outerHeight();
 
-        if (modalContent > modalHeight) {
-            modalImage.css({
-                'height': Math.round(modalHeight * 0.8),
-                'width': 'auto'
-            });
-        } else {
-            modalImage.css({
-                'height': 'auto',
-                'width': '90%'
-            });
+        if ($(window).width() > 765) {
+            if (modalContent > modalHeight) {
+                modalImage.css({
+                    'height': Math.round(modalHeight * 0.7),
+                    'width': 'auto'
+                });
+            } else {
+                modalImage.css({
+                    'height': 'auto',
+                    'width': '90%'
+                });
+            }
         }
     }
 
@@ -44,7 +46,10 @@ jQuery(function ($) {
 
     // Open modal and add data to modal
     gridItem.click(function () {
-        modal.fadeIn();
+        modal.fadeIn('slow', function () {
+            $('body').addClass('gp-grid-modal-opened');
+        });
+
 
         let header = $(this).find('.gp-about-grid-header').text()
         $.grep(gridItems, function (el) {
@@ -137,6 +142,13 @@ jQuery(function ($) {
 
     // Close modal
     $('.gp-modal-grid-close').click(function () {
-        modal.fadeOut();
+        modal.fadeOut('slow', function () {
+            modalImage.attr('src', '');
+            modalImage.removeAttr('style');
+            modalHeader.text('');
+            modalDescription.text('');
+
+            $('body').removeClass('gp-grid-modal-opened');
+        });
     });
 });

@@ -365,10 +365,6 @@ add_action('init', function(){
 	// Opened buffer will need for wp_redirect function
 	ob_start();
 
-	// TODO: change to Canada
-//		date_default_timezone_set('America/Toronto');
-	date_default_timezone_set('Europe/Moscow');
-
 	remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
 	add_action('woocommerce_shop_loop_item_title', 'gp_woocommerce_shop_loop_item_title', 7);
 

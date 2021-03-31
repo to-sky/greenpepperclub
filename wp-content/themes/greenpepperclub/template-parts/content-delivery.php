@@ -34,10 +34,14 @@ $deliveryData        = getSortedDeliveryDataForProduct( $productId, 'l F j' );
 			<?php endforeach; ?>
 
 			<?php if ( get_field( 'chef_choice' ) ) : ?>
+            <?php
+                $deliveryDays = array_column( $deliveryData, 'day_formatted' );
+                $splitDates = implode( ' - ', array_slice($deliveryDays, 0, 2) );
+            ?>
                 <div class="col">
                     <div class="custom-control custom-radio gp-delivery-control">
                         <input id="splitDates" class="custom-control-input" type="radio" name="date"
-                               value="SPLIT :<?php echo implode( ' - ', array_column( $deliveryData, 'day_formatted' ) ); ?>"
+                               value="SPLIT :<?php echo $splitDates; ?>"
                                required>
 
                         <label for="splitDates" class="custom-control-label">

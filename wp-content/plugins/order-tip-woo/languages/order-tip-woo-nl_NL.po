@@ -1,0 +1,443 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Woo Order Tip\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-02-07 18:32+0100\n"
+"PO-Revision-Date: 2021-02-07 18:33+0100\n"
+"Last-Translator: \n"
+"Language-Team: Nederlands\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: _;__;_e;esc_html;esc_html__;esc_html_e\n"
+"X-Loco-Version: 2.4.4; wp-5.5.3\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: admin/controllers/notices.class.php:37
+#, php-format
+msgid ""
+"To ensure full compatibility of the %sOrder Tip for WooCommerce%s plugin, "
+"please navigate to the plugin's %s, review the settings and save before "
+"proceeding."
+msgstr ""
+"Om volledige compatibiliteit van de %sOrder-tip voor WooCommerce%s-plug-in "
+"te garanderen, navigeer je naar de %s van de plugin, bekijk je de "
+"instellingen en sla je op voordat je verdergaat."
+
+#: admin/controllers/notices.class.php:40
+msgid "settings page"
+msgstr "instellingenpagina"
+
+#: admin/controllers/reports.class.php:58
+#: admin/controllers/reports.class.php:61
+msgid "Order Tips"
+msgstr "Fooien"
+
+#: admin/controllers/reports.class.php:133
+msgid "From"
+msgstr "Vanaf"
+
+#: admin/controllers/reports.class.php:139
+msgid "To"
+msgstr "Tot"
+
+#: admin/controllers/reports.class.php:147
+msgid "Export to CSV"
+msgstr "Exporteer naar CSV"
+
+#: admin/controllers/reports.class.php:154
+#, php-format
+msgid "Displaying orders between %s and %s"
+msgstr "Bestellingen tussen %s en %s worden weergeven"
+
+#: admin/controllers/reports.class.php:163
+#: admin/controllers/reports.class.php:386
+msgid "Order ID"
+msgstr "Bestelnummer"
+
+#: admin/controllers/reports.class.php:164
+msgid "Customer"
+msgstr "Klant"
+
+#: admin/controllers/reports.class.php:165
+msgid "Type"
+msgstr "Type"
+
+#: admin/controllers/reports.class.php:166
+msgid "Value"
+msgstr "Waarde"
+
+#: admin/controllers/reports.class.php:167
+msgid "Date/Time"
+msgstr "Datum/Uur"
+
+#: admin/controllers/reports.class.php:202
+#: admin/controllers/reports.class.php:458
+msgid "Total"
+msgstr "Totaal"
+
+#: admin/controllers/reports.class.php:212
+msgid "There are no orders with tips in the database just yet"
+msgstr "Er zijn nog geen bestellingen met fooien in de database"
+
+#: admin/controllers/reports.class.php:267
+#: admin/controllers/reports.class.php:341
+msgid "There are no orders with tips based on your date range."
+msgstr "Er zijn geen bestellingen met fooien op basis van uw datumbereik."
+
+#: admin/controllers/reports.class.php:387
+msgid "Tip name"
+msgstr "Naam van fooi"
+
+#: admin/controllers/reports.class.php:388
+msgid "Tip value"
+msgstr "Fooi waarde"
+
+#: admin/controllers/reports.class.php:389
+msgid "Order date"
+msgstr "Besteldatum"
+
+#: admin/controllers/reports.class.php:459
+msgid "Currency"
+msgstr "Valuta"
+
+#: admin/controllers/settings.class.php:62
+msgid "Settings"
+msgstr "Instellingen"
+
+#: admin/controllers/settings.class.php:75
+msgid "Order Tip"
+msgstr "Fooi"
+
+#: admin/controllers/settings.class.php:100
+msgid "Order Tip Settings"
+msgstr "Instellingen voor Fooi"
+
+#: admin/controllers/settings.class.php:106
+msgid "Shortcode"
+msgstr "Shortcode"
+
+#: admin/controllers/settings.class.php:108
+#, php-format
+msgid ""
+"You can use the %1$s[order_tip_form]%2$s shortcode in any page, post or "
+"widget. It will automatically take the settings below. However, we %1$sdo not"
+"%2$s recommend to use the shortcode on the cart or checkout pages if you "
+"enable the tip form using the checkboxes below."
+msgstr ""
+"U kunt de %1$s[order_tip_form] %2$s shortcode gebruiken in elke pagina, post "
+"of widget. Het zal automatisch de onderstaande instellingen overnemen. We "
+"%1$s raden echter niet%2$s aan om de shortcode op de winkelwagen- of "
+"betaalpagina's te gebruiken als u het fooienformulier inschakelt met behulp "
+"van de onderstaande selectievakjes."
+
+#: admin/controllers/settings.class.php:112
+msgid "Enabled on Cart page"
+msgstr "Geactiveerd op winkelwagen pagina"
+
+#: admin/controllers/settings.class.php:114
+msgid ""
+"If checked, the tip form will appear under the Apply Coupon form on the Cart "
+"page"
+msgstr ""
+"Indien aangevinkt, zal het fooienformulier verschijnen onder het formulier "
+"Coupon toepassen op de winkelwagenpagina"
+
+#: admin/controllers/settings.class.php:117
+#: admin/controllers/settings.class.php:140
+#: admin/controllers/settings.class.php:163
+#: admin/controllers/settings.class.php:172
+#: admin/controllers/settings.class.php:180
+msgid "Enable"
+msgstr "Activeren"
+
+#: admin/controllers/settings.class.php:121
+msgid "Select position on the cart page"
+msgstr "Selecteer positie op de winkelwagenpagina"
+
+#: admin/controllers/settings.class.php:123
+msgid ""
+"Select the position on the cart page. Please make sure to enable the tip "
+"form using the checkbox above."
+msgstr ""
+"Selecteer de positie op de winkelwagenpagina. Zorg ervoor dat u het "
+"fooienformulier inschakelt met het bovenstaande selectievakje."
+
+#: admin/controllers/settings.class.php:126
+msgid "Before the cart"
+msgstr "Voor de winkelwagen"
+
+#: admin/controllers/settings.class.php:127
+msgid "After the coupon and before the Update cart button"
+msgstr "Na de coupon en vóór de knop Winkelwagen bijwerken"
+
+#: admin/controllers/settings.class.php:128
+msgid "After the cart table"
+msgstr "Na de winkelwagen tabel"
+
+#: admin/controllers/settings.class.php:129
+msgid "Before cart totals"
+msgstr "Vóór de winkelwagen totalen"
+
+#: admin/controllers/settings.class.php:130
+msgid "After the cart"
+msgstr "Na de winkelwagen"
+
+#: admin/controllers/settings.class.php:135
+msgid "Enabled on Checkout page"
+msgstr "Geactiveerd op afreken pagina"
+
+#: admin/controllers/settings.class.php:137
+msgid ""
+"If checked, the tip form will appear under the Checkout form on the Checkout "
+"page"
+msgstr ""
+"Indien aangevinkt, verschijnt het fooienformulier onder het afrekenformulier "
+"op de afrekenpagina"
+
+#: admin/controllers/settings.class.php:144
+msgid "Select position on the checkout page"
+msgstr "Selecteer positie op de afrekenpagina"
+
+#: admin/controllers/settings.class.php:146
+msgid ""
+"Select the position on the checkout page. Please make sure to enable the tip "
+"form using the checkbox above."
+msgstr ""
+"Selecteer de positie op de afrekenpagina. Zorg ervoor dat u het "
+"fooienformulier inschakelt met het bovenstaande selectievakje."
+
+#: admin/controllers/settings.class.php:149
+msgid "Before the checkout form"
+msgstr "Vóór het afrekenscherm"
+
+#: admin/controllers/settings.class.php:150
+msgid "Before the order notes field"
+msgstr "Vóór het veld Ordernotities"
+
+#: admin/controllers/settings.class.php:151
+msgid "After customer details"
+msgstr "Na klantgegevens"
+
+#: admin/controllers/settings.class.php:152
+msgid "Before the order review"
+msgstr "Vóór de bestelilingscontrole"
+
+#: admin/controllers/settings.class.php:153
+msgid "After the checkout form"
+msgstr "Na het afrekenscherm"
+
+#: admin/controllers/settings.class.php:158
+msgid "Is taxable"
+msgstr "Is belastbaar"
+
+#: admin/controllers/settings.class.php:160
+msgid ""
+"If checked, the tip amount will be taxed as per your WooCommerce Tax "
+"settings."
+msgstr ""
+"Indien aangevinkt, wordt het bedrag van de fooi belast volgens uw "
+"WooCommerce belasting instellingen."
+
+#: admin/controllers/settings.class.php:167
+msgid "Tip fee name"
+msgstr "Naam van fooi"
+
+#: admin/controllers/settings.class.php:169
+msgid ""
+"The tip fee name will appear before the order total. It will always be "
+"followed by the tip amount. Default format is \"Tip (AMOUNT)\""
+msgstr ""
+"De naam van de fooi wordt weergegeven vóór het totaal van de bestelling. Het "
+"zal altijd worden gevolgd door het fooibedrag. Standaardindeling is 'Fooi "
+"(BEDRAG)'"
+
+#: admin/controllers/settings.class.php:176
+msgid "Tip form title"
+msgstr "Fooi Titel"
+
+#: admin/controllers/settings.class.php:178
+msgid "The tip form title will appear before the tip form"
+msgstr "De titel van het fooi-formulier verschijnt voor het fooi-formulier"
+
+#: admin/controllers/settings.class.php:184
+msgid "Tip Type"
+msgstr "Fooi Type"
+
+#: admin/controllers/settings.class.php:187
+msgid "Percent of the order total"
+msgstr "Percentage van totaal van bestelling"
+
+#: admin/controllers/settings.class.php:188
+msgid "Fixed amount"
+msgstr "Vast bedrag"
+
+#: admin/controllers/settings.class.php:191
+msgid "Select the type of tip you would like to use."
+msgstr "Selecteer het type fooi dat u wilt gebruiken."
+
+#: admin/controllers/settings.class.php:195
+msgid "Tip Rates"
+msgstr "Fooi hoeveelheden"
+
+#: admin/controllers/settings.class.php:207
+msgid "Enable various tip rates. Keep CTRL or CMD key pressed while selecting."
+msgstr ""
+"Schakel verschillende fooien in. Houd de CTRL- of CMD-toets ingedrukt "
+"tijdens het selecteren."
+
+#: admin/controllers/settings.class.php:211
+msgid "Enable custom tip field"
+msgstr "Aangepast veld voor fooien inschakelen"
+
+#: admin/controllers/settings.class.php:214
+#: admin/controllers/settings.class.php:257
+#: admin/controllers/settings.class.php:276
+msgid "Yes"
+msgstr "Ja"
+
+#: admin/controllers/settings.class.php:215
+#: admin/controllers/settings.class.php:258
+#: admin/controllers/settings.class.php:277
+msgid "No"
+msgstr "Nee"
+
+#: admin/controllers/settings.class.php:218
+msgid ""
+"If enabled, the customer will be able to add their own fixed amount tip."
+msgstr ""
+"Indien ingeschakeld, kan de klant zijn eigen fooi voor een vast bedrag "
+"toevoegen."
+
+#: admin/controllers/settings.class.php:222
+msgid "Custom tip field label"
+msgstr "Aangepaste Fooi label"
+
+#: admin/controllers/settings.class.php:225
+msgid ""
+"Set a label of your choice for the custom tip button. The default label is "
+"\"Custom Tip\""
+msgstr ""
+"Stel een label naar keuze in voor de aangepaste fooiknop. Het standaardlabel "
+"is 'Ander bedrag'"
+
+#: admin/controllers/settings.class.php:227
+msgid "Custom Tip"
+msgstr "Ander Bedrag"
+
+#: admin/controllers/settings.class.php:230
+msgid "Custom tip apply tip button label"
+msgstr "Aangepaste fooi toepassen knop label"
+
+#: admin/controllers/settings.class.php:233
+msgid ""
+"Set a label of your choice for the custom tip apply button. The default "
+"label is \"Add tip to order\""
+msgstr ""
+"Stel een label naar keuze in voor de knop Aangepaste fooi toepassen. Het "
+"standaardlabel is 'Fooi toevoegen aan bestelling'"
+
+#: admin/controllers/settings.class.php:235
+msgid "Add tip to order"
+msgstr "Fooi toevoegen aan de bestelling"
+
+#: admin/controllers/settings.class.php:238
+msgid "Custom tip enter tip input placeholder label"
+msgstr "Label voor het invoeren van aangepaste fooi"
+
+#: admin/controllers/settings.class.php:241
+msgid ""
+"Set a placeholder of your choice for the custom enter tip input field. The "
+"default label is \"Enter tip amount\""
+msgstr ""
+"Stel een tijdelijke aanduiding naar keuze in voor het invoerveld met "
+"aangepaste fooi invoerveld. Het standaardlabel is 'bedrag fooi invoeren'"
+
+#: admin/controllers/settings.class.php:243
+msgid "Enter tip amount"
+msgstr "Bedrag fooi invoeren"
+
+#: admin/controllers/settings.class.php:246
+msgid "Custom tip remove tip button label"
+msgstr "Label van aangepaste fooi verwijderknop"
+
+#: admin/controllers/settings.class.php:249
+msgid ""
+"Set a label of your choice for the custom tip remove button. The default "
+"label is \"Remove tip\""
+msgstr ""
+"Stel een label naar keuze in voor de knop Aangepaste tip verwijderen. Het "
+"standaardlabel is 'Verwijder fooi'"
+
+#: admin/controllers/settings.class.php:251
+msgid "Remove tip"
+msgstr "Verwijder fooi"
+
+#: admin/controllers/settings.class.php:254
+msgid "Enable cash tip"
+msgstr "Cash fooi activeren"
+
+#: admin/controllers/settings.class.php:261
+msgid ""
+"If enabled, customers will be able to choose to tip by cash (on delivery or "
+"local pickup)."
+msgstr ""
+"Indien ingeschakeld, kunnen klanten ervoor kiezen om contant een fooi te "
+"geven (bij aflevering of lokaal ophalen)."
+
+#: admin/controllers/settings.class.php:265
+msgid "Cash tip field label"
+msgstr "Cash fooi veldlabel"
+
+#: admin/controllers/settings.class.php:268
+msgid ""
+"Set a label of your choice for the cash tip button. The default label is "
+"\"Cash\""
+msgstr ""
+"Stel een label naar keuze in voor de cash fooi knop. Het standaardlabel is "
+"\"Contant\""
+
+#: admin/controllers/settings.class.php:270
+msgid "Cash"
+msgstr "Contant"
+
+#: admin/controllers/settings.class.php:273
+msgid "Clear tip after the order has been placed"
+msgstr "Fooi wissen nadat de bestelling is geplaatst"
+
+#: admin/controllers/settings.class.php:280
+msgid ""
+"If enabled, the tip that may be added to the cart, will be removed. "
+"Otherwise, it will be preserved on future orders in the current session."
+msgstr ""
+"Indien ingeschakeld, wordt de tip die aan de winkelwagen kan worden "
+"toegevoegd, verwijderd. Anders wordt het bewaard voor toekomstige "
+"bestellingen in de huidige sessie."
+
+#: admin/controllers/settings.class.php:284
+msgid "Remove tip confirmation message"
+msgstr "Bevestigingsbericht fooi verwijderen"
+
+#: admin/controllers/settings.class.php:287
+msgid "Set a message of your choice for the tip removal confirmation message."
+msgstr ""
+"Stel een bericht naar keuze in voor het bevestigingsbericht voor het "
+"verwijderen van de fooi."
+
+#: admin/controllers/settings.class.php:289
+msgid "Are you sure you wish to remove the tip?"
+msgstr "Weet u zeker dat u de fooi wilt verwijderen?"
+
+#: admin/controllers/settings.class.php:292
+msgid "Updated to 1.1"
+msgstr "Bijgewerkt naar 1.1"
+
+#~ msgid "Name"
+#~ msgstr "Naam"
+
+#~ msgid "Tip"
+#~ msgstr "Fooi"
