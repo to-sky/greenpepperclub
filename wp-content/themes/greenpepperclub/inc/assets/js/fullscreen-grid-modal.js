@@ -32,7 +32,7 @@ jQuery(function ($) {
         gridItems.push({
             bgUrl: $(el).find('.vce-hoverbox-background').css('background-image').split(/"/)[1],
             header: $(el).find('.gp-about-grid-header').text(),
-            description: $(el).find('.gp-about-grid-header').next('.vce-hoverbox-description').text(),
+            description: $(el).find('.gp-about-grid-header').next('.vce-hoverbox-description').html(),
             position: ++i
         });
     });
@@ -59,7 +59,7 @@ jQuery(function ($) {
                 modalImage.attr('src', el.bgUrl);
                 modalImage.removeAttr('style');
                 modalHeader.text(el.header);
-                modalDescription.text(el.description);
+                modalDescription.html(el.description);
 
                 // Update image size
                 changeImageSize();
@@ -133,7 +133,7 @@ jQuery(function ($) {
         // Insert data to modal
         modalImage.attr('src', gridItems[currentSlidePosition - 1].bgUrl).hide().fadeIn('slow');
         modalHeader.text(gridItems[currentSlidePosition - 1].header).hide().fadeIn('slow');
-        modalDescription.text(gridItems[currentSlidePosition - 1].description).hide().fadeIn('slow');
+        modalDescription.html(gridItems[currentSlidePosition - 1].description).hide().fadeIn('slow');
 
         changeImageSize();
 
