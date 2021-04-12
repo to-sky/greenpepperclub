@@ -29,7 +29,7 @@ if ($_GET) {
                 <div class="col-12 col-lg-8 col-xl-9 order-1 order-lg-0 mt-lg-0 food-items h-100">
                     <h2 class="food-items-title">Select your meals</h2>
                     <div class="mb-5 mb-lg-0">
-						<?php echo do_shortcode( '[food_item_listing cart_buttons=1 modal_order_button=0]' ); ?>
+						<?php echo do_shortcode( '[gp_food_item_listing cart_buttons=1 modal_order_button=0]' ); ?>
                     </div>
                 </div>
 

@@ -3,8 +3,8 @@
 /**
  * Show food listing
  */
-add_shortcode( 'food_item_listing', 'food_item_listing' );
-function food_item_listing( $atts ) {
+add_shortcode( 'gp_food_item_listing', 'gp_food_item_listing' );
+function gp_food_item_listing( $atts ) {
 	$atts = shortcode_atts( array(
 		'cart_buttons' => 0,
 		'modal_order_button' => 1
