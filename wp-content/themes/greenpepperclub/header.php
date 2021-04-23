@@ -40,9 +40,8 @@
     </video>
 <?php endif; ?>
 
-<div id="page" class="site d-flex flex-column min-vh-100 welcome <?php echo isProductFoodListingPage() ? 'h-100' : '' ?>">
-    <a class="skip-link screen-reader-text"
-       href="#content"><?php esc_html_e( 'Skip to content', 'wp-bootstrap-starter' ); ?></a>
+<div id="page" class="site d-flex flex-column min-vh-100 welcome <?php echo is_page_product_food_listing() ? 'h-100' : '' ?>">
+    <a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'wp-bootstrap-starter' ); ?></a>
 	<?php if ( ! is_page_template( 'blank-page.php' ) && ! is_page_template( 'blank-page-with-container.php' ) ): ?>
     <header id="masthead" class="site-header navbar-static-top fixed-top navbar-dark"
             role="banner">
@@ -70,7 +69,7 @@
 					'theme_location'  => 'primary',
 					'container'       => 'div',
 					'container_id'    => 'main-nav',
-					'container_class' => 'collapse navbar-collapse justify-content-end',
+					'container_class' => 'collapse navbar-collapse justify-content-lg-around',
 					'menu_id'         => false,
 					'menu_class'      => 'navbar-nav',
 					'depth'           => 3,
@@ -97,7 +96,7 @@
         <div class="gp-overlay" style="background-color: <?php echo $overlayColor; ?>"></div>
         <?php endif; ?>
 
-        <?php if ( ! is_page_template( 'fullwidth.php' ) && ! is_front_page() && ! isProductFoodListingPage() ) : ?>
+        <?php if ( ! is_page_template( 'fullwidth.php' ) && ! is_front_page() && ! is_page_product_food_listing() ) : ?>
         <div class="container">
             <div class="row">
         <?php endif; ?>

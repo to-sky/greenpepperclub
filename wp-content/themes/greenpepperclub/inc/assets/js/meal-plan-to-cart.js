@@ -18,7 +18,7 @@ jQuery( document ).ready(function($) {
     function getQtyFromCartById(id, returnInteger = false) {
         let itemIndex = getItemIndexIntoCart(id);
 
-        if (foodItems[itemIndex] === undefined) {
+        if (typeof foodItems[itemIndex] === 'undefined') {
             return returnInteger ? 0 : false;
         }
 
@@ -67,21 +67,17 @@ jQuery( document ).ready(function($) {
         // Set label with current qty into cart
         $('#totalQty').text(qtyItemsIntoCart);
 
+        // Fill food items hidden input
+        $('#foodItems').val(JSON.stringify(foodItems));
+
         // When cart is full
         if (checkCartIsFull()) {
             $('button[data-action="plus"]').prop('disabled', true);
-
-            $.when(
-                fillHiddenInputs()
-            ).then(function () {
-                addToCartBtn.prop('disabled', false);
-            });
+            addToCartBtn.prop('disabled', false);
         } else {
             addToCartBtn.prop('disabled', true);
             $('button[data-action="plus"]').prop('disabled', false);
         }
-
-        console.log(foodItems);
     }
 
     // Click on "Add to cart" button
@@ -90,13 +86,6 @@ jQuery( document ).ready(function($) {
 
         $('form button[name="add-to-cart"]').click();
     })
-
-    // Fill hidden inputs
-    function fillHiddenInputs() {
-        $('#food_item_ids').val( JSON.stringify( getAllTypesFromCart('id') ));
-        $('#food_item_names').val( JSON.stringify( getAllTypesFromCart('name') ) );
-        $('#food_item_qty').val( JSON.stringify( getAllTypesFromCart('qty') ) );
-    }
 
     // Add food item to cart
     function addToCart(id) {
@@ -157,6 +146,10 @@ jQuery( document ).ready(function($) {
     // Remove from cart food item with all quantity
     function deleteFromCart(id) {
         let itemIndexIntoCart = getItemIndexIntoCart(id);
+
+        if (typeof foodItems[itemIndexIntoCart] === 'undefined') {
+            return false;
+        }
 
         qtyItemsIntoCart -= foodItems[itemIndexIntoCart].qty;
 

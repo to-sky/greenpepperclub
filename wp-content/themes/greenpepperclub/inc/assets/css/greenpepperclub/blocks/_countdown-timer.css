@@ -1,0 +1,76 @@
+/*--------------------------------------------------------------
+# Countdown timer
+--------------------------------------------------------------*/
+#page .flipTimer .digit-set {
+  margin: 0 2px;
+}
+
+.flipTimer .days,
+.flipTimer .hours,
+.flipTimer .minutes,
+.flipTimer .seconds {
+  position: relative;
+}
+
+.days:after,
+.hours:after,
+.minutes:after,
+.seconds:after {
+  content: '';
+  color: #fff;
+  position: absolute;
+  bottom: -55px;
+  font-size: 25px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.days:after {
+  content: 'Days';
+}
+
+.hours:after {
+  content: 'Hours';
+}
+
+.minutes:after {
+  content: 'Minutes';
+}
+
+.seconds:after {
+  content: 'Seconds';
+}
+
+@media only screen and (max-width: 768px) {
+  #page .flipTimer {
+    font-size: 45px;
+    line-height: 50px;
+    height: 50px;
+  }
+
+  #page .flipTimer .digit-set {
+    width: 35px;
+  }
+
+  #page .flipTimer .digit > div {
+    height: 50%;
+    padding: 0 5px;
+  }
+
+  #page .flipTimer .digit > div.shadow-top {
+    width: 35px;
+  }
+
+  #page .flipTimer .digit > div.shadow-bottom {
+    width: 25px;
+  }
+
+  .days:after,
+  .hours:after,
+  .minutes:after,
+  .seconds:after {
+    bottom: -35px;
+    font-size: 15px;
+  }
+}

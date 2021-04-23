@@ -17,7 +17,7 @@
 		</div><!-- .container -->
 	<?php endif; ?>
 
-    <?php if ( ! isProductFoodListingPage() ) : ?>
+    <?php if ( ! is_page_product_food_listing() ) : ?>
 	</div><!-- #content -->
     <?php get_template_part( 'footer-widget' ); ?>
 	<footer id="colophon" class="site-footer <?php echo wp_bootstrap_starter_bg_class(); ?>" role="contentinfo">

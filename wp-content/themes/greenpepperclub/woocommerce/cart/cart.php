@@ -74,7 +74,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 						?>
 						</td>
 
-						<td class="product-name" data-title="<?php esc_attr_e( 'Product', 'wp-bootstrap-starter' ); ?>">
+						<td class="product-name border-left border-right <?php echo is_product_meal_plan( $cart_item['product_id'] ) ? 'p-0' : ''; ?>" data-title="<?php esc_attr_e( 'Product', 'wp-bootstrap-starter' ); ?>">
 						<?php
 						if ( ! $product_permalink ) {
 							echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;' );

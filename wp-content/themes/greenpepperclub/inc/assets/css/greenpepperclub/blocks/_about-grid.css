@@ -1,0 +1,79 @@
+/*--------------------------------------------------------------
+# About grid with modal (homepage)
+--------------------------------------------------------------*/
+/* About grid items */
+#gridItems .gp-about-grid-item,
+#gridItems .gp-about-grid-item .gp-about-grid-header .vce-google-fonts-heading-inner {
+  font-family: 'DIN-Next-Light';
+}
+
+.gp-about-grid-item .vce-hoverbox-wrapper {
+  cursor: pointer;
+}
+
+.gp-about-grid-item .vce-hoverbox-background {
+  transform: none !important;
+  background-color: transparent !important;
+}
+
+.gp-about-grid-item .vce-hoverbox-caption {
+  opacity: 1;
+  transition: .6s all ease;
+  padding: 0;
+}
+
+.gp-about-grid-item.vce-hoverbox--fade-overlay .vce-hoverbox-caption::before {
+  opacity: 0.4;
+}
+
+.gp-about-grid-item .vce-hoverbox-description {
+  display: none;
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1200px) {
+  .gp-about-grid-item h2 {
+    font-size: 95%;
+  }
+
+  .gp-about-grid-item p {
+    font-size: 65%;
+  }
+}
+
+
+/* Grid modal */
+.gp-grid-modal-opened {
+  overflow-y: hidden;
+  padding-right: 15px;
+}
+
+.gp-modal-grid {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  background: #fff;
+  overflow-y: auto;
+}
+
+.gp-modal-grid-image {
+  width: 90%;
+  overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
+  -moz-overflow-scrolling: touch;
+}
+
+.gp-modal-grid .gp-icon {
+  width: 15px;
+  height: 15px;
+}
+
+@media only screen and (min-width: 1024px) {
+  .gp-modal-grid .gp-icon {
+    width: 25px;
+    height: 25px;
+  }
+}

@@ -2,24 +2,11 @@
 /**
  * Food listing template part for single product page
  */
-
-
-$deliveryDate = '';
-$deliveryTime = '';
-
-if ($_GET) {
-    $deliveryDate = $_GET['date'];
-    $deliveryTime = $_GET['time'];
-}
 ?>
 
-<input type="hidden" id="date" name="date" value="<?php echo $deliveryDate; ?>">
-<input type="hidden" id="date" name="time" value="<?php echo $deliveryTime; ?>">
-
-<input type="hidden" name="food_item_ids" id="food_item_ids">
-<input type="hidden" name="food_item_names" id="food_item_names">
-<input type="hidden" name="food_item_qty" id="food_item_qty">
-
+<input type="hidden" id="date" name="date" value="<?php echo $_GET['date'] ?? ''; ?>">
+<input type="hidden" id="date" name="time" value="<?php echo $_GET['time'] ?? ''; ?>">
+<input type="hidden" name="food_items" id="foodItems">
 
 <section id="primary" class="content-area h-100">
     <main id="main" class="site-main h-100" role="main">

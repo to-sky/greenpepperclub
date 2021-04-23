@@ -188,7 +188,7 @@ function runCountdownTimer(el, deadlineTime) {
         direction: 'down',
         date: deadlineTime,
         callback: function () {
-            jQuery.post(gp_ajax.url, {action: 'get_next_delivery_deadline'}, function (response) {
+            jQuery.post(gp_ajax.ajax_url, {action: 'get_next_delivery_deadline'}, function (response) {
                 jQuery('#countdownTimerContainer').html(clonedCountdownTimer);
 
                 clonedCountdownTimer.flipTimer({

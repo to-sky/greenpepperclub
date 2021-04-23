@@ -6,6 +6,17 @@
  *
  * @package WP_Bootstrap_Starter
  */
+
+/**
+ * Add overlay on product card at the "Meal plans" page
+ */
+if ( is_page_meal_plans() ) {
+	add_action( 'woocommerce_shop_loop_item_title', 'gp_woocommerce_shop_loop_item_title', 7 );
+	function gp_woocommerce_shop_loop_item_title() {
+		remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
+		echo '<div class="gp-overlay"></div></a>';
+	}
+}
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>

@@ -1,0 +1,26 @@
+/*--------------------------------------------------------------
+# How It Works (homepage block)
+--------------------------------------------------------------*/
+.gp-how-it-work p {
+  margin-bottom: 0;
+}
+
+.gp-how-it-work-title h2 {
+  font-size: 36px;
+}
+
+@media only screen and (min-width: 768px) {
+  .gp-how-it-work-title h2 {
+    font-size: 52px;
+  }
+
+  .gp-how-it-work-text p span {
+    font-size: 14px !important;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .gp-how-it-work-text p span {
+    font-size: 16px !important;
+  }
+}

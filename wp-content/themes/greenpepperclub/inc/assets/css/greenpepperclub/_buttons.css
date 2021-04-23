@@ -1,0 +1,148 @@
+/*--------------------------------------------------------------
+# Buttons
+--------------------------------------------------------------*/
+button[disabled] {
+  cursor: not-allowed;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.btn-primary,
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary.disabled,
+.btn-primary:disabled,
+.woocommerce a.button.alt,
+.woocommerce button.button.alt,
+.woocommerce button.button.alt.disabled,
+.woocommerce-checkout-review-order .woocommerce-checkout-payment button.alt {
+  background-color: #8dc63f;
+  border: 1px solid #8dc63f;
+}
+
+.btn-primary:hover,
+.woocommerce a.button.alt:hover,
+.woocommerce-checkout-review-order .woocommerce-checkout-payment button.alt:hover {
+  background-color: #7db332;
+  border: 1px solid #7db332;
+}
+
+.btn-primary.focus,
+.btn-primary:focus,
+.btn-primary:not(:disabled):not(.disabled):active:focus,
+.woocommerce #respond input#submit:focus,
+.woocommerce a.button:focus,
+.woocommerce button.button:focus,
+.woocommerce input.button:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.woocommerce-button,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce #respond input#submit,
+.woocommerce button.button.disabled,
+.woocommerce button.button:disabled,
+.woocommerce button.button:disabled[disabled],
+.woocommerce a.button.alt,
+.woocommerce-checkout-review-order .woocommerce-checkout-payment button.alt {
+  padding: 8px 10px;
+  transition: 0.4s all ease;
+}
+
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce #respond input#submit {
+  color: #fff;
+  font-weight: 500;
+  background-color: #8dc63f;
+  border: 1px solid #8dc63f;
+}
+
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover,
+.woocommerce #respond input#submit:hover {
+  background-color: #7db332 !important;
+  border-color: #7db332;
+  color: #ffffff;
+}
+
+.woocommerce-checkout-review-order .woocommerce-checkout-payment button.alt {
+  width: 100%;
+}
+
+
+.gp-button-order-now a {
+  font-family: 'Lulo-Clean';
+  font-size: 13px;
+}
+
+.gp-button-order-now a:hover {
+  border-color: transparent !important;
+}
+
+
+/* Meal plan buttons */
+.gp-minus-btn,
+.gp-plus-btn {
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.gp-delete-btn {
+  color: #999;
+  font-size: 18px;
+}
+
+.cart-items .gp-minus-btn,
+.cart-items .gp-plus-btn {
+  width: auto;
+  height: auto;
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 14px;
+  border-radius: 0;
+}
+
+.cart-items .gp-plus-btn {
+  color: #8dc63f;
+}
+
+.gp-delete-btn:hover,
+.cart-items .gp-minus-btn:hover {
+  color: #666;
+  cursor: pointer;
+}
+
+.cart-items .gp-plus-btn:hover {
+  color: #7db332;
+}
+
+@media only screen and (min-width: 1024px) {
+  .gp-minus-btn,
+  .gp-plus-btn {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.add-to-cart-btn-desktop-container {
+  bottom: -47px;
+  background: #eeede7;
+}
+
+.add-to-cart-btn-mobile-container {
+  bottom: 0;
+  z-index: 1;
+}

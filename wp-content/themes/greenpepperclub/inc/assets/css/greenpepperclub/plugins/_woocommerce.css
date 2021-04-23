@@ -1,0 +1,179 @@
+/*--------------------------------------------------------------
+## Woocommerce
+--------------------------------------------------------------*/
+/* Fix conflict Woocommerce and Bootstrap classes */
+.u-columns .u-column1.col-1,
+.u-columns .u-column2.col-2 {
+  padding: 0;
+  max-width: none;
+}
+
+.woocommerce-checkout .col-12 {
+  display: block;
+  padding: 0;
+}
+
+.woocommerce-checkout .form-row {
+  display: block !important;
+}
+
+.wc-credit-card-form .form-row {
+  padding: 0 !important;
+}
+
+
+/* Main */
+.woocommerce div.product .product_title {
+  font-size: 24px;
+  padding: 10px 0;
+  border-bottom: 1px solid #000;
+}
+
+.woocommerce ul.products li.product .woocommerce-loop-product__title,
+.woocommerce ul.products li.product .price {
+  font-size: 18px;
+}
+
+
+/* Single page */
+.woocommerce div.product form.cart div.quantity {
+  width: 15%;
+  float: left;
+}
+
+.woocommerce div.product form.cart .button {
+  width: 80%;
+  float: right;
+}
+
+input.input-text.qty {
+  height: 34px;
+}
+
+
+/* Product Sale badge */
+.woocommerce span.onsale {
+  background-color: #8dc63f
+}
+
+@media screen and (max-width: 1199px) {
+  .woocommerce span.onsale {
+    top: -2.5em;
+  }
+}
+
+
+/* Login/Register page */
+.woocommerce-privacy-policy-text {
+  display: none;
+}
+
+
+/* Account page */
+.woocommerce-MyAccount-navigation ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.woocommerce-MyAccount-navigation ul li {
+  padding: 5px;
+  background: #8dc63f;
+  margin-bottom: 10px;
+}
+
+.woocommerce-MyAccount-navigation ul li a {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.woocommerce-MyAccount-navigation ul li a:hover,
+.woocommerce-MyAccount-navigation ul li.is-active a {
+  color: #555555;
+}
+
+
+/* Meal plans page */
+.woocommerce ul.products li.product_cat-meal-plan .woocommerce-loop-product__title,
+.woocommerce ul.products li.product_cat-meal-plan .price {
+  font-size: 22px;
+}
+
+.product_cat-meal-plan .single_add_to_cart_button {
+  display: none !important;
+}
+
+.product_cat-meal-plan .add_to_cart_button {
+  display: none !important;
+}
+
+
+/* Meal plans page (product image overlay) */
+.product_cat-meal-plan .gp-overlay,
+.woocommerce ul.products li.product_cat-meal-plan a img {
+  transition: 0.5s all ease;
+}
+
+.woocommerce ul.products li.product_cat-meal-plan a img {
+  margin-bottom: 0;
+  opacity: 0.5;
+}
+
+.product_cat-meal-plan .woocommerce-loop-product__link {
+  position: relative;
+  display: inline-block;
+}
+
+.product_cat-meal-plan .woocommerce-loop-product__link:hover .gp-overlay {
+  background: rgba(141, 198, 63, 0.5);
+}
+
+.product_cat-meal-plan .woocommerce-loop-product__link:hover img {
+  opacity: 0.7 !important;
+}
+
+.product_cat-meal-plan.woocommerce-loop-product__link:active .gp-overlay,
+.product_cat-meal-plan .woocommerce-loop-product__link:focus .gp-overlay {
+  background: transparent;
+}
+
+.product_cat-meal-plan .woocommerce-loop-product__link:active img,
+.product_cat-meal-plan .woocommerce-loop-product__link:focus img {
+  opacity: 1 !important;
+}
+
+
+/* Cart table on "Checkout" and "Cart" page */
+.woocommerce-checkout-review-order {
+  margin-top: 25px;
+}
+
+.product-name.cart-meal-container {
+  padding: 0 !important;
+  border-right: 1px solid #e5e5e5;
+}
+
+.product-name .cart-meal-table {
+  margin-bottom: 8px;
+}
+
+.product-name .cart-meal-name {
+  padding-left: 12px;
+}
+
+
+/* Checkout page */
+@media only screen and (min-width: 768px) {
+  .woocommerce-checkout .col2-set,
+  .woocommerce-checkout .woocommerce-checkout-review-order {
+    width: 49% !important;
+  }
+
+  .woocommerce-checkout .col2-set {
+    float: left;
+  }
+
+  .woocommerce-checkout .woocommerce-checkout-review-order {
+    float: right;
+  }
+}

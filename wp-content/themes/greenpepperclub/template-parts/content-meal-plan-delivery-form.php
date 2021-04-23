@@ -1,6 +1,6 @@
 <?php
 /**
- * Template part for displaying delivery days and times
+ * Template part for displaying delivery days and times form
  *
  */
 
@@ -10,7 +10,7 @@ $deliveryTimeEvening = get_field( 'delivery_time_evening', $productId, true );
 $deliveryData        = getSortedDeliveryDataForProduct( $productId, 'l F j' );
 ?>
 
-<form action="<?php the_permalink(); ?>" method="get" class="my-5" id="deliveryForm">
+<form action="<?php the_permalink(); ?>" method="get" id="deliveryForm">
     <input type="hidden" name="product-food-listing" value="1">
 
     <div class="delivery-dates">
@@ -41,14 +41,14 @@ $deliveryData        = getSortedDeliveryDataForProduct( $productId, 'l F j' );
                 <div class="col">
                     <div class="custom-control custom-radio gp-delivery-control">
                         <input id="splitDates" class="custom-control-input" type="radio" name="date"
-                               value="SPLIT :<?php echo $splitDates; ?>"
+                               value="SPLIT: <?php echo $splitDates; ?>"
                                required>
 
                         <label for="splitDates" class="custom-control-label">
                             <span class="text-uppercase font-montserrat-semibold">Chef’s Choice - Split Order</span>
                             <span class="font-montserrat-regular"> + $<?php the_field( 'chef_choice_cost' ); ?></span>
                             <button type="button" class="bg-transparent border-0 pl-2 text-info" data-toggle="tooltip" data-placement="top"
-                                    title="only available for 6/8/12 meals.  - split your meals between two delivery days.">
+                                    title="Only available for 6/8/12 meals - split your meals between two delivery days.">
                                 <i class="fas fa-info"></i>
                             </button>
                         </label>

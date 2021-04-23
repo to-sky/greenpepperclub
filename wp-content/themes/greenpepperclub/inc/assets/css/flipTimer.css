@@ -58,24 +58,24 @@
   }
 }
 
-@-keyframes flipTop {
-0% {
-  transform: perspective(400px) rotateX(0deg);
+@keyframes flipTop {
+  0% {
+    transform: perspective(400px) rotateX(0deg);
+  }
+
+  100% {
+    transform: perspective(400px) rotateX(-90deg);
+  }
 }
 
-100% {
-  transform: perspective(400px) rotateX(-90deg);
-}
-}
+@keyframes flipBottom {
+  0% {
+    transform: perspective(400px) rotateX(90deg);
+  }
 
-@-keyframes flipBottom {
-0% {
-  transform: perspective(400px) rotateX(90deg);
-}
-
-100% {
-  transform: perspective(400px) rotateX(0deg);
-}
+  100% {
+    transform: perspective(400px) rotateX(0deg);
+  }
 }
 
 .flipTimer {

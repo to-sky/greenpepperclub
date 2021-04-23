@@ -1,0 +1,162 @@
+/*--------------------------------------------------------------
+# Forms
+--------------------------------------------------------------*/
+.custom-control-input:checked ~ .custom-control-label::before {
+  border-color: #8dc63f;
+  background-color: #8dc63f;
+}
+
+/* Have Questions form (Homepage) */
+.have-questions-form-container {
+  font-family: 'DIN-Next-Light';
+}
+
+.have-questions-form-container p {
+  margin-bottom: 3px;
+}
+
+.have-questions-form label {
+  margin-bottom: 9px;
+}
+
+.have-questions-form input,
+.have-questions-form textarea,
+.have-questions-form label {
+  width: 100%;
+}
+
+
+.have-questions-form input,
+.have-questions-form textarea {
+  border-radius: 0;
+  border-color: #2f2e2e;
+}
+
+.have-questions-form textarea {
+  height: auto !important;
+  margin: auto !important;
+  padding: 10px 10px 0;
+  resize: none;
+}
+
+.have-questions-form .wpcf7-submit {
+  margin: 0 !important;
+  width: 100%;
+  background: #2f2e2e;
+  transition: .6s all ease;
+}
+
+.have-questions-form .wpcf7-submit:hover,
+.have-questions-form .wpcf7-submit:focus,
+.have-questions-form .wpcf7-submit:active {
+  border-color: #969696 !important;
+  background: #969696 !important;
+}
+
+.have-questions-form .submit-block {
+  text-align: center;
+}
+
+.have-questions-form .submit-block .ajax-loader {
+  margin-top: 5px;
+}
+
+.have-questions-form input:not([type="submit"]):hover,
+.have-questions-form input:not([type="submit"]):focus,
+.have-questions-form textarea:hover,
+.have-questions-form textarea:focus {
+  border-width: 2px;
+  border-color: #969696;
+  box-shadow: none;
+}
+
+.have-questions-form input:not([type="submit"]) {
+  padding: 3px 3px 3px 10px;
+}
+
+.have-questions-form .input-is-required {
+  color: #b03737;
+}
+
+.have-questions-form-container form .wpcf7-response-output {
+  margin: 0;
+}
+
+/* Select delivery day form (Meal plans page) */
+.gp-delivery-control {
+  padding-left: 0;
+}
+
+.gp-delivery-control label {
+  padding: 15px 0 15px 35px;
+  width: 100%;
+  border: 1px solid #dee2e6;
+}
+
+.gp-delivery-control label:hover {
+  cursor: pointer;
+}
+
+.gp-delivery-control label:before,
+.gp-delivery-control label:after {
+  top: 18px;
+  left: 14px;
+}
+
+.gp-delivery-control .custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: none;
+}
+
+.gp-delivery-control .custom-control-input:not(:disabled):active ~ .custom-control-label::before {
+  background-color: #8dc63f;
+  border-color: #8dc63f;
+}
+
+.gp-delivery-control input[type="radio"]:checked ~ label {
+  border-color: #8dc63f;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .gp-delivery-control {
+    font-size: 10px;
+  }
+
+  .gp-delivery-control label {
+    padding-left: 25px;
+  }
+
+  .gp-delivery-control label:before,
+  .gp-delivery-control label:after {
+    top: 17px;
+    left: 6px;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1200px) {
+  .gp-delivery-control {
+    font-size: 12px;
+  }
+
+  .gp-delivery-control label:before,
+  .gp-delivery-control label:after {
+    top: 17px;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .gp-delivery-control label:before,
+  .gp-delivery-control label:after {
+    top: 19px;
+  }
+}
+
+
+/* Woocommerce forms */
+.woocommerce form .password-input,
+.woocommerce-page form .password-input {
+  width: 100%;
+}
+
+.woocommerce-cart-form .shop_table .coupon .input-text {
+  width: 8.313rem !important;
+}

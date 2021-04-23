@@ -13,23 +13,19 @@
  */
 
 get_header();
+
+$product = wc_get_product( $post->ID );
 ?>
 
-<?php if(! isProductFoodListingPage()) : ?>
-    <section id="primary" class="content-area col-sm-12 col-md-12 col-lg-12">
-        <main id="main" class="site-main" role="main">
-            <div class="container">
-                <div class="row no-gutters">
-                    <div class="col col-12 col-md-10 offset-md-1">
-						<?php get_template_part( 'template-parts/content', 'delivery' ) ?>
-                    </div>
-                </div>
-            </div>
-        </main><!-- #main -->
-    </section><!-- #primary -->
-<?php else : ?>
-    <?php woocommerce_content(); ?>
-<?php endif; ?>
+<?php if ( is_product_meal_plan( $product->get_id() ) ) : ?>
+	 <?php get_template_part( 'template-parts/content', 'meal-plans' ); ?>
+<?php else: ?>
+	<section id="primary" class="col content-area py-5">
+		<main id="main" class="site-main" role="main">
+			<?php woocommerce_content(); ?>
+		</main><!-- #main -->
+	</section><!-- #primary -->
+<?php endif ?>
 
 <?php
 get_footer();

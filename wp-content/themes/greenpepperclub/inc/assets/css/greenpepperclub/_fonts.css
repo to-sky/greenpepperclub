@@ -1,0 +1,116 @@
+/*--------------------------------------------------------------
+# Fonts
+--------------------------------------------------------------*/
+@font-face {
+  font-family: 'DIN-Neuzeit-Grotesk-Bold';
+  src: url('../../fonts/DIN-Neuzeit-Grotesk-Bold-Cond.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DIN-Next-Light';
+  src: url('../../fonts/DIN-Next-Light.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'DIN-Next-Regular';
+  src: url('../../fonts/DIN-Next-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Futura-Light-Regular';
+  src: url('../../fonts/Futura-Light-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+@font-face {
+  font-family: 'Lulo-Clean';
+  src: url('../../fonts/Lulo-Clean-W01-One-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat-Bold';
+  src: url('../../fonts/Montserrat-Bold.woff') format('woff'),
+  url('../../fonts/Montserrat-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat-SemiBold';
+  src: url('../../fonts/Montserrat-SemiBold.woff') format('woff'),
+  url('../../fonts/Montserrat-SemiBold.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat-Regular';
+  src: url('../../fonts/Montserrat-Regular.woff') format('woff'),
+  url('../../fonts/Montserrat-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Ubuntu-Bold';
+  src: url('../../fonts/Ubuntu-Bold.woff') format('woff'),
+  url('../../fonts/Ubuntu-Bold.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lato-Regular';
+  src: url('../../fonts/Lato-Regular.woff') format('woff'),
+  url('../../fonts/Lato-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-din-next-light {
+  font-family: 'DIN-Next-Light';
+}
+
+.font-din-next {
+  font-family: 'DIN-Next-Regular';
+}
+
+.font-din-neuzeit-grotesk-bold {
+  font-family: 'DIN-Neuzeit-Grotesk-Bold';
+}
+
+.font-futura-light-regular {
+  font-family: 'Futura-Light-Regular';
+}
+
+.font-lulo-clean {
+  font-family: 'Lulo-Clean';
+}
+
+.font-montserrat-regular {
+  font-family: 'Montserrat-Regular';
+}
+
+.font-lato-regular {
+  font-family: 'Lato-Regular';
+}
+
+.font-montserrat-bold {
+  font-family: 'Montserrat-Bold';
+}
+
+.font-montserrat-semibold {
+  font-family: 'Montserrat-SemiBold';
+}
+
+.font-ubuntu-bold {
+  font-family: 'Ubuntu-Bold';
+}

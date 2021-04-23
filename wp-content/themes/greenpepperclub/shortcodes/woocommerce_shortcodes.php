@@ -1,100 +1,138 @@
 <?php
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
-
-add_filter( 'woocommerce_return_to_shop_redirect', 'change_shop_url_with_redirect' );
-function change_shop_url_with_redirect(){
-	return get_meal_plans_url();
-}
+remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
 
 
-// define the woocommerce_before_add_to_cart_button callback
-add_action( 'woocommerce_before_add_to_cart_button', 'action_woocommerce_before_add_to_cart_button', 10, 0 );
-function action_woocommerce_before_add_to_cart_button() {
-	get_template_part( 'template-parts/content', 'single-product-food-listing' );
-}
+/**
+ * Add food items data to the cart
+ */
+add_filter( 'woocommerce_add_cart_item_data', 'gp_woocommerce_add_cart_item_data', 10, 3 );
+function gp_woocommerce_add_cart_item_data( $cart_item_data, $product_id, $variation_id ) {
+	$food_items = $_POST['food_items'] ?? false;
 
-
-// define the woocommerce_add_cart_item_data callback
-add_filter( 'woocommerce_add_cart_item_data', 'filter_woocommerce_add_cart_item_data', 10, 3 );
-function filter_woocommerce_add_cart_item_data( $cart_item_data, $product_id, $variation_id ) {
-	$new_value['date']            = $_POST['date'];
-	$new_value['time']            = $_POST['time'];
-	$new_value['food_item_ids']   = json_decode( $_POST['food_item_ids'] );
-	$new_value['food_item_names'] = json_decode(str_replace('\\', '', $_POST['food_item_names']));
-	$new_value['food_item_qty']   = json_decode( $_POST['food_item_qty'] );
-
-	return array_merge( $cart_item_data, $new_value );
-}
-
-
-add_filter( 'woocommerce_cart_item_name', 'gp_show_cart_ordered_service_info', 10, 3 );
-function gp_show_cart_ordered_service_info( $name, $cart_item, $cart_item_key ) {
-	$name      = '';
-	$foodItemIds = $cart_item['food_item_ids'];
-
-	if ( isset( $foodItemIds ) ) {
-		$name .= '<table><tr><th>Meal</th><th>Name</th><th>Quantity</th></tr>';
-		foreach ( $foodItemIds as $key => $foodItemId ) {
-			$foodImageUrl = get_the_post_thumbnail_url( $foodItemId, 'thumbnail' );
-			$name .= '<tr><td><img src="' . $foodImageUrl . '" style="width:50px" /></td><td>' . $cart_item['food_item_names'][ $key ] . '</td><td>' . $cart_item['food_item_qty'][ $key ] . '</td></tr>';
-		}
-		$name .= '</table>';
+	if ( ! $food_items || empty( $food_items ) ) {
+		return $cart_item_data;
 	}
 
-	return $name;
+	$data['date'] = $_POST['date'];
+	$data['time'] = $_POST['time'];
+	$data['food_items'] = json_decode(str_replace('\\', '', $food_items), true);
+
+	return array_merge( $cart_item_data, $data );
 }
 
 
-add_action( 'woocommerce_checkout_create_order_line_item', 'gp_add_custom_service_data_to_order', 10, 4 );
-function gp_add_custom_service_data_to_order( $item, $cart_item_key, $values, $order ) {
-	foreach ( $item as $cart_item_key => $value ) {
-		if ( ! empty( $value['food_item_names'] ) && ! empty( $value['food_item_qty'] ) ) {
-			$food_item_names = $value['food_item_names'];
-			$food_item_qty = $value['food_item_qty'];
-			$meta  = '';
+/**
+ * Show Meal plan product with food items in the cart and checkout page
+ */
+add_filter( 'woocommerce_cart_item_name', 'gp_woocommerce_cart_item_name', 10, 3 );
+function gp_woocommerce_cart_item_name( $name, $cart_item, $cart_item_key ) {
+	if ( ! isset( $cart_item['food_items'] ) ) {
+		return $name;
+	}
 
-			for ( $i = 0; $i < count( $food_item_names ); $i ++ ) {
-				$meta .= $food_item_names[ $i ] . ' - ' . $food_item_qty[ $i ] . '<br>';
-			}
+	$date = $cart_item['date'];
+	$time = $cart_item['time'];
+	$food_items = $cart_item['food_items'];
 
-			$item->add_meta_data( __( 'Food Item Name', 'socialplanet' ), $meta, true );
-			$item->add_meta_data( __( 'Delivery Date', 'socialplanet' ), $value['date'], true );
-			$item->add_meta_data( __( 'Delivery Time', 'socialplanet' ), $value['time'], true );
+	ob_start();
+
+	get_template_part( 'template-parts/content', 'meal-plan-cart-item', compact( 'food_items', 'name', 'date', 'time' ) );
+
+	return ob_get_clean();
+}
+
+
+/**
+ * Add custom data to order for Meal plan product
+ */
+add_action( 'woocommerce_checkout_create_order_line_item', 'gp_woocommerce_checkout_create_order_line_item', 10, 4 );
+function gp_woocommerce_checkout_create_order_line_item( $item, $cart_item_key, $values, $order ) {
+	if ( isset( $values['food_items'] ) ) {
+
+		$meta  = '';
+		foreach ($values['food_items'] as $food_item) {
+			$meta .= $food_item['name'] . " - " . $food_item['qty'] . "<br>";
 		}
+
+		$item->add_meta_data( __( 'Food Item Name', 'wp-bootstrap-starter' ), $meta, true );
+		$item->add_meta_data( __( 'Delivery Date', 'wp-bootstrap-starter' ), $values['date'], true );
+		$item->add_meta_data( __( 'Delivery Time', 'wp-bootstrap-starter' ), $values['time'], true );
 	}
 }
 
 
-//remove quantity from all over
-add_filter( 'woocommerce_is_sold_individually', 'wc_remove_all_quantity_fields', 10, 2 );
-function wc_remove_all_quantity_fields( $return, $product ) {
-	return true;
-}
-
-
-add_action( 'woocommerce_before_calculate_totals', 'wc_before_calculate_totals' );
-function wc_before_calculate_totals( $cart_object ) {
+/**
+ * Add extra cost to the order with "Chef's choice - split order" option
+ */
+add_action( 'woocommerce_before_calculate_totals', 'gp_woocommerce_before_calculate_totals' );
+function gp_woocommerce_before_calculate_totals( $cart_object ) {
 	global $woocommerce;
 
-	$cart_items          = $cart_object->get_cart();
-	$extra_shipping_cost = 0;
+	$cart_items = $cart_object->get_cart();
+	$extra_cost = 0;
 
-	foreach ( $cart_items as $key => $value ) {
-		if ( strpos( $value['date'], 'SPLIT' ) !== false ) {
-			$extra_shipping_cost = get_field( 'chef_choice_cost', $value['product_id'] );
+	foreach ( $cart_items as $item => $data ) {
+		if ( isset( $data['date'] ) && strpos( $data['date'], 'SPLIT' ) !== false ) {
+			$extra_cost = get_field( 'chef_choice_cost', $data['product_id'] );
 		}
 	}
 
-	if ( $extra_shipping_cost > 0 ) {
-		$woocommerce->cart->add_fee( __( 'Shipping Cost', 'woocommerce' ), $extra_shipping_cost );
+	if ( $extra_cost > 0 ) {
+		$woocommerce->cart->add_fee( __( 'Chef\'s Choice сost', 'wp-bootstrap-starter' ), $extra_cost );
 	}
 
 	return $cart_object;
 }
 
 
-add_filter( 'woocommerce_add_to_cart_redirect', 'wc_redirect_checkout_add_cart' );
-function wc_redirect_checkout_add_cart() {
-	return wc_get_checkout_url();
+/**
+ * Redirect to cart if product in Meal plan category
+ */
+add_filter( 'woocommerce_add_to_cart_redirect', 'gp_woocommerce_add_to_cart_redirect', 10, 2 );
+function gp_woocommerce_add_to_cart_redirect( $url, $adding_to_cart ) {
+	if ( isset( $adding_to_cart ) && is_product_meal_plan( $adding_to_cart->get_id() ) ) {
+		$url = wc_get_cart_url();
+	}
+
+	return $url;
+}
+
+
+/**
+ * Message after added product to the cart (in Meal plan category)
+ */
+add_filter ( 'wc_add_to_cart_message_html', 'gp_wc_add_to_cart_message_html', 10, 2 );
+function gp_wc_add_to_cart_message_html( $message, $products ) {
+	foreach( $products as $product_id => $quantity ){
+		$product = wc_get_product( $product_id );
+
+		if( is_product_meal_plan( $product_id ) ){
+			$added_text = sprintf( _n( '"%s" has been added to your cart.', '"%s" have been added to your cart.', $quantity, 'woocommerce' ), $product->get_title() );
+
+			$message = sprintf(
+				'<a href="%s" tabindex="1" class="button wc-forward">%s</a> %s',
+				esc_url( get_meal_plans_url() ),
+				esc_html__( 'Continue shopping', 'woocommerce' ),
+				esc_html( $added_text )
+			);
+		}
+	}
+
+	return $message;
+}
+
+
+/**
+ * Disable "Shop" page
+ */
+add_action( 'wp', 'gp_woocommerce_disable_shop_page' );
+function gp_woocommerce_disable_shop_page() {
+	global $post;
+
+	if ( is_shop() ) {
+		global $wp_query;
+
+		$wp_query->set_404();
+		status_header(404);
+	}
 }

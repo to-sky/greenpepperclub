@@ -181,6 +181,7 @@ function wp_bootstrap_starter_scripts() {
 	// load bootstrap css
 	// load AItheme styles
 	// load WP Bootstrap Starter styles
+	wp_enqueue_style( 'greenpepperclub-style', get_template_directory_uri() . '/inc/assets/css/greenpepperclub/main.css' );
 	wp_enqueue_style( 'wp-bootstrap-starter-style', get_stylesheet_uri() );
     if(get_theme_mod( 'theme_option_setting' ) && get_theme_mod( 'theme_option_setting' ) !== 'default') {
         wp_enqueue_style( 'wp-bootstrap-starter-'.get_theme_mod( 'theme_option_setting' ), get_template_directory_uri() . '/inc/assets/css/presets/theme-option/'.get_theme_mod( 'theme_option_setting' ).'.css', false, '' );
@@ -232,8 +233,8 @@ function wp_bootstrap_starter_scripts() {
 	wp_enqueue_script( 'wp-bootstrap-starter-skip-link-focus-fix', get_template_directory_uri() . '/inc/assets/js/skip-link-focus-fix.min.js', array(), '20151215', true );
     wp_enqueue_script( 'fullscreen-grid-modal', get_template_directory_uri() . '/inc/assets/js/fullscreen-grid-modal.js', array() );
 
-    if (isProductFoodListingPage() ) {
-	    wp_enqueue_script( 'cart', get_template_directory_uri() . '/inc/assets/js/cart.js', array(), false, true );
+    if (is_page_product_food_listing() ) {
+	    wp_enqueue_script( 'meal-plan-to-cart', get_template_directory_uri() . '/inc/assets/js/meal-plan-to-cart.js', array(), false, true );
     }
 
     wp_enqueue_script( 'modal-food-item', get_template_directory_uri() . '/inc/assets/js/modal-food-item.js', array(), false, true );
@@ -297,7 +298,7 @@ add_action( 'wp_enqueue_scripts', 'gp_ajax_data', 99 );
 function gp_ajax_data(){
 	wp_localize_script('wp-bootstrap-starter-themejs', 'gp_ajax',
 		array(
-			'url' => admin_url('admin-ajax.php')
+			'ajax_url' => admin_url('admin-ajax.php')
 		)
 	);
 }
@@ -367,21 +368,16 @@ function taxation_remove_ver_css_js( $src, $handle )  {
  * Init
  */
 add_action('init', function(){
-	// Opened buffer will need for wp_redirect function
+	// Opened buffer will need for correct working wp_redirect function
 	ob_start();
-
-	// Check if site in production
-	if( wp_get_environment_type() !== 'local' ) {
-		date_default_timezone_set('America/Toronto');
-	};
-
-	remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
-	add_action('woocommerce_shop_loop_item_title', 'gp_woocommerce_shop_loop_item_title', 7);
-
-	function gp_woocommerce_shop_loop_item_title() {
-		echo '<div class="gp-overlay"></div></a>';
-	}
 });
+
+// Set default timezone
+$timezone = $_SERVER['SERVER_NAME'] === 'greenpepperclub.test'
+	? 'Europe/Moscow'
+	: 'America/Toronto';
+
+date_default_timezone_set($timezone);
 
 /**
  * Disable admin bar on frontend(for users)
@@ -548,6 +544,10 @@ function getNextDeliveryDeadline($getTimestamp = false, $format = 'M j, Y H:i:s'
 	return date($format, $nextDeliveryDeadlineTimestamp);
 }
 
+// Meal plan page id
+const MEAL_PLANS_PAGE_ID = 69;
+const PRODUCT_MEAL_PLAN_CATEGORY_NAME = 'meal-plan';
+
 /**
  * Get next delivery deadline from ajax
  */
@@ -564,7 +564,7 @@ function get_next_delivery_deadline_callback() {
  *
  * @return bool
  */
-function isProductFoodListingPage() {
+function is_page_product_food_listing() {
 	return isset( $_GET['product-food-listing'] ) && intval( $_GET['product-food-listing'] ) == 1;
 }
 
@@ -572,7 +572,7 @@ function isProductFoodListingPage() {
  * Get meal plans url
  */
 function get_meal_plans_url() {
-	return get_permalink(69);
+	return get_permalink( MEAL_PLANS_PAGE_ID );
 }
 
 /**
@@ -580,4 +580,38 @@ function get_meal_plans_url() {
  */
 function the_meal_plans_url() {
 	echo get_meal_plans_url();
+}
+
+/**
+ * Check if page is Meal plans
+ *
+ * @return bool
+ */
+function is_page_meal_plans() {
+	return is_page( MEAL_PLANS_PAGE_ID );
+}
+
+/**
+ * Redirect to specific single product page template based on category
+ */
+add_filter('wc_get_template_part', 'gp_custom_product_template', 10, 3);
+function gp_custom_product_template($template, $slug, $name) {
+	global $product;
+
+	if ( $name === 'single-product' && $slug === 'content' && is_product_meal_plan( $product->get_id() ) ) {
+		$template = locate_template(array("{$slug}-{$name}-meal.php", WC()->template_path() . "{$slug}-{$name}-meal.php"));
+	}
+
+	return $template;
+}
+
+/**
+ * Check if product is Meal plan
+ *
+ * @param $product_id
+ *
+ * @return bool
+ */
+function is_product_meal_plan( $product_id ) {
+	return has_term( PRODUCT_MEAL_PLAN_CATEGORY_NAME, 'product_cat', $product_id );
 }

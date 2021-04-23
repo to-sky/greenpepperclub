@@ -1,0 +1,111 @@
+/*--------------------------------------------------------------
+# Helpers
+--------------------------------------------------------------*/
+/*Text Color*/
+.food-txt-primary {
+  color: #8dc63f;
+}
+
+
+/*Text Variation*/
+.food-txt-uppercase {
+  text-transform: uppercase;
+}
+
+
+/*Font Weight*/
+.food-font-w400 {
+  font-weight: 400
+}
+
+
+/*Font Size*/
+.food-font11 {
+  font-size: 11px;
+}
+
+.food-font13 {
+  font-size: 13px;
+}
+
+.food-font14 {
+  font-size: 14px;
+}
+
+.food-font16 {
+  font-size: 16px;
+}
+
+.food-font18 {
+  font-size: 18px;
+}
+
+.food-font24 {
+  font-size: 24px;
+}
+
+.food-font30 {
+  font-size: 30px;
+}
+
+/* Visibility */
+.gp-invisible {
+  visibility: hidden;
+  height: 0;
+}
+
+.gp-visible {
+  visibility: visible;
+  height: auto;
+}
+
+.gp-hide-figcaption figcaption {
+  display: none;
+}
+
+
+/* Sizes */
+.gp-fs-17 {
+  font-size: 17px;
+}
+
+.gp-fs-20 {
+  font-size: 20px;
+}
+
+.gp-size-25 {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+
+/* Positions */
+.gp-right {
+  right: 0;
+}
+
+.gp-left {
+  left: 0;
+}
+
+.gp-valign {
+  margin: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+
+/* Different */
+.gp-overlay {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+}

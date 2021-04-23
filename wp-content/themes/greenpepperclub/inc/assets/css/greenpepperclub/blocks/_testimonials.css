@@ -1,0 +1,22 @@
+/*--------------------------------------------------------------
+# Testimonials slider
+--------------------------------------------------------------*/
+.gp-testimonial-item {
+  font-family: 'DIN-Next-Light';
+  background: rgba(255, 255, 255, .7);
+  color: #565656;
+  outline: none;
+}
+
+.gp-testimonial-symbol {
+  margin: auto;
+  width: 40px;
+  height: 33px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.gp-testimonial-author {
+  font-family: 'DIN-Next-Regular';
+  color: #222;
+}

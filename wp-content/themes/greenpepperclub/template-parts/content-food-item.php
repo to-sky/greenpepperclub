@@ -1,6 +1,6 @@
 <?php
 /**
- * Show all foods with description in modal
+ * Template part for showing food item with modal handler
  */
 
 $cartButtons = (int) $args['cart_buttons'];
