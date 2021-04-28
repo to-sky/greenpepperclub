@@ -257,6 +257,8 @@ function wp_bootstrap_starter_scripts() {
 
     wp_enqueue_script('slick-js', 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js', array(), '', true );
     wp_enqueue_script('matchHeight', 'https://cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.2/jquery.matchHeight-min.js', array(), '', true );
+
+	wp_register_script('purchase-gift-card', get_template_directory_uri() . '/inc/assets/js/purchase-gift-card.js', array(), false, true );
 }
 add_action( 'wp_enqueue_scripts', 'wp_bootstrap_starter_scripts' );
 
@@ -614,4 +616,20 @@ function gp_custom_product_template($template, $slug, $name) {
  */
 function is_product_meal_plan( $product_id ) {
 	return has_term( PRODUCT_MEAL_PLAN_CATEGORY_NAME, 'product_cat', $product_id );
+}
+
+
+/**
+ * Get gift card
+ */
+add_action('wp_ajax_get_gift_card', 'get_gift_card_callback');
+add_action('wp_ajax_nopriv_get_gift_card', 'get_gift_card_callback');
+function get_gift_card_callback() {
+	if( $_POST['id'] === 'custom' ) {
+		echo do_shortcode("[wpgv_giftvoucher]");
+	} else {
+		echo do_shortcode("[wpgv_giftitems item_id='" . $_POST['id'] . "']");
+	}
+
+	wp_die();
 }

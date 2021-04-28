@@ -13,3 +13,7 @@
 .vc_desktop .entry-content {
   margin-top: 0;
 }
+
+.purchase-gift-card .vce-tall-hoverbox-inner:hover {
+  cursor: pointer;
+}

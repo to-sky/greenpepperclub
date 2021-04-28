@@ -1,0 +1,11 @@
+#giftCardModal .wpgv_preview-box {
+  display: none !important;
+}
+
+#giftCardModal #wpgv-giftitems {
+  width: 100% !important;
+}
+
+#giftCardModal .modal-content {
+  border-radius: 8px;
+}

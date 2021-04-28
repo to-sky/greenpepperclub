@@ -243,7 +243,7 @@ function wpgv_giftitems_shortcode ($atts = '')
 
                     <div class="wpgv-price">'.$pricestring.'</div>
 
-                    <div class="wpgv-buy"><button type="button" data-item-id="'.$item_id.'" data-cat-id="'.$category->term_id.'" data-item-price="'.$subprice.'">'.__('Buy', 'gift-voucher').'</button></div>
+                    <div class="wpgv-buy"><button type="button" data-item-id="'.$item_id.'" data-item-price="'.$subprice.'">'.__('Buy', 'gift-voucher').'</button></div>
                 </div>';
         }
         $html .= '</div>';
