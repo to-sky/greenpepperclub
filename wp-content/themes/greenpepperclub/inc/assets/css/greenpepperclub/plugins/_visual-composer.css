@@ -14,6 +14,6 @@
   margin-top: 0;
 }
 
-.purchase-gift-card .vce-tall-hoverbox-inner:hover {
+.purchase-gift-card .vce-tall-hoverbox:hover {
   cursor: pointer;
 }

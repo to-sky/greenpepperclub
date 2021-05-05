@@ -22,6 +22,7 @@ $product = wc_get_product( $post->ID );
 <?php else: ?>
 	<section id="primary" class="col content-area py-5">
 		<main id="main" class="site-main" role="main">
+            <?php woocommerce_breadcrumb(); ?>
 			<?php woocommerce_content(); ?>
 		</main><!-- #main -->
 	</section><!-- #primary -->

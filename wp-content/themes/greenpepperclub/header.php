@@ -35,7 +35,7 @@
 
 <body <?php body_class(); ?>>
 <?php if( is_front_page() && get_field('video_background') ) : ?>
-    <video playsinline autoplay muted loop id="bgvid">
+    <video playsinline autoplay muted loop poster="<?php echo get_template_directory_uri() ?>/inc/assets/img/fire.jpg" id="bgvid">
         <source id="mp4" src="<?php the_field('video_background'); ?>" type="video/mp4">
     </video>
 <?php endif; ?>

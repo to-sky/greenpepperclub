@@ -136,3 +136,63 @@ function gp_woocommerce_disable_shop_page() {
 		status_header(404);
 	}
 }
+
+/**
+ * If product is meal plan and isset into cart, then redirect to the cart with Success message
+ */
+add_filter('woocommerce_add_to_cart_sold_individually_found_in_cart', 'gp_woocommerce_add_to_cart_sold_individually_found_in_cart', 10, 5);
+function gp_woocommerce_add_to_cart_sold_individually_found_in_cart($exist, $product_id, $variation_id, $cart_item_data, $cart_id){
+	return is_product_meal_plan( $product_id ) ? false : $exist;
+}
+
+
+// Slug for "A LA CARTE page"
+const A_LA_CARTE_PAGE_SLUG = 'a-la-carte';
+
+/**
+ * Rename "home" in breadcrumb
+ */
+add_filter( 'woocommerce_breadcrumb_defaults', 'wcc_change_breadcrumb_home_text' );
+function wcc_change_breadcrumb_home_text( $defaults ) {
+	$defaults['home'] = get_the_title( get_page_by_path( A_LA_CARTE_PAGE_SLUG ) );
+
+	return $defaults;
+}
+
+/**
+ * Replace the home link URL
+ */
+add_filter( 'woocommerce_breadcrumb_home_url', 'woo_custom_breadrumb_home_url' );
+function woo_custom_breadrumb_home_url() {
+	return get_permalink( get_page_by_path( A_LA_CARTE_PAGE_SLUG ) );
+}
+
+/**
+ * Change the breadcrumb separator
+ */
+add_filter( 'woocommerce_breadcrumb_defaults', 'wcc_change_breadcrumb_delimiter' );
+function wcc_change_breadcrumb_delimiter( $defaults ) {
+	$defaults['delimiter'] = ' &gt; ';
+
+	return $defaults;
+}
+
+/**
+ * Change the breadcrumb on the product page
+ */
+add_filter( 'woocommerce_get_breadcrumb', 'gp_woocommerce_get_breadcrumb', 20, 2 );
+function gp_woocommerce_get_breadcrumb( $crumbs, $breadcrumb ) {
+
+	// only on the single product page
+	if ( ! is_product() ) {
+		return $crumbs;
+	}
+
+	// gets the first element of the array "$crumbs"
+	$new_crumbs[] = reset( $crumbs );
+	// gets the last element of the array "$crumbs"
+	$new_crumbs[] = end( $crumbs );
+
+	return $new_crumbs;
+}
+

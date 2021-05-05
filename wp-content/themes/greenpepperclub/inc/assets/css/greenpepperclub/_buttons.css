@@ -12,11 +12,8 @@ a:hover {
 .btn-primary,
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
-.btn-primary.disabled,
-.btn-primary:disabled,
 .woocommerce a.button.alt,
 .woocommerce button.button.alt,
-.woocommerce button.button.alt.disabled,
 .woocommerce-checkout-review-order .woocommerce-checkout-payment button.alt {
   background-color: #8dc63f;
   border: 1px solid #8dc63f;
@@ -27,6 +24,24 @@ a:hover {
 .woocommerce-checkout-review-order .woocommerce-checkout-payment button.alt:hover {
   background-color: #7db332;
   border: 1px solid #7db332;
+}
+
+.btn.disabled,
+.btn:disabled,
+.btn-primary.disabled,
+.btn-primary:disabled,
+.woocommerce button.button.alt.disabled {
+  background-color: #afd37a;
+  border: 1px solid #afd37a;
+  opacity: 1;
+}
+
+.btn.disabled:hover,
+.btn-primary.disabled:hover,
+.woocommerce button.button.alt.disabled:hover {
+  background-color: #afd37a !important;
+  border: 1px solid #afd37a;
+  opacity: 1;
 }
 
 .btn-primary.focus,

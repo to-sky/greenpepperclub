@@ -242,7 +242,7 @@ function wp_bootstrap_starter_scripts() {
 
     // Add google map only for page where run [gp_delivery_map] shortcode
 	global $post;
-	if( has_shortcode( $post->post_content, 'gp_delivery_map') ) {
+	if( isset( $post ) && has_shortcode( $post->post_content, 'gp_delivery_map') ) {
 		wp_enqueue_script( 'delivery-map', get_template_directory_uri() . '/inc/assets/js/delivery-map.js', array(), false, true );
 		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCYsElLRMB12YSy0QF0KwTSIwavSYGqsyg&callback=initMap&libraries=&v=weekly', [ 'delivery-map' ], false, true );
 	}
