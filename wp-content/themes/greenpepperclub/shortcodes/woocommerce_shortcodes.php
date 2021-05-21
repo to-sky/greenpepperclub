@@ -147,14 +147,14 @@ function gp_woocommerce_add_to_cart_sold_individually_found_in_cart($exist, $pro
 
 
 // Slug for "A LA CARTE page"
-const A_LA_CARTE_PAGE_SLUG = 'a-la-carte';
+const A_LA_CART_PAGE_SLUG = 'a-la-cart';
 
 /**
  * Rename "home" in breadcrumb
  */
 add_filter( 'woocommerce_breadcrumb_defaults', 'wcc_change_breadcrumb_home_text' );
 function wcc_change_breadcrumb_home_text( $defaults ) {
-	$defaults['home'] = get_the_title( get_page_by_path( A_LA_CARTE_PAGE_SLUG ) );
+	$defaults['home'] = get_the_title( get_page_by_path( A_LA_CART_PAGE_SLUG ) );
 
 	return $defaults;
 }
@@ -164,7 +164,7 @@ function wcc_change_breadcrumb_home_text( $defaults ) {
  */
 add_filter( 'woocommerce_breadcrumb_home_url', 'woo_custom_breadrumb_home_url' );
 function woo_custom_breadrumb_home_url() {
-	return get_permalink( get_page_by_path( A_LA_CARTE_PAGE_SLUG ) );
+	return get_permalink( get_page_by_path( A_LA_CART_PAGE_SLUG ) );
 }
 
 /**
